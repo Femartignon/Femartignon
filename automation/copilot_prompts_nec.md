@@ -13,24 +13,28 @@
 A coluna Prazo (F) de DB_ATIVIDADES está vazia e agora é um campo de data.
 Deixe a IA calcular os prazos retrocedendo a partir da data do evento.
 
+> ✅ JÁ APLICADO no arquivo atual: 78 prazos preenchidos automaticamente
+> (perfil "Mais folga"). Use este prompt apenas para REPROCESSAR ou para
+> novos eventos adicionados depois.
+
 ```
 Na aba DB_ATIVIDADES, preencha a coluna "Prazo" (coluna F) de cada atividade.
 Para cada linha, encontre a "Data Início" do evento correspondente na aba
-DB_EVENTOS (faça a correspondência pelo nome em DB_EVENTOS coluna "Evento" =
-DB_ATIVIDADES coluna "Evento"). Calcule o prazo subtraindo dias da data do
-evento conforme a Etapa:
-- Planejamento: 60 dias antes
-- VEEVA: 45 dias antes
-- Sociedade: 40 dias antes
-- Agência: 30 dias antes
-- Simpósio: 20 dias antes
-- Stand: 15 dias antes
-- Pós-Evento: 7 dias DEPOIS do evento
+DB_EVENTOS (correspondência pelo nome do Evento). Calcule o prazo conforme a
+Etapa (negativo = antes do evento, positivo = depois):
+- Planejamento: 90 dias antes
+- VEEVA: 75 dias antes
+- Sociedade / Contrapartidas / Cota / Patrocínio: 60 dias antes
+- Agência / Ag. Logística / Produção / RSVP: 45 dias antes
+- Simpósio / Palestrantes: 30 dias antes
+- Alinhamentos Finais: 14 dias antes
+- Stand / Buffet / Staff / Credenciais / Logomarcas: 21 dias antes
+- Pós-Evento: 15 dias DEPOIS do evento
 Não altere linhas cujo Status seja "CONCLUÍDO". Preencha apenas onde o Prazo
 estiver vazio. Use o formato de data DD/MM/AAAA.
 ```
 
-> Depois de preencher, a formatação condicional já existente vai acender
+> Depois de preencher, a formatação condicional já existente acende
 > automaticamente: vermelho (vencido), laranja (7 dias), amarelo (pendente).
 
 ---
