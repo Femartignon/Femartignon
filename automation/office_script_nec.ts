@@ -341,7 +341,7 @@ function escreverSecao(
     fmt.getFill().setColor("D9E1F2");
     fmt.getFont().setBold(true);
     fmt.getFont().setSize(9);
-    fmt.getBorders().getItem(ExcelScript.BorderIndex.edgeBottom).setStyle(ExcelScript.BorderLineStyle.thin);
+    fmt.getRangeBorder(ExcelScript.BorderIndex.edgeBottom).setStyle(ExcelScript.BorderLineStyle.continuous);
   }
   linha++;
 

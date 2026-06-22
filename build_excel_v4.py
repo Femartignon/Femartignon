@@ -367,9 +367,6 @@ tab2=Table(displayName="TblAtividades",ref=f"A3:I{3+n_at}")
 tab2.tableStyleInfo=TableStyleInfo(name="TableStyleMedium7",showRowStripes=True)
 ws.add_table(tab2)
 
-ws.conditional_formatting.add(f"G4:G{3+n_at}",
-    DataBarRule(start_type='num',start_value=0,end_type='num',end_value=1,color="2E75B6"))
-
 for i,at in enumerate(activities):
     r=4+i; drow(ws,r,9,alt=(i%2==1))
     pct=at['Pct']
@@ -389,17 +386,23 @@ for i,at in enumerate(activities):
             cell.fill=fx("FFFFF0"); cell.alignment=al("center")
 
 # ── CF rules — DB_ATIVIDADES ─────────────────────────────────────────────────
+# DataBar adicionado DEPOIS das FormulaRules para não interferir com prioridades
 cf_rng_at=f"A4:I{3+n_at}"
-# P1: Prazo vencido + PENDENTE → RED (overdue)
-add_cf(ws,cf_rng_at,'=AND($H4="PENDENTE",ISNUMBER($F4),$F4<TODAY())',C_LRED,C_RED,stop=True)
-# P2: ATRASADO → RED
+# P1 (prioridade 1, mais alta): ATRASADO → RED (status explícito)
 add_cf(ws,cf_rng_at,'=$H4="ATRASADO"',C_LRED,C_RED)
+# P2: Prazo vencido + PENDENTE → RED (vencimento implícito)
+add_cf(ws,cf_rng_at,'=AND($H4="PENDENTE",ISNUMBER($F4),$F4<TODAY())',C_LRED,C_RED)
 # P3: Prazo em 7 dias + PENDENTE → ORANGE
 add_cf(ws,cf_rng_at,'=AND($H4="PENDENTE",ISNUMBER($F4),$F4>=TODAY(),$F4<=TODAY()+7)',C_LORANGE,C_ORANGE)
 # P4: PENDENTE geral → YELLOW
 add_cf(ws,cf_rng_at,'=$H4="PENDENTE"',C_LYELL,C_YELLOW)
-# P5: CONCLUÍDO → soft GREEN
+# P5: EM ANDAMENTO → light blue
+add_cf(ws,cf_rng_at,'=$H4="EM ANDAMENTO"',C_LBLUE,"1F3864")
+# P6: CONCLUÍDO → soft GREEN
 add_cf(ws,cf_rng_at,'=$H4="CONCLUÍDO"',"F0FFF0","375623")
+# DataBar para % Conclusão — adicionado por último para coexistir com CFs acima
+ws.conditional_formatting.add(f"G4:G{3+n_at}",
+    DataBarRule(start_type='num',start_value=0,end_type='num',end_value=1,color="2E75B6"))
 
 resp_str=",".join(RESP_UNICOS[:20]) if RESP_UNICOS else "Eventos,Time de Marca"
 adv(ws,f'"{",".join(STATUS_AT)}"',f"H4:H{3+n_at}","Status")
