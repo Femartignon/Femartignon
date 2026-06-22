@@ -371,7 +371,7 @@ for i,at in enumerate(activities):
     r=4+i; drow(ws,r,9,alt=(i%2==1))
     pct=at['Pct']
     row_data=[i+1,at['Evento'],at['Etapa'],at['Ativ'],at['Resp'],
-              at['Prazo'],pct/100 if pct else 0,at['Status'],at['Obs']]
+              None,pct/100 if pct else 0,at['Status'],at['Obs']]
     for c_idx,val in enumerate(row_data,1):
         cell=ws.cell(row=r,column=c_idx); cell.value=val
         if c_idx==7:
@@ -382,8 +382,9 @@ for i,at in enumerate(activities):
             else: cell.fill=fx("FFDDD8"); cell.font=ft(True,"C00000",9)
         if c_idx==8: scell(cell,at['Status'])
         if c_idx==6:
-            cell.font=ft(False,"7F6000",8,italic=True)
-            cell.fill=fx("FFFFF0"); cell.alignment=al("center")
+            # Prazo: célula de DATA (vazia, pronta para receber DD/MM/AAAA)
+            cell.number_format='DD/MM/YYYY'
+            cell.font=ft(False,"7F6000",8); cell.fill=fx("FFFFF0"); cell.alignment=al("center")
 
 # ── CF rules — DB_ATIVIDADES ─────────────────────────────────────────────────
 # DataBar adicionado DEPOIS das FormulaRules para não interferir com prioridades
@@ -407,6 +408,15 @@ ws.conditional_formatting.add(f"G4:G{3+n_at}",
 resp_str=",".join(RESP_UNICOS[:20]) if RESP_UNICOS else "Eventos,Time de Marca"
 adv(ws,f'"{",".join(STATUS_AT)}"',f"H4:H{3+n_at}","Status")
 adv(ws,f'"{resp_str}"',f"E4:E{3+n_at}","Responsável")
+
+# Validação de DATA na coluna Prazo (bloqueia texto, permite vazio)
+dv_prazo=DataValidation(type="date",operator="greaterThanOrEqual",formula1="43831",
+    allow_blank=True,showInputMessage=True,showErrorMessage=True)
+dv_prazo.promptTitle="Prazo da Atividade"
+dv_prazo.prompt="Insira a data no formato DD/MM/AAAA.\nDeixe em branco se ainda não houver prazo definido."
+dv_prazo.errorTitle="Data inválida"
+dv_prazo.error="Insira uma data válida (DD/MM/AAAA) ou deixe em branco. Texto não é permitido."
+dv_prazo.sqref=f"F4:F{3+n_at}"; ws.add_data_validation(dv_prazo)
 
 print("DB_ATIVIDADES ✅")
 
