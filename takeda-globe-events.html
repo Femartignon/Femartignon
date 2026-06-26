@@ -324,9 +324,11 @@ const app = document.getElementById('app');
 const renderer = new THREE.WebGLRenderer({antialias:false,powerPreference:'high-performance',stencil:false});
 renderer.setPixelRatio(Q.dpr);
 renderer.setSize(innerWidth,innerHeight);
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.05;
-renderer.outputColorSpace = THREE.SRGBColorSpace;
+// When using EffectComposer + OutputPass, keep the renderer in linear space
+// with no tone mapping so OutputPass does one clean ACES + sRGB conversion.
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 renderer.useLegacyLights = false;
 app.appendChild(renderer.domElement);
 renderer.domElement.style.touchAction='none';
@@ -357,7 +359,7 @@ window.addEventListener('resize',()=>{
    SECTION 2 · LIGHTING
 ═══════════════════════════════════════════════════════ */
 setLoad(10,'CALIBRATING PHOTON ENGINE…');
-const sun = new THREE.DirectionalLight(0xfff4e6,3.6);
+const sun = new THREE.DirectionalLight(0xfff4e6,2.4);
 sun.position.copy(sunUniform.value).multiplyScalar(10); scene.add(sun);
 scene.add(new THREE.AmbientLight(0x172233,0.14));
 const rim = new THREE.DirectionalLight(0x2c4a6e,0.42);
@@ -372,8 +374,10 @@ const loader = new THREE.TextureLoader();
 const loadTex = (url,srgb)=> new Promise(res=>{
   loader.load(url, t=>{ if(srgb)t.colorSpace=THREE.SRGBColorSpace;
     t.anisotropy=maxAniso; res(t); }, undefined, ()=>{
+      // dark fallback — avoids a bright-white sphere triggering full-screen bloom
       const c=document.createElement('canvas'); c.width=c.height=4;
-      const t=new THREE.CanvasTexture(c); res(t); }); });
+      const cx=c.getContext('2d'); cx.fillStyle='#111'; cx.fillRect(0,0,4,4);
+      const t=new THREE.CanvasTexture(c); t.colorSpace=srgb?THREE.SRGBColorSpace:THREE.NoColorSpace; res(t); }); });
 
 const [dayRaw,nightRaw,specRaw,topoRaw,cloudRaw] = await Promise.all([
   loadTex(BASE+'earth_atmos_4096.jpg',true),
@@ -727,7 +731,8 @@ const composer=new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene,camera));
 let smaaPass=null;
 if(Q.smaa){ smaaPass=new SMAAPass(innerWidth*Q.dpr,innerHeight*Q.dpr); composer.addPass(smaaPass); }
-const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.52,.58,.82);
+// strength, radius, threshold — threshold=0.88 keeps bloom tight to bright emitters
+const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),.38,.45,.88);
 composer.addPass(bloom);
 
 function lensDirt(){
