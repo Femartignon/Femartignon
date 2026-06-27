@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CEO Executive Brief — Mobile Ready</title>
   <script type="module" src="https://unpkg.com/@microsoft/mgt/dist/bundle/mgt.esm.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -50,6 +53,11 @@
       color: #fff;
       border-radius: 4px;
       cursor: pointer;
+      touch-action: manipulation;
+    }
+    .refresh-button:focus-visible {
+      outline: 2px solid #1a1a1a;
+      outline-offset: 2px;
     }
     @media (max-width: 600px) {
       body { padding: 16px; }
@@ -63,53 +71,67 @@
     <mgt-login></mgt-login>
   </div>
 
-  <h1>🧬 Executive Brief</h1>
-  <p>📆 Data: <span id="todayDate"></span></p>
+  <h1><span aria-hidden="true">🧬</span> Executive Brief</h1>
+  <p><span aria-hidden="true">📆</span> Data: <span id="todayDate">…</span></p>
 
   <!-- Tasks -->
   <section>
     <h2>
-      📋 Tarefas & Prioridades
-      <button class="refresh-button" onclick="refreshComponent('mgt-todo')">🔄</button>
+      <span><span aria-hidden="true">📋</span> Tarefas &amp; Prioridades</span>
+      <button class="refresh-button" type="button" aria-label="Atualizar tarefas" onclick="refreshComponent('mgt-todo')"><span aria-hidden="true">🔄</span></button>
     </h2>
-    <mgt-todo></mgt-todo>
-    <p class="fallback">✅ Nenhuma tarefa pendente hoje.</p>
+    <div aria-live="polite">
+      <mgt-todo>
+        <template data-type="no-data">
+          <p class="fallback"><span aria-hidden="true">✅</span> Nenhuma tarefa pendente hoje.</p>
+        </template>
+      </mgt-todo>
+    </div>
   </section>
 
   <!-- Calendar -->
   <section>
     <h2>
-      📅 Reuniões
-      <button class="refresh-button" onclick="refreshComponent('mgt-agenda')">🔄</button>
+      <span><span aria-hidden="true">📅</span> Reuniões</span>
+      <button class="refresh-button" type="button" aria-label="Atualizar reuniões" onclick="refreshComponent('mgt-agenda')"><span aria-hidden="true">🔄</span></button>
     </h2>
-    <mgt-agenda group-by-day></mgt-agenda>
-    <p class="fallback">📭 Nenhuma reunião agendada.</p>
+    <div aria-live="polite">
+      <mgt-agenda group-by-day>
+        <template data-type="no-data">
+          <p class="fallback"><span aria-hidden="true">📭</span> Nenhuma reunião agendada.</p>
+        </template>
+      </mgt-agenda>
+    </div>
   </section>
 
   <!-- Emails -->
   <section>
     <h2>
-      📧 E-mails importantes
-      <button class="refresh-button" onclick="refreshComponent('mgt-get')">🔄</button>
+      <span><span aria-hidden="true">📧</span> E-mails importantes</span>
+      <button class="refresh-button" type="button" aria-label="Atualizar e-mails" onclick="refreshComponent('mgt-get')"><span aria-hidden="true">🔄</span></button>
     </h2>
-    <mgt-get resource="/me/messages?$top=5">
-      <template>
-        <div style="padding: 10px; border-bottom: 1px solid #eee;">
-          <strong>{{subject}}</strong><br />
-          <small>De: {{from.emailAddress.name}}</small>
-        </div>
-      </template>
-    </mgt-get>
-    <p class="fallback">✉️ Nenhum e-mail relevante encontrado.</p>
+    <div aria-live="polite">
+      <mgt-get resource="/me/messages?$top=5">
+        <template>
+          <div style="padding: 10px; border-bottom: 1px solid #eee;">
+            <strong>{{subject}}</strong><br />
+            <small>De: {{from.emailAddress.name}}</small>
+          </div>
+        </template>
+        <template data-type="no-data">
+          <p class="fallback"><span aria-hidden="true">✉️</span> Nenhum e-mail relevante encontrado.</p>
+        </template>
+      </mgt-get>
+    </div>
   </section>
 
   <!-- Productivity -->
   <section>
-    <h2>🤖 Boost de Produtividade</h2>
+    <h2><span aria-hidden="true">🤖</span> Boost de Produtividade</h2>
     <ul>
-      <li>🔝 Concentre-se em 1–3 tarefas do To Do acima</li>
-      <li>🕒 Horários ideais: 11h–13h, 16h–18h</li>
-      <li>🚧 Verifique e-mails por bloqueios pendentes</li>
+      <li><span aria-hidden="true">🔝</span> Concentre-se em 1–3 tarefas do To Do acima</li>
+      <li><span aria-hidden="true">🕒</span> Horários ideais: 11h–13h, 16h–18h</li>
+      <li><span aria-hidden="true">🚧</span> Verifique e-mails por bloqueios pendentes</li>
     </ul>
   </section>
 
@@ -120,7 +142,7 @@
 
     function refreshComponent(tagName) {
       const old = document.querySelector(tagName);
-      const clone = old.cloneNode();
+      const clone = old.cloneNode(true);
       old.replaceWith(clone);
     }
   </script>
