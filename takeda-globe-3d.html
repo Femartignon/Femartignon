@@ -4,6 +4,11 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>TAKEDA · GLOBAL INTELLIGENCE GRID — Cinematic Earth</title>
+<!-- warm up the render-blocking font + texture-CDN connections before they're needed -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://unpkg.com" crossorigin />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -848,8 +853,8 @@ SITES.forEach((s,i)=>{
   // HTML label
   const el=document.createElement('div'); el.className='lab '+s.type;
   el.innerHTML=`<div class="dotmark"></div><div class="pin"><span class="nm">${s.city}</span><span class="rl">${s.type.toUpperCase()}</span></div>`;
-  el.querySelector('.pin').addEventListener('click',()=>selectSite(s));
-  labelLayer.appendChild(el); s._el=el;
+  const pin=el.querySelector('.pin'); pin.addEventListener('click',()=>selectSite(s));
+  labelLayer.appendChild(el); s._el=el; s._pin=pin;   // cache .pin: no per-frame DOM query
 });
 cores.instanceMatrix.needsUpdate=true; if(cores.instanceColor) cores.instanceColor.needsUpdate=true;
 siteGroup.add(cores);
@@ -1012,6 +1017,8 @@ document.getElementById('tRoutes').textContent=ROUTES.length;
 const clock=new THREE.Clock();
 let frames=0,fpsT=0,transit=180, lowStreak=0, degraded=false;
 const tmp=new THREE.Vector3(), pAttr=particleSys?particleSys.geometry.attributes.position:null;
+// reusable temporaries for the per-frame label projection (avoids ~5 Vector3 allocations/site/frame)
+const _wp=new THREE.Vector3(), _sv=new THREE.Vector3(), _na=new THREE.Vector3(), _nb=new THREE.Vector3();
 
 function animate(){
   requestAnimationFrame(animate);
@@ -1028,15 +1035,18 @@ function animate(){
   // particles flow along arcs
   if(particleSys && particleSys.visible){
     let idx=0;
-    particleData.forEach(p=>{ p.t=(p.t+dt*p.speed)%1; p.curve.getPointAt(p.t,_p);
-      pAttr.array[idx++]=_p.x; pAttr.array[idx++]=_p.y; pAttr.array[idx++]=_p.z; });
+    for(let i=0;i<particleData.length;i++){ const p=particleData[i];
+      p.t=(p.t+dt*p.speed)%1; p.curve.getPointAt(p.t,_p);
+      pAttr.array[idx++]=_p.x; pAttr.array[idx++]=_p.y; pAttr.array[idx++]=_p.z; }
     pAttr.needsUpdate=true;
   }
   // expanding rings
-  ringGroup.children.forEach(r=>{ const ph=(et*0.9+r.userData.phase)%1;
-    r.scale.setScalar(1+ph*2.2); r.material.opacity=0.6*(1-ph); r.lookAt(camera.position); });
+  for(let i=0;i<ringGroup.children.length;i++){ const r=ringGroup.children[i];
+    const ph=(et*0.9+r.userData.phase)%1;
+    r.scale.setScalar(1+ph*2.2); r.material.opacity=0.6*(1-ph); r.lookAt(camera.position); }
   // marker twinkle
-  siteGroup.children.forEach(m=>{ if(m.isSprite) m.material.opacity=0.7+Math.sin(et*2+m.userData.tw)*0.2; });
+  for(let i=0;i<siteGroup.children.length;i++){ const m=siteGroup.children[i];
+    if(m.isSprite) m.material.opacity=0.7+Math.sin(et*2+m.userData.tw)*0.2; }
 
   // camera fly + executive bob
   if(flyAnim){ flyAnim.t+=dt/flyAnim.dur; const k=flyAnim.t>=1?1:1-Math.pow(1-flyAnim.t,3);
@@ -1052,16 +1062,21 @@ function animate(){
   // project HTML labels w/ occlusion cull
   if(labelLayer.style.display!=='none'){
     const camDist=camera.position.length();
-    SITES.forEach(s=>{
-      const wp=s._pos.clone().applyMatrix4(world.matrixWorld);
-      const sv=tmp.copy(wp).project(camera);
-      const x=(sv.x*0.5+0.5)*innerWidth, y=(-sv.y*0.5+0.5)*innerHeight;
-      const behind=sv.z>1 || wp.clone().sub(camera.position).normalize().dot(wp.clone().normalize())>0.18;
+    for(let i=0;i<SITES.length;i++){
+      const s=SITES[i];
+      _wp.copy(s._pos).applyMatrix4(world.matrixWorld);
+      _sv.copy(_wp).project(camera);
+      const x=(_sv.x*0.5+0.5)*innerWidth, y=(-_sv.y*0.5+0.5)*innerHeight;
+      // occlusion cull: behind frustum, or on the far side of the globe relative to camera
+      _na.copy(_wp).sub(camera.position).normalize();
+      _nb.copy(_wp).normalize();
+      const behind=_sv.z>1 || _na.dot(_nb)>0.18;
       s._el.style.transform=`translate(${x}px,${y}px)`;
       s._el.classList.toggle('far',behind);
-      s._el.querySelector('.pin').classList.toggle('compact',camDist>4.4 && (!selected||selected.id!==s.id));
-      s._el.style.zIndex=Math.round((1-sv.z)*1000);
-    });
+      s._pin.classList.toggle('compact',camDist>4.4 && (!selected||selected.id!==s.id));
+      const zi=Math.round((1-_sv.z)*1000);   // only touch the DOM when z-order actually changes
+      if(s._zi!==zi){ s._el.style.zIndex=zi; s._zi=zi; }
+    }
   }
 
   composer.render();
@@ -1075,8 +1090,11 @@ function animate(){
     if(fps<45){ lowStreak++; } else { lowStreak=Math.max(0,lowStreak-1); }
     if(lowStreak>=3 && !degraded){ degraded=true;
       if(cloudB){ cloudB.visible=false; }
-      bloom.strength=0.4; renderer.setPixelRatio(Math.max(1, Q.dpr*0.75));
-      if(lstat) {}
+      bloom.strength=0.4;
+      // actually shed GPU load: resize the renderer AND the composer's render targets
+      // (bloom/SMAA/grade), otherwise the post passes keep rendering at full resolution.
+      const nr=Math.max(1, Q.dpr*0.75);
+      renderer.setPixelRatio(nr); composer.setPixelRatio(nr);
     }
     document.getElementById('tRange').textContent=Math.round((camera.position.length()-1)*6371)+' ';
     transit+=Math.round((Math.random()-0.45)*6); transit=Math.max(120,Math.min(260,transit));
