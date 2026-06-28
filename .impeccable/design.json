@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-28T00:00:00.000Z",
+  "title": "Design System: TAKEDA Global Intelligence Grid",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Takeda Red", "canonical": "#E1251B", "tonalRamp": ["#2a0705", "#4a0c08", "#6e120b", "#a30f08", "#c41a12", "#E1251B", "#ff5a4d", "#ff8d84", "#ffc2bc"] },
+      "cyan": { "role": "primary", "displayName": "Telemetry Cyan", "canonical": "#39d6ff", "tonalRamp": ["#06222b", "#0a3946", "#0f5161", "#176d80", "#2aa6cc", "#39d6ff", "#7fe9ff", "#aef2ff", "#d8f9ff"] },
+      "amber": { "role": "secondary", "displayName": "Signal Amber", "canonical": "#ffb547", "tonalRamp": ["#2e1c00", "#4d3000", "#6e4600", "#9a6300", "#cc8a1f", "#ffb547", "#ffca7d", "#ffdcaa", "#ffeed3"] },
+      "green": { "role": "secondary", "displayName": "Signal Green", "canonical": "#3ee08a", "tonalRamp": ["#042114", "#073a23", "#0a5333", "#0f7546", "#1fa863", "#3ee08a", "#7feab0", "#aef2cd", "#d8f9e6"] },
+      "violet": { "role": "secondary", "displayName": "Signal Violet", "canonical": "#9d7bff", "tonalRamp": ["#170c33", "#241252", "#341a73", "#48269a", "#6e4fcc", "#9d7bff", "#bba6ff", "#d4c8ff", "#ece5ff"] },
+      "bg": { "role": "neutral", "displayName": "Deep Space", "canonical": "#03060d", "tonalRamp": ["#03060d", "#070c16", "#0c1320", "#141d2e", "#1f2b40", "#33425c", "#516787", "#8aa0c6", "#e8f0ff"] },
+      "text": { "role": "neutral", "displayName": "Instrument Ink", "canonical": "#e8f0ff", "tonalRamp": ["#0c1320", "#1f2b40", "#33425c", "#516787", "#8aa0c6", "#9fb4d6", "#c4d2ea", "#e8f0ff", "#f6f9ff"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Brand mark glyph and largest HUD identifiers. Rare." },
+      "title": { "displayName": "Title", "purpose": "Brand name and primary panel identity; presence via 3px tracking." },
+      "body": { "displayName": "Body", "purpose": "The little running prose: status descriptions, tooltips. 65-75ch cap." },
+      "readout": { "displayName": "Readout", "purpose": "Card headers and primary telemetry values, in Cyan Soft." },
+      "label": { "displayName": "Label", "purpose": "Buttons, pills, tags, ticks: pervasive mono instrument labeling." }
+    },
+    "shadows": [
+      { "name": "telemetry-glow", "value": "0 0 24px rgba(57,214,255,0.35)", "purpose": "Default hover/active lift. Light, not shadow." },
+      { "name": "active-glow", "value": "0 0 18px rgba(57,214,255,0.5)", "purpose": "Pressed/active control paired with cyan fill." },
+      { "name": "mark-glow", "value": "0 0 20px rgba(225,37,27,0.55), inset 0 0 12px rgba(255,255,255,0.15)", "purpose": "The Takeda-red brand mark only." },
+      { "name": "cabin-lift", "value": "0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)", "purpose": "Modal / primary floating panels lifted off the cabin floor." }
+    ],
+    "motion": [
+      { "name": "ease-instrument", "value": "0.2s", "purpose": "Default state transition for controls (hover, active)." },
+      { "name": "ease-expand", "value": "0.8s cubic-bezier(0.7,0,0.2,1)", "purpose": "Panel height/reveal expansion." },
+      { "name": "ease-fade", "value": "1s", "purpose": "Opacity/visibility fades for HUD layers." }
+    ],
+    "breakpoints": [
+      { "name": "narrow", "value": "768px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Instrument Button",
+      "kind": "button",
+      "refersTo": "button-instrument",
+      "description": "Primary HUD control. Glass key with mono label; cyan-fills when active.",
+      "html": "<button class=\"ds-btn-instrument\"><svg viewBox=\"0 0 24 24\" width=\"13\" height=\"13\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/></svg>TRACK</button>",
+      "css": ".ds-btn-instrument { display:flex; align-items:center; gap:8px; font:600 10.5px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:1.5px; text-transform:uppercase; color:#8aa0c6; background:rgba(8,14,26,0.62); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border:1px solid rgba(120,170,255,0.16); border-radius:9px; padding:10px 14px; cursor:pointer; transition:.2s; } .ds-btn-instrument:hover { color:#e8f0ff; border-color:rgba(140,190,255,0.42); box-shadow:0 0 24px rgba(57,214,255,0.35); } .ds-btn-instrument:focus-visible { outline:none; border-color:#39d6ff; box-shadow:0 0 18px rgba(57,214,255,0.5); } .ds-btn-instrument.is-active { color:#02121a; background:linear-gradient(90deg,#39d6ff,#2aa6cc); border-color:transparent; box-shadow:0 0 18px rgba(57,214,255,0.5); }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "Telemetry status chip. Leading dot carries the signal color; the label carries the meaning.",
+      "html": "<span class=\"ds-pill\"><span class=\"ds-dot\"></span>LINK <b>NOMINAL</b></span>",
+      "css": ".ds-pill { display:inline-flex; align-items:center; gap:7px; font:600 10px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:1.5px; color:#8aa0c6; background:rgba(8,14,26,0.62); -webkit-backdrop-filter:blur(14px); backdrop-filter:blur(14px); border:1px solid rgba(120,170,255,0.16); border-radius:8px; padding:8px 12px; } .ds-pill b { color:#e8f0ff; font-weight:700; } .ds-pill .ds-dot { width:6px; height:6px; border-radius:50%; background:#3ee08a; box-shadow:0 0 8px rgba(62,224,138,0.8); }"
+    },
+    {
+      "name": "HUD Card",
+      "kind": "card",
+      "refersTo": "hud-card",
+      "description": "Floating glass instrument panel. Readout header in cyan, mono tag on the right.",
+      "html": "<section class=\"ds-card\"><header class=\"ds-card-head\"><h3>EVENT TELEMETRY</h3><span class=\"ds-tag\">FY26</span></header><div class=\"ds-card-body\">488 payments tracked</div></section>",
+      "css": ".ds-card { width:240px; background:rgba(8,14,26,0.62); -webkit-backdrop-filter:blur(18px) saturate(1.2); backdrop-filter:blur(18px) saturate(1.2); border:1px solid rgba(120,170,255,0.16); border-radius:14px; color:#e8f0ff; overflow:hidden; } .ds-card-head { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; border-bottom:1px solid rgba(120,170,255,0.16); } .ds-card-head h3 { margin:0; font:700 11px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:2.2px; text-transform:uppercase; color:#7fe9ff; } .ds-card-head .ds-tag { font:600 9px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:1.5px; color:#8aa0c6; } .ds-card-body { padding:13px 15px; font:500 13px/1.5 'Inter',system-ui,sans-serif; }"
+    },
+    {
+      "name": "Brand Mark",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Takeda-red brand mark + wordmark. The one place red leads.",
+      "html": "<div class=\"ds-brand\"><div class=\"ds-mark\">T</div><div class=\"ds-name\">TAKEDA <b>GRID</b></div></div>",
+      "css": ".ds-brand { display:flex; align-items:center; gap:13px; } .ds-mark { position:relative; width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font:800 18px/1 'Inter',system-ui,sans-serif; letter-spacing:-1px; color:#fff; background:linear-gradient(135deg,#E1251B,#a30f08); box-shadow:0 0 20px rgba(225,37,27,0.55), inset 0 0 12px rgba(255,255,255,0.15); } .ds-mark::after { content:''; position:absolute; inset:-3px; border-radius:11px; border:1px solid rgba(255,120,110,0.4); opacity:.6; } .ds-name { font:700 14px/1 'Inter',system-ui,sans-serif; letter-spacing:3px; color:#e8f0ff; } .ds-name b { color:#ff5a4d; font-weight:700; }"
+    },
+    {
+      "name": "Coordinate Readout",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Live telemetry value display: mono, uppercase, cyan-soft value over a dim label.",
+      "html": "<div class=\"ds-readout\"><span class=\"ds-readout-label\">COORD</span><span class=\"ds-readout-val\">35.6762°N 139.6503°E</span></div>",
+      "css": ".ds-readout { display:flex; flex-direction:column; gap:3px; } .ds-readout-label { font:600 9px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:2px; text-transform:uppercase; color:#516787; } .ds-readout-val { font:700 11px/1 'JetBrains Mono',ui-monospace,monospace; letter-spacing:1px; color:#7fe9ff; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Glass Cockpit",
+    "overview": "This is avionics for event operations. The interface behaves like the glass cockpit of a modern aircraft: a near-black cabin so the outside view (a photoreal Earth) reads first, with precise, glowing glass instruments arranged at the edges. Every panel is a readout, every label is monospaced telemetry, and nothing decorates. Authority comes from fidelity: real Blue Marble albedo, real relief, real money, status lights that mean exactly what they say. Cyan is the telemetry voice; Takeda red is the identity-and-alert voice; the two never blur. It rejects the Three.js demo/toy look and cookie-cutter SaaS dashboards; the bar is NASA SVS, Cesium, SpaceX Mission Control, Palantir Gotham.",
+    "keyCharacteristics": [
+      "Deep-space ground (#03060d) so the map and instruments carry all the light.",
+      "Translucent glass panels (backdrop-filter: blur(14px)) floating over the view.",
+      "Monospaced, uppercase, letter-spaced labels — telemetry, not prose.",
+      "Cyan = ambient report; Takeda red = identity + alert. Strict separation.",
+      "Glow as the only elevation: light, never drop-shadow boxes."
+    ],
+    "rules": [
+      { "name": "The Two-Voice Rule", "body": "Cyan reports; red alerts. Cyan is ambient and may appear across many instruments at once; Takeda red is rare and reserved for identity and genuine attention. Never use red for ambient chrome, and never use cyan to signal an alert.", "section": "colors" },
+      { "name": "The Status-Never-Hue-Alone Rule", "body": "Amber, green, and red status must always pair with a label, icon, or shape — never color alone. The faróis must survive a color-blind operator and a grayscale print.", "section": "colors" },
+      { "name": "The Telemetry Rule", "body": "If it's a label, status, coordinate, count, or control, it's monospaced, uppercase, and letter-spaced. If it's something a person reads as a sentence, it's Inter.", "section": "typography" },
+      { "name": "The Glow-Not-Shadow Rule", "body": "Elevation is expressed as emitted light (glow), never as a dark drop shadow on a light card. If you reach for a soft gray box-shadow to lift an element, you're designing a SaaS card, not a cockpit instrument.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep Deep Space (#03060d) as the ground and let the Earth and cyan telemetry carry the light.",
+      "Do set every label, status, control, and coordinate in JetBrains Mono — uppercase, letter-spaced (>=1.5px), small.",
+      "Do express elevation as glow (0 0 24px rgba(57,214,255,.35)), not as gray drop shadows.",
+      "Do reserve Takeda Red (#E1251B) for the brand mark and genuine alerts; let cyan do the ambient reporting.",
+      "Do pair every status color with a label, icon, or shape so faróis survive color-blindness and grayscale.",
+      "Do float new instruments on the fixed HUD layer over the map."
+    ],
+    "donts": [
+      "Don't ship the Three.js demo/toy look: no neon palettes, heavy scanlines, gimmick glow, or 'look what the GPU can do.'",
+      "Don't use Takeda red as ambient chrome, or cyan to signal an alert.",
+      "Don't lift elements with soft gray box-shadow cards; use glow or a brighter hairline.",
+      "Don't build cookie-cutter card grids or gradient hero-metrics.",
+      "Don't set running prose in the mono font, or telemetry/readouts in Inter.",
+      "Don't signal status with color alone."
+    ]
+  }
+}
