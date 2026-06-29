@@ -21,17 +21,17 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:1.45;font-weight:400;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-.wrap{max-width:1080px;margin:0 auto;padding:28px 22px 56px}
+.wrap{max-width:1140px;margin:0 auto;padding:32px 24px 64px}
 
 /* ===================== HEADER EDITORIAL ===================== */
-.masthead{position:relative;margin-bottom:26px;padding:6px 0 24px;border-bottom:1px solid var(--line)}
+.masthead{position:relative;margin-bottom:32px;padding:8px 0 26px;border-bottom:1px solid var(--line)}
 .masthead::after{content:'';position:absolute;left:0;bottom:-1px;width:64px;height:3px;background:var(--red);border-radius:2px}
 .mast-grid{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px}
 .eyebrow{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--red);margin-bottom:14px}
 .eyebrow .mark{width:18px;height:18px;flex-shrink:0}
 .eyebrow .sep{width:1px;height:11px;background:var(--line);margin:0 2px}
 .eyebrow .neutral{color:var(--faint);font-weight:700;letter-spacing:1.4px}
-.mast-title{font-size:38px;line-height:1.02;font-weight:700;letter-spacing:-.6px;color:var(--ink)}
+.mast-title{font-size:42px;line-height:1.02;font-weight:700;letter-spacing:-.8px;color:var(--ink)}
 .mast-title em{font-style:normal;color:var(--red)}
 .mast-sub{font-size:13px;color:var(--muted);margin-top:11px;max-width:42ch;line-height:1.5}
 .mast-meta{display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right}
@@ -40,7 +40,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 .meta-date{font-size:11px;color:var(--faint);font-weight:400;letter-spacing:.2px}
 
 /* ===================== SELETOR DE TRILHA ===================== */
-.trilhas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.trilhas{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
 .trilha{position:relative;border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;cursor:pointer;background:var(--card);transition:border-color .2s var(--ease),background .2s var(--ease),transform .2s var(--spring),box-shadow .25s var(--ease);overflow:hidden;display:flex;align-items:center;gap:15px;outline:none}
 .trilha:hover{border-color:#C9CDD2;transform:translateY(-2px);box-shadow:0 10px 26px rgba(17,20,24,.08)}
 .trilha:focus-visible{border-color:var(--red);box-shadow:0 0 0 3px var(--on)}
@@ -64,10 +64,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 .trilha.act .check{opacity:1;transform:scale(1)}
 
 /* ===================== LAYOUT ===================== */
-.grid{display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:28px;align-items:start}
+@media(max-width:1024px){.grid{grid-template-columns:320px 1fr;gap:22px}}
+@media(max-width:900px){.grid{grid-template-columns:1fr;gap:20px}.panel{position:static;top:auto}}
 
-.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow-card)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;box-shadow:var(--shadow-card);position:sticky;top:24px;align-self:start}
 .panel .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--line-soft)}
 .panel h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink);display:flex;align-items:center;gap:9px}
 .panel h2::before{content:'';width:3px;height:14px;background:var(--red);border-radius:2px}
@@ -123,7 +124,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 .ref-airfare .lock svg{width:11px;height:11px}
 
 /* ===================== RESULTADOS ===================== */
-.results{display:flex;flex-direction:column;gap:18px}
+.results{display:flex;flex-direction:column;gap:20px}
 
 .totals{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card)}
 .totals .line{display:flex;justify-content:space-between;align-items:center;padding:13px 20px;font-size:13.5px;border-top:1px solid var(--line-soft)}
@@ -222,8 +223,9 @@ tbody td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabula
   .wrap{padding:22px 16px 44px}
   .mast-grid{grid-template-columns:1fr}
   .mast-meta{flex-direction:row;align-items:center;justify-content:flex-start;flex-wrap:wrap;text-align:left}
-  .mast-title{font-size:30px}
-  .trilhas{grid-template-columns:1fr}
+  .mast-title{font-size:31px}
+  .trilhas{grid-template-columns:1fr;gap:12px}
+  .panel{padding:18px}
   .totals .grand .gval{font-size:28px}
   .totals .perp{grid-template-columns:1fr}
   .totals .perp div:last-child{border-left:none;border-top:1px solid rgba(255,255,255,.12)}
