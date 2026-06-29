@@ -16,6 +16,7 @@
   --r-lg:18px; --r-md:13px; --r-sm:10px;
   --shadow-card:0 1px 2px rgba(17,20,24,.04),0 6px 18px rgba(17,20,24,.05);
   --ease:cubic-bezier(.22,1,.36,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
@@ -40,8 +41,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 
 /* ===================== SELETOR DE TRILHA ===================== */
 .trilhas{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
-.trilha{position:relative;border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;cursor:pointer;background:var(--card);transition:border-color .2s var(--ease),background .2s var(--ease),transform .12s var(--ease);overflow:hidden;display:flex;align-items:center;gap:15px;outline:none}
-.trilha:hover{border-color:#C9CDD2}
+.trilha{position:relative;border:1.5px solid var(--line);border-radius:var(--r-md);padding:18px 20px;cursor:pointer;background:var(--card);transition:border-color .2s var(--ease),background .2s var(--ease),transform .2s var(--spring),box-shadow .25s var(--ease);overflow:hidden;display:flex;align-items:center;gap:15px;outline:none}
+.trilha:hover{border-color:#C9CDD2;transform:translateY(-2px);box-shadow:0 10px 26px rgba(17,20,24,.08)}
 .trilha:focus-visible{border-color:var(--red);box-shadow:0 0 0 3px var(--on)}
 .trilha:active{transform:translateY(1px)}
 .trilha.act{border-color:var(--red);background:linear-gradient(180deg,#fff 0%,#FFF6F6 100%)}
@@ -49,8 +50,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 .trilha.act .curve{transform:scaleY(1)}
 .trilha .ico{width:42px;height:42px;border-radius:11px;background:var(--panel-alt);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted);transition:all .2s var(--ease)}
 .trilha .ico svg{width:21px;height:21px}
-.trilha.act .ico{background:var(--red);border-color:var(--red);color:#fff;animation:icopop .42s var(--ease)}
-@keyframes icopop{0%{transform:scale(1)}38%{transform:scale(1.12)}100%{transform:scale(1)}}
+.trilha.act .ico{background:var(--red);border-color:var(--red);color:#fff;animation:icopop .5s var(--spring)}
+@keyframes icopop{0%{transform:scale(.86) rotate(-8deg)}60%{transform:scale(1.14) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
+.trilha .check svg polyline{stroke-dasharray:26;stroke-dashoffset:26}
+.trilha.act .check svg polyline{animation:draw .42s var(--ease) .08s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
 .trilha .txt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .trilha .tt{font-size:14.5px;font-weight:700;color:var(--ink);letter-spacing:.2px}
 .trilha.act .tt{color:var(--red-ink)}
@@ -100,11 +104,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 .pill.on .pico{border-color:var(--red);background:var(--red)}
 .pill.on .pico svg{opacity:1;transform:scale(1)}
 /* pops táteis ao ativar */
-.tog.on .dot::after{animation:knob .28s var(--ease)}
-@keyframes knob{0%{transform:scale(1)}42%{transform:scale(.8)}100%{transform:scale(1)}}
-.pill.on .pico{animation:pillpop .3s var(--ease)}
-@keyframes pillpop{0%{transform:scale(1)}45%{transform:scale(1.16)}100%{transform:scale(1)}}
-.tog:active,.pill:active{transform:translateY(1px)}
+.tog.on .dot::after{animation:knob .4s var(--spring)}
+@keyframes knob{0%{transform:scale(1)}40%{transform:scale(.72)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.pill.on .pico{animation:pillpop .42s var(--spring)}
+@keyframes pillpop{0%{transform:scale(1)}40%{transform:scale(.8)}68%{transform:scale(1.24)}100%{transform:scale(1)}}
+.pill .pico svg polyline{stroke-dasharray:26;stroke-dashoffset:26}
+.pill.on .pico svg polyline{animation:draw .34s var(--ease) .06s forwards}
+.tog:hover,.pill:hover{transform:translateY(-1px)}
+.tog:active,.pill:active{transform:translateY(1px) scale(.985)}
 
 .cond-field{max-height:0;opacity:0;overflow:hidden;transition:max-height .32s var(--ease),opacity .22s var(--ease),margin .32s var(--ease);margin-bottom:0}
 .cond-field.show{max-height:200px;opacity:1;margin-bottom:16px}
@@ -137,8 +144,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--body);line-height:
 
 /* ===== motion impecável: contagem + brilho do total ===== */
 .totals .grand .gval{display:inline-block;transform-origin:left center;will-change:transform;backface-visibility:hidden}
-.totals.num-flash .grand .gval{animation:gpop .52s var(--ease)}
-@keyframes gpop{0%{transform:scale(1)}28%{transform:scale(1.045)}100%{transform:scale(1)}}
+.totals.num-flash .grand .gval{animation:gpop .56s var(--spring)}
+@keyframes gpop{0%{transform:scale(1);text-shadow:0 0 0 rgba(255,255,255,0)}32%{transform:scale(1.06);text-shadow:0 0 22px rgba(255,255,255,.55)}100%{transform:scale(1);text-shadow:0 0 0 rgba(255,255,255,0)}}
 .totals.num-flash .grand::before{animation:sheen .9s var(--ease)}
 @keyframes sheen{0%{transform:translateX(-180%) skewX(-12deg);opacity:0}18%{opacity:1}100%{transform:translateX(460%) skewX(-12deg);opacity:0}}
 .totals .perp .val{transition:color .2s var(--ease)}
@@ -207,9 +214,9 @@ tbody td:last-child{text-align:right;font-weight:700;font-variant-numeric:tabula
 .hide{display:none!important}
 
 /* entrada stagger */
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.stagger{animation:rise .5s var(--ease) both}
-.stagger.d1{animation-delay:.04s}.stagger.d2{animation-delay:.1s}.stagger.d3{animation-delay:.16s}
+@keyframes rise{from{opacity:0;transform:translateY(16px) scale(.985);filter:blur(6px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.stagger{animation:rise .62s var(--ease) both}
+.stagger.d1{animation-delay:.08s}.stagger.d2{animation-delay:.16s}.stagger.d3{animation-delay:.24s}
 
 @media(max-width:560px){
   .wrap{padding:22px 16px 44px}
@@ -726,6 +733,20 @@ document.querySelectorAll('.pill').forEach(p=>{
 document.getElementById('btn-clear').addEventListener('click',clearForm);
 document.getElementById('btn-pdf').addEventListener('click',gerarPDF);
 ['cidade','part','dias','palestrantes','coffee','hcps','noites-apoio','rota','inscricao'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',()=>{calculou=true;render();});el.addEventListener('change',()=>{calculou=true;render();});}});
+
+/* ===== overdrive: tilt parallax nos cartões de trilha ===== */
+if(!prefersReduce && window.matchMedia('(hover:hover) and (pointer:fine)').matches){
+  document.querySelectorAll('.trilha').forEach(card=>{
+    card.addEventListener('pointermove',e=>{
+      const r=card.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-.5, py=(e.clientY-r.top)/r.height-.5;
+      card.style.transition='transform .05s linear';
+      card.style.transform=`translateY(-2px) perspective(720px) rotateX(${(-py*5).toFixed(2)}deg) rotateY(${(px*6).toFixed(2)}deg)`;
+    });
+    card.addEventListener('pointerleave',()=>{card.style.transition='';card.style.transform='';});
+    card.addEventListener('pointerdown',()=>{card.style.transition='';card.style.transform='';});
+  });
+}
 
 syncCondFields();
 render();
