@@ -17,9 +17,8 @@ Takeda — não há uma aplicação ou framework único amarrando tudo:
   renderização.
 - **Planilhas Excel** (`*.xlsx`) — planilhas de operações de eventos / controle
   financeiro (`Central_de_Controle_Eventos_Takeda.xlsx`,
-  `Pharma_Events_Operations_Enterprise.xlsx`, `Takeda_Events_2026_Enterprise.xlsx`).
-  Trate-as como entregáveis de dados, não como código — use a skill `xlsx` ao
-  editá-las.
+  `Takeda_Events_2026_Enterprise.xlsx`). Trate-as como entregáveis de dados, não
+  como código — use a skill `xlsx` ao editá-las.
 - **`Takeda_PO_Email_Flow.zip`** — exportação de um flow do Power Automate
   (automação de e-mail de faturamento → PO).
 - **`RENDERING_UPGRADE.md`** — dossiê documentando a reformulação de renderização
