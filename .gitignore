@@ -6,3 +6,6 @@
 # HyperFrames project local artifacts
 gastro-academy-leadership-deck/snapshots/
 gastro-academy-leadership-deck/node_modules/
+gastro-academy-leadership-video/work-*/
+gastro-academy-leadership-video/node_modules/
+gastro-academy-leadership-video/*.mp4
