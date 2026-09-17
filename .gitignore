@@ -1,0 +1,8 @@
+# HyperFrames skill scaffolding (installed via `npx skills add`, not deck content)
+/.agents/
+/.claude/skills/
+/skills-lock.json
+
+# HyperFrames project local artifacts
+gastro-academy-leadership-deck/snapshots/
+gastro-academy-leadership-deck/node_modules/
