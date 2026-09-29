@@ -15,6 +15,7 @@ INK = "#20252B"          # texto principal
 GRAY = "#677078"         # rótulos
 BORDER = "#D9DCDF"       # contorno do cartão
 HAIR = "#CED2D5"         # divisórias / picote
+SURFACE = "#F1F3F4"      # faixas de conexão
 CREAM = "#F7F4EF"        # canhoto (localizador + código de barras) — fundo do DS
 WHITE = "#FFFFFF"
 GRAPHITE = "#1E2A38"       # faixa de rota — grafite do DS do evento
@@ -40,17 +41,18 @@ def value(text, size, color=INK):
 
 def spacer(h, bg=None):
     bg = f' bgcolor="{bg}"' if bg else ""
-    return f'<table {TABLE}{bg}><tr><td height="{h}"></td></tr></table>'
+    return f'<table {TABLE}><tr><td height="{h}"{bg}></td></tr></table>'
 
 def band(inner, bg=WHITE, top=0, bottom=0):
     """Faixa de largura total com gutter lateral G e respiro vertical."""
+    b = f'bgcolor="{bg}"'  # cor sempre no <td>: o app descarta bgcolor de <table>
     rows = []
     if top:
-        rows.append(f'<tr><td colspan="3" height="{top}"></td></tr>')
-    rows.append(f'<tr><td width="{G}"></td><td>{inner}</td><td width="{G}"></td></tr>')
+        rows.append(f'<tr><td colspan="3" height="{top}" {b}></td></tr>')
+    rows.append(f'<tr><td width="{G}" {b}></td><td {b}>{inner}</td><td width="{G}" {b}></td></tr>')
     if bottom:
-        rows.append(f'<tr><td colspan="3" height="{bottom}"></td></tr>')
-    return f'<table {TABLE} bgcolor="{bg}">' + "".join(rows) + "</table>"
+        rows.append(f'<tr><td colspan="3" height="{bottom}" {b}></td></tr>')
+    return f'<table {TABLE}>' + "".join(rows) + "</table>"
 
 def hairline(color=HAIR):
     return f'<table {TABLE}><tr><td height="1" bgcolor="{color}"></td></tr></table>'
@@ -70,8 +72,8 @@ def header():
     return band(inner, top=16, bottom=16)
 
 def chip(text):
-    return (f'<table role="presentation" border="0" cellspacing="0" cellpadding="5" bgcolor="{WHITE}">'
-            f'<tr><td>{value("&nbsp;" + text + "&nbsp;", 1, GRAPHITE)}</td></tr></table>')
+    return (f'<table role="presentation" border="0" cellspacing="0" cellpadding="5">'
+            f'<tr><td bgcolor="{WHITE}">{value("&nbsp;" + text + "&nbsp;", 1, GRAPHITE)}</td></tr></table>')
 
 def plane_track():
     line = f'<table {TABLE}><tr><td height="1" bgcolor="{GRAPHITE_LINE}"></td></tr></table>'
@@ -115,7 +117,7 @@ def details(leg, date_field):
 
 def connection(leg, key, lbl):
     var = f"activatedPerson.voo_{leg}_{key}"
-    inner = (f'<table {TABLE} bgcolor="#F1F3F4"><tr><td width="3" bgcolor="{GRAPHITE}"></td><td>'
+    inner = (f'<table {TABLE}><tr><td width="3" bgcolor="{GRAPHITE}"></td><td bgcolor="{SURFACE}">'
              f'<table {TABLE}><tr><td width="12"></td><td>'
              f'{spacer(10)}{label(lbl)}<br>{value("{{{" + var + "}}}", 3)}{spacer(10)}'
              f'</td></tr></table></td></tr></table>')
@@ -130,11 +132,12 @@ def perforation():
 
 def barcode():
     total = sum(BARS)
+    BAR_H = ' height="44"'  # altura no <td>: a linha herda
     cells = "".join(
-        f'<td width="{w / total * 100:.2f}%" bgcolor="{INK if i % 2 == 0 else CREAM}"></td>'
+        f'<td width="{w / total * 100:.2f}%"{BAR_H if i == 0 else ""} bgcolor="{INK if i % 2 == 0 else CREAM}"></td>'
         for i, w in enumerate(BARS)
     )
-    return f'<table {TABLE} height="44"><tr>{cells}</tr></table>'
+    return f'<table {TABLE}><tr>{cells}</tr></table>'
 
 def stub(leg):
     loc = "{{activatedPerson.voo_" + leg + "_localizador}}"
@@ -159,20 +162,22 @@ def card(leg, direction, date_field):
         f"<tr><td>{perforation()}</td></tr>",
         f"<tr><td>{stub(leg)}</td></tr>",
     ]
-    frame = TABLE.replace('cellpadding="0"', 'cellpadding="1"')  # 1px = contorno
     body = "\n".join(blocks)
+    edge = f'<td width="1" bgcolor="{BORDER}"></td>'  # contorno 1px feito de <td>
     return (
         f"<!-- CARTAO DE EMBARQUE — {direction} -->\n"
-        f'<table {frame} bgcolor="{BORDER}"><tr><td>\n'
-        f'<table {TABLE} bgcolor="{WHITE}">\n{body}\n</table>\n'
-        "</td></tr></table>\n"
+        f'<table {TABLE}>\n'
+        f'<tr><td colspan="3" height="1" bgcolor="{BORDER}"></td></tr>\n'
+        f'<tr>{edge}<td bgcolor="{WHITE}">\n<table {TABLE}>\n{body}\n</table>\n</td>{edge}</tr>\n'
+        f'<tr><td colspan="3" height="1" bgcolor="{BORDER}"></td></tr>\n'
+        "</table>\n"
     )
 
 HEAD = """<!--
-CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · V3
+CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · V4
 GERADO por build.py — edite o script, não este arquivo.
 Cole todo este fragmento no editor HTML da plataforma.
-Markup legado apenas (table/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.
+Markup legado apenas (table/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.\nbgcolor SEMPRE em <td>: o app descarta bgcolor em <table> (V3 renderizou texto branco sobre branco).
 Conexões ficam ocultas (inclusive rótulos) quando seus próprios campos estão vazios.
 Data_volta_ conserva o sublinhado final. Não substituir três chaves por duas.
 Campos entre {{{ }}} (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam {{ }}.
