@@ -60,13 +60,16 @@ def band(inner, bg, top=0, bottom=0):
 # ── Blocos ────────────────────────────────────────────────────────────────
 def corners(bg, pos):
     """Linha dos cantos. O app impõe line-height (~22 px) > R, então a célula cresce:
-    a imagem é presa na borda externa (valign top/bottom) para não sobrar faixa reta."""
+    a imagem é presa na borda externa (valign top/bottom) para não sobrar faixa reta.
+    O app também alinha <img> ao meio da linha de texto; por isso a imagem flutua
+    (align=left/right): fora do fluxo de linha, a célula fica com exatamente R px."""
     va = "top" if pos == "t" else "bottom"
-    img = lambda c: f'<img src="{ASSETS}cantos/{c}.png" width="{R}" height="{R}" alt="" style="display:block;">'
+    img = lambda c, side: (f'<img src="{ASSETS}cantos/{c}.png" width="{R}" height="{R}" alt="" '
+                           f'align="{side}" style="display:block;">')
     return (f'<table {TABLE}><tr>'
-            f'<td width="{R}" height="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "l")}</td>'
+            f'<td width="{R}" height="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "l", "left")}</td>'
             f'<td bgcolor="{bg}"></td>'
-            f'<td width="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "r")}</td>'
+            f'<td width="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "r", "right")}</td>'
             f'</tr></table>')
 
 def header(leg, direction, date_field, bg):
