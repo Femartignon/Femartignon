@@ -59,18 +59,21 @@ def band(inner, bg, top=0, bottom=0):
 
 # ── Blocos ────────────────────────────────────────────────────────────────
 def corners(bg, pos):
+    """Linha dos cantos. O app impõe line-height (~22 px) > R, então a célula cresce:
+    a imagem é presa na borda externa (valign top/bottom) para não sobrar faixa reta."""
+    va = "top" if pos == "t" else "bottom"
     img = lambda c: f'<img src="{ASSETS}cantos/{c}.png" width="{R}" height="{R}" alt="" style="display:block;">'
     return (f'<table {TABLE}><tr>'
-            f'<td width="{R}" height="{R}" bgcolor="{bg}">{img(pos + "l")}</td>'
+            f'<td width="{R}" height="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "l")}</td>'
             f'<td bgcolor="{bg}"></td>'
-            f'<td width="{R}" bgcolor="{bg}">{img(pos + "r")}</td>'
+            f'<td width="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "r")}</td>'
             f'</tr></table>')
 
 def header(leg, direction, date_field, bg):
     logo = (f'<img src="{ASSETS}logos/{v(f"voo_{leg}_cia")}.png" alt="{v(f"voo_{leg}_cia")}" '
             f'height="{LOGO_H}" style="display:block;">')
     right = (f'{text(v(f"voo_{leg}_partida", triple=True), 4, bold=True)}<br>'
-             f'{text(direction + " · " + v(date_field), 2, SOFT)}')
+             f'{text(direction + when(date_field, " · " + v(date_field)), 2, SOFT)}')
     return band(f'<table {TABLE}><tr>'
                 f'<td valign="middle">{logo}</td>'
                 f'<td valign="top" align="right">{right}</td>'
@@ -80,7 +83,7 @@ def route(leg, bg):
     """Grade 3×3 (rótulo / código / horário): cada texto na própria linha com altura
     explícita — o app impõe line-height fixo e, com <br>, o código de 48 px invade o rótulo."""
     via = when(f"voo_{leg}_conexao_aeroporto",
-               text("via " + v(f"voo_{leg}_conexao_aeroporto", triple=True), 1, SOFT, bold=True))
+               text("via " + v(f"voo_{leg}_conexao_aeroporto", triple=True), 2, SOFT, bold=True))
     row = lambda h, l, c, r, va="middle": (
         f'<tr><td width="40%" height="{h}" valign="{va}">{l}</td>'
         f'<td width="20%" valign="{va}" align="center">{c}</td>'
