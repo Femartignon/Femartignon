@@ -7,7 +7,7 @@ a partir do campo `voo_ida_cia` / `voo_volta_cia` (código IATA):
 
 | Arquivo | Companhia |
 |---|---|
-| `LA.png` | LATAM Airlines |
+| `LA.png` | LATAM Airlines — versão monocromática branca (o símbolo rosa sumia no vermelho) |
 | `G3.png` | GOL |
 | `AD.png` | Azul |
 
