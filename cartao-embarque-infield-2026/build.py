@@ -20,6 +20,9 @@ WHITE = "#FFFFFF"        # texto principal
 SOFT = "#FFE3E4"         # rótulos e texto secundário sobre o vermelho
 PAGE = "#FFFFFF"         # fundo da página do app (cor dos entalhes laterais)
 G = 20                   # gutter lateral (px)
+CODE_H = 56              # altura da linha dos códigos IATA (fonte 48 px)
+ROUTE_GAP = 6            # respiro entre rótulo e código
+NOTCH_W, NOTCH_H = 8, 16 # entalhes laterais do picote
 
 # PNG branco transparente por código IATA (LA, G3, AD…), versionado neste repo.
 LOGO_BASE = "https://raw.githubusercontent.com/Femartignon/Femartignon/main/cartao-embarque-infield-2026/logos/"
@@ -65,16 +68,22 @@ def header(leg, direction, date_field):
                 f'</tr></table>', top=20, bottom=22)
 
 def route(leg):
+    """Grade 3×3 (rótulo / código / horário): cada texto na própria linha com altura
+    explícita — o app impõe line-height fixo e, com <br>, o código de 48 px invade o rótulo."""
     via = when(f"voo_{leg}_conexao_aeroporto",
-               "<br>" + text("via " + v(f"voo_{leg}_conexao_aeroporto", triple=True), 1, SOFT, bold=True))
+               text("via " + v(f"voo_{leg}_conexao_aeroporto", triple=True), 1, SOFT, bold=True))
+    row = lambda h, l, c, r, va="middle": (
+        f'<tr><td width="40%" height="{h}" valign="{va}">{l}</td>'
+        f'<td width="20%" valign="{va}" align="center">{c}</td>'
+        f'<td width="40%" valign="{va}" align="right">{r}</td></tr>')
     return band(
-        f'<table {TABLE}><tr>'
-        f'<td width="40%" valign="top">{text("ORIGEM", 2, SOFT)}<br>'
-        f'{text(v(f"voo_{leg}_origem"), 7, bold=True)}<br>{text(v(f"horario_{leg}"), 3)}</td>'
-        f'<td width="20%" valign="middle" align="center">{text("&#9992;&#65038;", 6)}{via}</td>'
-        f'<td width="40%" valign="top" align="right">{text("DESTINO", 2, SOFT)}<br>'
-        f'{text(v(f"voo_{leg}_destino"), 7, bold=True)}<br>{text("&nbsp;", 3)}</td>'
-        f'</tr></table>', bottom=24)
+        f'<table {TABLE}>'
+        + row(18, text("ORIGEM", 2, SOFT), "", text("DESTINO", 2, SOFT), "bottom")
+        + f'<tr><td colspan="3" height="{ROUTE_GAP}"></td></tr>'
+        + row(CODE_H, text(v(f"voo_{leg}_origem"), 7, bold=True), text("&#9992;&#65038;", 6),
+              text(v(f"voo_{leg}_destino"), 7, bold=True))
+        + row(24, text(v(f"horario_{leg}"), 3), via, "", "top")
+        + '</table>', bottom=24)
 
 def perforation():
     """Entalhes laterais (cor da página) + picote tracejado."""
@@ -83,11 +92,11 @@ def perforation():
                      for i in range(n))
     line = f'<table {TABLE}><tr>{dashes}</tr></table>'
     return (f'<table {TABLE}><tr>'
-            f'<td width="10" height="20" bgcolor="{PAGE}"></td>'
+            f'<td width="{NOTCH_W}" height="{NOTCH_H}" bgcolor="{PAGE}"></td>'
             f'<td width="12" bgcolor="{RED}"></td>'
             f'<td valign="middle" bgcolor="{RED}">{line}</td>'
             f'<td width="12" bgcolor="{RED}"></td>'
-            f'<td width="10" bgcolor="{PAGE}"></td>'
+            f'<td width="{NOTCH_W}" bgcolor="{PAGE}"></td>'
             f'</tr></table>')
 
 def passenger():
@@ -103,7 +112,7 @@ def info(leg):
                 f'</tr></table>', bottom=26)
 
 def footer():
-    note = text("Documento de apoio do evento. No embarque, apresente o cartão emitido pela companhia aérea.", 1, SOFT)
+    note = text("Documento de apoio · no embarque, use o cartão da cia aérea.", 1, SOFT)
     return band(note, bottom=18)
 
 def card(leg, direction, date_field):
