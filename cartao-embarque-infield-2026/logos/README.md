@@ -1,0 +1,16 @@
+# Logos das companhias aéreas
+
+Usados pelo cartão de embarque (`cartao-embarque.html`). O cartão monta a URL
+a partir do campo `voo_ida_cia` / `voo_volta_cia` (código IATA):
+
+`https://raw.githubusercontent.com/Femartignon/Femartignon/main/cartao-embarque-infield-2026/logos/<IATA>.png`
+
+| Arquivo | Companhia |
+|---|---|
+| `LA.png` | LATAM Airlines |
+| `G3.png` | GOL |
+| `AD.png` | Azul |
+
+Especificação: logo oficial em **versão branca (negativo)**, PNG com fundo
+transparente, **altura de 68 px** (exibido a 34 px, nitidez 2x em telas Retina),
+sem margem extra. Nome do arquivo = código IATA em maiúsculas.
