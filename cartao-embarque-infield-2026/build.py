@@ -8,12 +8,13 @@ Layout de cartão de wallet (referência: LATAM no Apple Wallet).
 - Logo da cia: campo voo_<trecho>_cia (código IATA) → logos/<IATA>.png.
 - Cor da cia: campo voo_<trecho>_cor (hex, ex. #1B0088) → bgcolor das <td>.
   Campo vazio = bgcolor="" (transparente) → aparece a <td> externa em FALLBACK.
-- Cantos arredondados: PNG de canto (branco da página fora do arco,
-  transparente dentro) sobre a <td> colorida → funciona para qualquer cor.
+- Cantos arredondados: linhas de <td> de 1 px (recuo na cor da página) — sem imagem.
+- Chegada: horario_<trecho>_chegada sob o destino (vazio = nada aparece).
 
 Uso: python3 build.py [ref]  → sobrescreve cartao-embarque.html
      ref = branch/commit dos assets no GitHub (padrão: main)
 """
+import math
 import sys
 from pathlib import Path
 
@@ -26,7 +27,8 @@ DASH = "#FFFFFF"         # picote
 G = 20                   # gutter lateral (px)
 CODE_H = 56              # altura da linha dos códigos IATA (fonte 48 px)
 ROUTE_GAP = 6            # respiro entre rótulo e código
-R = 16                   # raio dos cantos (pt); PNG em 3x = 48 px
+R = 12                   # raio dos cantos (px), desenhado com <td> de 1 px
+PAGE = "#FFFFFF"         # fundo da página do app (cor fora da curva)
 LOGO_H = 34
 
 REF = sys.argv[1] if len(sys.argv) > 1 else "main"
@@ -59,18 +61,17 @@ def band(inner, bg, top=0, bottom=0):
 
 # ── Blocos ────────────────────────────────────────────────────────────────
 def corners(bg, pos):
-    """Linha dos cantos. O app impõe line-height (~22 px) > R, então a célula cresce:
-    a imagem é presa na borda externa (valign top/bottom) para não sobrar faixa reta.
-    O app também alinha <img> ao meio da linha de texto; por isso a imagem flutua
-    (align=left/right): fora do fluxo de linha, a célula fica com exatamente R px."""
-    va = "top" if pos == "t" else "bottom"
-    img = lambda c, side: (f'<img src="{ASSETS}cantos/{c}.png" width="{R}" height="{R}" alt="" '
-                           f'align="{side}" style="display:block;">')
-    return (f'<table {TABLE}><tr>'
-            f'<td width="{R}" height="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "l", "left")}</td>'
-            f'<td bgcolor="{bg}"></td>'
-            f'<td width="{R}" valign="{va}" bgcolor="{bg}">{img(pos + "r", "right")}</td>'
-            f'</tr></table>')
+    """Cantos arredondados desenhados só com <td> de 1 px (sem imagem).
+    Imagens de canto deixavam uma faixa reta no app (o app interfere no layout de <img>);
+    células com bgcolor e altura explícita são o que já provamos que ele respeita.
+    Cada linha é uma tabela própria: recuo lateral na cor da página + miolo na cor do card."""
+    rows = []
+    for y in range(R):
+        dy = R - y - 0.5                                   # distância ao centro do arco
+        inset = round(R - math.sqrt(max(R * R - dy * dy, 0)))
+        side = f'<td width="{inset}" height="1" bgcolor="{PAGE}"></td>' if inset else ""
+        rows.append(f'<table {TABLE}><tr>{side}<td height="1" bgcolor="{bg}"></td>{side}</tr></table>')
+    return "".join(rows if pos == "t" else rows[::-1])
 
 def header(leg, direction, date_field, bg):
     logo = (f'<img src="{ASSETS}logos/{v(f"voo_{leg}_cia")}.png" alt="{v(f"voo_{leg}_cia")}" '
@@ -97,7 +98,7 @@ def route(leg, bg):
         + f'<tr><td colspan="3" height="{ROUTE_GAP}"></td></tr>'
         + row(CODE_H, text(v(f"voo_{leg}_origem"), 7, bold=True), text("&#9992;&#65038;", 6),
               text(v(f"voo_{leg}_destino"), 7, bold=True))
-        + row(24, text(v(f"horario_{leg}"), 3), via, "", "top")
+        + row(24, text(v(f"horario_{leg}"), 3), via, text(v(f"horario_{leg}_chegada"), 3), "top")
         + '</table>', bg, bottom=22)
 
 def perforation(bg):
