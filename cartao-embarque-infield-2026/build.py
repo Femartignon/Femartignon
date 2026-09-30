@@ -137,10 +137,37 @@ def card(leg, direction, date_field):
         corners(bg, "b"),
     ]
     body = "\n".join(f"<tr><td>{b}</td></tr>" for b in blocks)
+    # Sem voo cadastrado (ex.: participante local) → o cartão inteiro some.
     return (f"<!-- CARTAO DE EMBARQUE — {direction} -->\n"
-            f'<table {TABLE}><tr><td bgcolor="{FALLBACK}">\n'
-            f"<table {TABLE}>\n{body}\n</table>\n"
-            "</td></tr></table>\n")
+            + when(f"voo_{leg}_origem",
+                   f'\n<table {TABLE}><tr><td bgcolor="{FALLBACK}">\n'
+                   f"<table {TABLE}>\n{body}\n</table>\n"
+                   "</td></tr></table>\n<br>\n")
+            + "\n")
+
+GUIDE_BG = "#F2F3F5"     # bloco de orientações: neutro, abaixo dos cartões
+INK = "#20252B"
+GRAY = "#677078"
+BULLET = "#E1242A"       # único acento vermelho do bloco
+GUIDE = [
+    "Chegue ao aeroporto com <b>2 horas</b> de antecedência.",
+    "Tenha em mãos um <b>documento oficial com foto</b>.",
+    "Faça o <b>check-in</b> pelo app ou site da companhia aérea.",
+    "Transfer e hotel: <b>Mais › Logística do Evento</b>.",
+    "Dúvidas ou alteração de voo: <b>Mais › Suporte da Agência</b>.",
+]
+
+def guide():
+    """Bloco 'Antes de embarcar' — mesmo sistema do cartão (cantos, gutter), fundo neutro."""
+    item = lambda t: (f'<table {TABLE}><tr>'
+                      f'<td width="16" valign="top">{text("&#9679;", 1, BULLET)}</td>'
+                      f'<td>{text(t, 2, INK)}</td></tr></table>')
+    gap = lambda h: f'<table {TABLE}><tr><td height="{h}"></td></tr></table>'
+    items = "".join(item(t) + gap(8) for t in GUIDE)
+    inner = text("ANTES DE EMBARCAR", 2, GRAY, bold=True) + gap(12) + items
+    blocks = [corners(GUIDE_BG, "t"), band(inner, GUIDE_BG, top=8, bottom=6), corners(GUIDE_BG, "b")]
+    body = "\n".join(f"<tr><td>{b}</td></tr>" for b in blocks)
+    return f"<!-- ORIENTAÇÕES -->\n<table {TABLE}>\n{body}\n</table>\n"
 
 HEAD = """<!--
 CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · V6
@@ -150,14 +177,15 @@ Markup legado apenas (table/font/bgcolor/img): sem JS, <style>, <div> ou flexbox
 bgcolor SEMPRE em <td>: o app descarta bgcolor em <table>.
 Logo: voo_ida_cia / voo_volta_cia = código IATA (LA, G3, AD) → logos/<IATA>.png.
 Cor:  voo_ida_cor / voo_volta_cor = hex da cia (LA #1B0088 · AD #002D72 · G3 #D95300); vazio = carmim Takeda.
-Conexões ficam ocultas quando seus próprios campos estão vazios.
+Conexões ficam ocultas quando seus próprios campos estão vazios; cartão inteiro oculto sem voo_<trecho>_origem.
+Chegada: horario_ida_chegada / horario_volta_chegada. Bloco "Antes de embarcar" ao final.
 Data_volta_ conserva o sublinhado final. Não substituir três chaves por duas.
 Campos entre {{{ }}} (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam {{ }}.
 -->
 """
 
 def build():
-    html = HEAD + card("ida", "IDA", "Data_ida") + "<br>\n<br>\n" + card("volta", "VOLTA", "Data_volta_")
+    html = HEAD + card("ida", "IDA", "Data_ida") + card("volta", "VOLTA", "Data_volta_") + guide()
     Path(__file__).with_name("cartao-embarque.html").write_text(html, encoding="utf-8")
 
 if __name__ == "__main__":
