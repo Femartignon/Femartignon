@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encontro Infield 2026 · Clima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Design tokens ─────────────────────────────────────────── */
+  :root {
+    --bg: #F2F2F7;
+    --card: #FFFFFF;
+    --text: #1C1C1E;
+    --text-2: #6E6E73;
+    --hairline: rgba(60, 60, 67, .14);
+    --accent: #E1242A;
+    --accent-soft: rgba(225, 36, 42, .08);
+    --radius: 20px;
+    --pad: clamp(16px, 4vw, 28px);
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+    --font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #000000;
+      --card: #1C1C1E;
+      --text: #F5F5F7;
+      --text-2: #98989D;
+      --hairline: rgba(235, 235, 245, .16);
+      --accent: #FF453A;
+      --accent-soft: rgba(255, 69, 58, .12);
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #000000;
+    --card: #1C1C1E;
+    --text: #F5F5F7;
+    --text-2: #98989D;
+    --hairline: rgba(235, 235, 245, .16);
+    --accent: #FF453A;
+    --accent-soft: rgba(255, 69, 58, .12);
+    --shadow: none;
+  }
+
+  /* ── Base ──────────────────────────────────────────────────── */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+  }
+
+  /* ── Widget: two equal halves ──────────────────────────────── */
+  .widget {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow: hidden;
+  }
+  .half {
+    padding: var(--pad);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+  }
+  .half + .half { border-left: 1px solid var(--hairline); }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Left: weather ─────────────────────────────────────────── */
+  .wx-main { display: flex; align-items: center; gap: 12px; }
+  .wx-icon { width: 44px; height: 44px; flex: none; color: var(--text); }
+  .wx-temp {
+    font-size: clamp(40px, 9vw, 56px);
+    font-weight: 600;
+    letter-spacing: -.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .wx-desc { font-size: 15px; font-weight: 500; }
+  .wx-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 12px;
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 1px solid var(--hairline);
+  }
+  .wx-meta dt { font-size: 11px; color: var(--text-2); }
+  .wx-meta dd { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* ── Right: countdown ──────────────────────────────────────── */
+  .cd-days { display: flex; align-items: baseline; gap: 8px; }
+  .cd-days strong {
+    font-size: clamp(40px, 9vw, 56px);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-days span { font-size: 15px; font-weight: 500; }
+  .cd-date { font-size: 15px; font-weight: 500; }
+  .cd-clock {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: auto;
+  }
+  .cd-unit {
+    background: var(--accent-soft);
+    border-radius: 12px;
+    padding: 10px 4px;
+    text-align: center;
+  }
+  .cd-unit b {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-unit small { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: .06em; }
+  .cd-live { font-size: 28px; font-weight: 700; color: var(--accent); }
+
+  .muted { color: var(--text-2); font-size: 13px; }
+
+  /* Phones: keep the split, tighten spacing */
+  @media (max-width: 480px) {
+    :root { --pad: 14px; }
+    .half { gap: 10px; }
+    .eyebrow { white-space: normal; font-size: 10px; }
+    .wx-icon { width: 32px; height: 32px; }
+    .wx-main { gap: 8px; }
+    .wx-temp, .cd-days strong { font-size: 38px; }
+    .wx-desc, .cd-date, .cd-days span { font-size: 13px; }
+    .wx-meta { grid-template-columns: 1fr; gap: 6px; padding-top: 10px; }
+    .cd-clock { gap: 4px; }
+    .cd-unit { padding: 8px 2px; border-radius: 10px; }
+    .cd-unit b { font-size: 16px; }
+    .cd-unit small { font-size: 9px; letter-spacing: .02em; }
+  }
+  /* Stack halves only when side-by-side no longer fits */
+  @media (max-width: 300px) {
+    .widget { grid-template-columns: 1fr; }
+    .half + .half { border-left: 0; border-top: 1px solid var(--hairline); }
+  }
+</style>
+</head>
+<body>
+
+<main class="widget" aria-label="Encontro Infield 2026 — clima e contagem regressiva">
+
+  <!-- Left half: current weather -->
+  <section class="half" aria-live="polite">
+    <p class="eyebrow" id="wx-city">Clima agora</p>
+    <div class="wx-main">
+      <svg class="wx-icon" id="wx-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"></svg>
+      <div class="wx-temp" id="wx-temp">--°</div>
+    </div>
+    <p class="wx-desc" id="wx-desc">Carregando…</p>
+    <dl class="wx-meta">
+      <div><dt>Sensação</dt><dd id="wx-feels">--</dd></div>
+      <div><dt>Mín / Máx</dt><dd id="wx-range">--</dd></div>
+      <div><dt>Umidade</dt><dd id="wx-hum">--</dd></div>
+      <div><dt>Vento</dt><dd id="wx-wind">--</dd></div>
+    </dl>
+  </section>
+
+  <!-- Right half: countdown to the event -->
+  <section class="half">
+    <p class="eyebrow">Encontro Infield 2026</p>
+    <div id="cd-body">
+      <div class="cd-days"><strong id="cd-d">--</strong><span id="cd-d-label">dias</span></div>
+    </div>
+    <p class="cd-date" id="cd-date"></p>
+    <div class="cd-clock" id="cd-clock">
+      <div class="cd-unit"><b id="cd-h">--</b><small>horas</small></div>
+      <div class="cd-unit"><b id="cd-m">--</b><small>min</small></div>
+      <div class="cd-unit"><b id="cd-s">--</b><small>seg</small></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ── Configuration: the only block to edit ───────────────────── */
+const CONFIG = {
+  city: "São Paulo",
+  latitude: -23.5505,
+  longitude: -46.6333,
+  timezone: "America/Sao_Paulo",
+  eventStart: "2026-11-16T00:00:00-03:00",   // Brasília time (no DST)
+  weatherRefreshMin: 15
+};
+
+/* ── Weather (Open-Meteo, no API key) ────────────────────────── */
+const ICONS = {
+  sun:    '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  moon:   '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  partly: '<path d="M8 3v1.5M3.5 8H5M4.8 4.8l1 1M12.2 4.8l-1 1"/><path d="M5.6 11.3A3.5 3.5 0 1 1 11.8 8"/><path d="M17 20H9a4 4 0 1 1 .9-7.9A5 5 0 0 1 19.5 13 3.5 3.5 0 0 1 17 20z"/>',
+  cloud:  '<path d="M17.5 19H8a5 5 0 1 1 1.1-9.9A6 6 0 0 1 20.6 11 4 4 0 0 1 17.5 19z"/>',
+  fog:    '<path d="M4 10h16M4 14h16M6 18h12M8 6h8"/>',
+  rain:   '<path d="M17.5 15H8a5 5 0 1 1 1.1-9.9A6 6 0 0 1 20.6 7 4 4 0 0 1 17.5 15z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
+  storm:  '<path d="M17.5 14H8a5 5 0 1 1 1.1-9.9A6 6 0 0 1 20.6 6 4 4 0 0 1 17.5 14z"/><path d="M13 14l-3 4h4l-3 4"/>',
+  snow:   '<path d="M17.5 14H8a5 5 0 1 1 1.1-9.9A6 6 0 0 1 20.6 6 4 4 0 0 1 17.5 14z"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 22h.01M14 22h.01"/>'
+};
+
+// WMO weather codes → [description, icon]
+function describe(code, isDay) {
+  if (code === 0) return ["Céu limpo", isDay ? "sun" : "moon"];
+  if (code <= 2)  return ["Parcialmente nublado", isDay ? "partly" : "cloud"];
+  if (code === 3) return ["Nublado", "cloud"];
+  if (code <= 48) return ["Neblina", "fog"];
+  if (code <= 57) return ["Garoa", "rain"];
+  if (code <= 67) return ["Chuva", "rain"];
+  if (code <= 77) return ["Neve", "snow"];
+  if (code <= 82) return ["Pancadas de chuva", "rain"];
+  if (code <= 86) return ["Neve", "snow"];
+  return ["Tempestade", "storm"];
+}
+
+const $ = id => document.getElementById(id);
+const round = n => Math.round(n);
+
+async function loadWeather() {
+  const url = "https://api.open-meteo.com/v1/forecast"
+    + `?latitude=${CONFIG.latitude}&longitude=${CONFIG.longitude}`
+    + "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day"
+    + "&daily=temperature_2m_max,temperature_2m_min&forecast_days=1"
+    + `&timezone=${encodeURIComponent(CONFIG.timezone)}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(res.status);
+    const { current: c, daily: d } = await res.json();
+    const [desc, icon] = describe(c.weather_code, c.is_day === 1);
+    $("wx-city").textContent = `${CONFIG.city} · agora`;
+    $("wx-icon").innerHTML = ICONS[icon];
+    $("wx-temp").textContent = `${round(c.temperature_2m)}°`;
+    $("wx-desc").textContent = desc;
+    $("wx-feels").textContent = `${round(c.apparent_temperature)}°`;
+    $("wx-range").textContent = `${round(d.temperature_2m_min[0])}° / ${round(d.temperature_2m_max[0])}°`;
+    $("wx-hum").textContent = `${round(c.relative_humidity_2m)}%`;
+    $("wx-wind").textContent = `${round(c.wind_speed_10m)} km/h`;
+  } catch {
+    $("wx-city").textContent = CONFIG.city;
+    $("wx-desc").innerHTML = '<span class="muted">Clima indisponível no momento</span>';
+  }
+}
+
+/* ── Countdown ───────────────────────────────────────────────── */
+const target = new Date(CONFIG.eventStart);
+const pad = n => String(n).padStart(2, "0");
+const dayKey = date => date.toLocaleDateString("en-CA", { timeZone: CONFIG.timezone });
+
+$("cd-date").textContent = target.toLocaleDateString("pt-BR", {
+  weekday: "long", day: "numeric", month: "long", timeZone: CONFIG.timezone
+}).replace(/^./, s => s.toUpperCase());
+
+let timer;
+function tick() {
+  const now = new Date();
+  const diff = target - now;
+
+  if (diff <= 0) {
+    clearInterval(timer);
+    const isToday = dayKey(now) === dayKey(target);
+    $("cd-body").innerHTML = `<p class="cd-live">${isToday ? "É hoje!" : "Evento realizado"}</p>`;
+    $("cd-clock").hidden = true;
+    return;
+  }
+
+  const s = Math.floor(diff / 1000);
+  const days = Math.floor(s / 86400);
+  $("cd-d").textContent = days;
+  $("cd-d-label").textContent = days === 1 ? "dia" : "dias";
+  $("cd-h").textContent = pad(Math.floor(s % 86400 / 3600));
+  $("cd-m").textContent = pad(Math.floor(s % 3600 / 60));
+  $("cd-s").textContent = pad(s % 60);
+}
+
+tick();
+timer = setInterval(tick, 1000);
+loadWeather();
+setInterval(loadWeather, CONFIG.weatherRefreshMin * 60 * 1000);
+</script>
+</body>
+</html>
