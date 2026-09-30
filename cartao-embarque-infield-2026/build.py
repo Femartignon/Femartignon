@@ -4,46 +4,38 @@ Restrição da plataforma: sem JS, sem <style>, sem <div>/flexbox. Só markup
 legado (table/font/bgcolor/img) + Handlebars. Por isso os dois cartões são
 emitidos como HTML duplicado — mas a fonte única de verdade é este script.
 
+V5: layout de cartão de wallet (referência: LATAM no Apple Wallet) em vermelho
+Takeda. Logo da cia dirigido por dado: campo voo_<trecho>_cia (código IATA)
+monta a URL de logos/<IATA>.png (PNG branco, fundo transparente).
+
 Uso: python3 build.py  → sobrescreve cartao-embarque.html
 """
 from pathlib import Path
 
 # ── Tokens ────────────────────────────────────────────────────────────────
-FONT = "Arial, Helvetica, sans-serif"
-RED = "#E1242A"          # único acento vermelho da peça (faixa superior) — C&E v2.0
-INK = "#20252B"          # texto principal
-GRAY = "#677078"         # rótulos
-BORDER = "#D9DCDF"       # contorno do cartão
-HAIR = "#CED2D5"         # divisórias / picote
-SURFACE = "#F1F3F4"      # faixas de conexão
-CREAM = "#F7F4EF"        # canhoto (localizador + código de barras) — fundo do DS
-WHITE = "#FFFFFF"
-GRAPHITE = "#1E2A38"       # faixa de rota — grafite do DS do evento
-GRAPHITE_SOFT = "#A9B4C2"  # rótulos sobre grafite (contraste AA)
-GRAPHITE_LINE = "#4A5A6E"  # trilha do avião
+FONT = "-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+RED = "#E1242A"          # fundo do cartão — vermelho Takeda C&E v2.0
+RED_DASH = "#F07A7E"     # picote sobre o vermelho
+WHITE = "#FFFFFF"        # texto principal
+SOFT = "#FFE3E4"         # rótulos e texto secundário sobre o vermelho
+PAGE = "#FFFFFF"         # fundo da página do app (cor dos entalhes laterais)
 G = 20                   # gutter lateral (px)
 
-LOGO = "https://upload.wikimedia.org/wikipedia/commons/f/fe/Latam-logo_-v_%28Indigo%29.svg"
-
-# Padrão de barras original (preto, branco, preto, ...) — decorativo.
-BARS = [3,2,4,3,2,2,5,2,3,3,2,3,3,2,2,3,4,2,3,2,5,3,2,3,2,2,5,2,5,3,4,2,3,2,5,2,
-        3,3,3,3,2,3,3,3,3,2,5,3,3,3,2,3,2,3,2,3,3,3,5,3,3,3,5,3,3,3,3,2,3,2,5,3,
-        5,3,3,3,4,3,5,2,2,3,4,2,3,2,4,3,2,3,2,3,5,3]
+# PNG branco transparente por código IATA (LA, G3, AD…), versionado neste repo.
+LOGO_BASE = "https://raw.githubusercontent.com/Femartignon/Femartignon/main/cartao-embarque-infield-2026/logos/"
+LOGO_H = 34
 
 TABLE = 'role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"'
 
 # ── Primitivas ────────────────────────────────────────────────────────────
-def label(text, color=GRAY):
-    return f'<font face="{FONT}" size="1" color="{color}">{text}</font>'
+def text(t, size, color=WHITE, bold=False):
+    t = f"<b>{t}</b>" if bold else t
+    return f'<font face="{FONT}" size="{size}" color="{color}">{t}</font>'
 
-def value(text, size, color=INK):
-    return f'<font face="{FONT}" size="{size}" color="{color}"><b>{text}</b></font>'
+def spacer(h, bg=RED):
+    return f'<table {TABLE}><tr><td height="{h}" bgcolor="{bg}"></td></tr></table>'
 
-def spacer(h, bg=None):
-    bg = f' bgcolor="{bg}"' if bg else ""
-    return f'<table {TABLE}><tr><td height="{h}"{bg}></td></tr></table>'
-
-def band(inner, bg=WHITE, top=0, bottom=0):
+def band(inner, top=0, bottom=0, bg=RED):
     """Faixa de largura total com gutter lateral G e respiro vertical."""
     b = f'bgcolor="{bg}"'  # cor sempre no <td>: o app descarta bgcolor de <table>
     rows = []
@@ -54,131 +46,86 @@ def band(inner, bg=WHITE, top=0, bottom=0):
         rows.append(f'<tr><td colspan="3" height="{bottom}" {b}></td></tr>')
     return f'<table {TABLE}>' + "".join(rows) + "</table>"
 
-def hairline(color=HAIR):
-    return f'<table {TABLE}><tr><td height="1" bgcolor="{color}"></td></tr></table>'
+def v(field, triple=False):
+    """Merge tag de activatedPerson; triple = HTML sem escapar."""
+    return ("{{{" if triple else "{{") + "activatedPerson." + field + ("}}}" if triple else "}}")
 
-def field(lbl, val, size=4, align="left"):
-    return f'<td valign="top" align="{align}">{label(lbl)}<br>{value(val, size)}</td>'
+def when(field, html):
+    return "{{#if activatedPerson." + field + "}}" + html + "{{/if}}"
 
 # ── Blocos ────────────────────────────────────────────────────────────────
-def header():
-    inner = (
+def header(leg, direction, date_field):
+    logo = (f'<img src="{LOGO_BASE}{v(f"voo_{leg}_cia")}.png" alt="{v(f"voo_{leg}_cia")}" '
+            f'height="{LOGO_H}" style="display:block;">')
+    right = (f'{text(v(f"voo_{leg}_partida", triple=True), 4, bold=True)}<br>'
+             f'{text(direction + " · " + v(date_field), 2, SOFT)}')
+    return band(f'<table {TABLE}><tr>'
+                f'<td valign="middle">{logo}</td>'
+                f'<td valign="top" align="right">{right}</td>'
+                f'</tr></table>', top=20, bottom=22)
+
+def route(leg):
+    via = when(f"voo_{leg}_conexao_aeroporto",
+               "<br>" + text("via " + v(f"voo_{leg}_conexao_aeroporto", triple=True), 1, SOFT, bold=True))
+    return band(
         f'<table {TABLE}><tr>'
-        f'<td width="34" valign="middle"><img src="{LOGO}" alt="LATAM" height="20" style="display:block;"></td>'
-        f'<td width="12"></td>'
-        f'<td valign="middle">{value("ENCONTRO INFIELD 2026", 2)}<br>{label("CARTÃO DE EMBARQUE")}</td>'
-        f'</tr></table>'
-    )
-    return band(inner, top=16, bottom=16)
-
-def chip(text):
-    return (f'<table role="presentation" border="0" cellspacing="0" cellpadding="5">'
-            f'<tr><td bgcolor="{WHITE}">{value("&nbsp;" + text + "&nbsp;", 1, GRAPHITE)}</td></tr></table>')
-
-def plane_track():
-    line = f'<table {TABLE}><tr><td height="1" bgcolor="{GRAPHITE_LINE}"></td></tr></table>'
-    return (f'<table {TABLE}><tr>'
-            f'<td width="40%" valign="middle">{line}</td>'
-            f'<td width="20%" valign="middle" align="center">{value("&#9992;&#65038;", 4, WHITE)}</td>'
-            f'<td width="40%" valign="middle">{line}</td>'
-            f'</tr></table>')
-
-def route(leg, direction):
-    p = f"activatedPerson.voo_{leg}"
-    inner = (
-        f'{chip(direction)}'
-        f'{spacer(14)}'
-        f'<table {TABLE}><tr>'
-        f'<td width="40%" valign="bottom">{label("ORIGEM", GRAPHITE_SOFT)}<br>{value("{{" + p + "_origem}}", 6, WHITE)}</td>'
-        f'<td width="20%" valign="middle">{plane_track()}</td>'
-        f'<td width="40%" valign="bottom" align="right">{label("DESTINO", GRAPHITE_SOFT)}<br>{value("{{" + p + "_destino}}", 6, WHITE)}</td>'
-        f'</tr></table>'
-    )
-    return band(inner, bg=GRAPHITE, top=18, bottom=22)
-
-def details(leg, date_field):
-    p = "activatedPerson"
-    passenger = f'{label("PASSAGEIRO")}<br>{value("{{" + p + ".fname}} {{" + p + ".lname}}", 4)}'
-    grid = (
-        f'<table {TABLE}>'
-        f'<tr>{field("DATA", "{{" + p + "." + date_field + "}}")}'
-        f'<td width="16"></td>'
-        f'{field("HORÁRIO", "{{" + p + ".horario_" + leg + "}}", align="right")}</tr>'
-        f'</table>'
-    )
-    flight = f'{label("VOO · CIA E Nº")}<br>{value("{{{" + p + ".voo_" + leg + "_partida}}}", 4)}'
-    return (
-        band(passenger, top=20, bottom=16)
-        + band(hairline())
-        + band(grid, top=16, bottom=16)
-        + band(hairline())
-        + band(flight, top=16, bottom=18)
-    )
-
-def connection(leg, key, lbl):
-    var = f"activatedPerson.voo_{leg}_{key}"
-    inner = (f'<table {TABLE}><tr><td width="3" bgcolor="{GRAPHITE}"></td><td bgcolor="{SURFACE}">'
-             f'<table {TABLE}><tr><td width="12"></td><td>'
-             f'{spacer(10)}{label(lbl)}<br>{value("{{{" + var + "}}}", 3)}{spacer(10)}'
-             f'</td></tr></table></td></tr></table>')
-    return f"{{{{#if {var}}}}}\n{band(inner, bottom=10)}\n{{{{/if}}}}"
+        f'<td width="40%" valign="top">{text("ORIGEM", 2, SOFT)}<br>'
+        f'{text(v(f"voo_{leg}_origem"), 7, bold=True)}<br>{text(v(f"horario_{leg}"), 3)}</td>'
+        f'<td width="20%" valign="middle" align="center">{text("&#9992;&#65038;", 6)}{via}</td>'
+        f'<td width="40%" valign="top" align="right">{text("DESTINO", 2, SOFT)}<br>'
+        f'{text(v(f"voo_{leg}_destino"), 7, bold=True)}<br>{text("&nbsp;", 3)}</td>'
+        f'</tr></table>', bottom=24)
 
 def perforation():
-    n = 50
-    cells = "".join(
-        f'<td width="2%" height="1" bgcolor="{HAIR if i % 2 == 0 else WHITE}"></td>' for i in range(n)
-    )
-    return spacer(8) + f'<table {TABLE}><tr>{cells}</tr></table>'
+    """Entalhes laterais (cor da página) + picote tracejado."""
+    n = 40
+    dashes = "".join(f'<td width="2.5%" height="1" bgcolor="{RED_DASH if i % 2 == 0 else RED}"></td>'
+                     for i in range(n))
+    line = f'<table {TABLE}><tr>{dashes}</tr></table>'
+    return (f'<table {TABLE}><tr>'
+            f'<td width="10" height="20" bgcolor="{PAGE}"></td>'
+            f'<td width="12" bgcolor="{RED}"></td>'
+            f'<td valign="middle" bgcolor="{RED}">{line}</td>'
+            f'<td width="12" bgcolor="{RED}"></td>'
+            f'<td width="10" bgcolor="{PAGE}"></td>'
+            f'</tr></table>')
 
-def barcode():
-    total = sum(BARS)
-    BAR_H = ' height="44"'  # altura no <td>: a linha herda
-    cells = "".join(
-        f'<td width="{w / total * 100:.2f}%"{BAR_H if i == 0 else ""} bgcolor="{INK if i % 2 == 0 else CREAM}"></td>'
-        for i, w in enumerate(BARS)
-    )
-    return f'<table {TABLE}><tr>{cells}</tr></table>'
+def passenger():
+    return band(text(v("fname") + " " + v("lname"), 4, bold=True), top=24, bottom=20)
 
-def stub(leg):
-    loc = "{{activatedPerson.voo_" + leg + "_localizador}}"
-    pnr = (
-        f'<table {TABLE}><tr>'
-        f'<td valign="middle">{label("LOCALIZADOR")}<br>{label("Sua reserva")}</td>'
-        f'<td valign="middle" align="right">{value(loc, 6)}</td>'
-        f'</tr></table>'
-    )
-    note = (f'<font face="{FONT}" size="1" color="{GRAY}">'
-            f'Documento de apoio do evento. No embarque, apresente o cartão emitido pela companhia aérea.</font>')
-    return band(pnr + spacer(16) + barcode() + spacer(14) + note, bg=CREAM, top=20, bottom=18)
+def info(leg):
+    loc = f'{text("LOCALIZADOR", 2, SOFT)}<br>{text(v(f"voo_{leg}_localizador"), 5, bold=True)}'
+    conn = when(f"voo_{leg}_conexao_voo",
+                f'{text("VOO DE CONEXÃO", 2, SOFT)}<br>{text(v(f"voo_{leg}_conexao_voo", triple=True), 5, bold=True)}')
+    return band(f'<table {TABLE}><tr>'
+                f'<td width="50%" valign="top">{loc}</td>'
+                f'<td width="50%" valign="top" align="right">{conn}</td>'
+                f'</tr></table>', bottom=26)
+
+def footer():
+    note = text("Documento de apoio do evento. No embarque, apresente o cartão emitido pela companhia aérea.", 1, SOFT)
+    return band(note, bottom=18)
 
 def card(leg, direction, date_field):
     blocks = [
-        f'<tr><td bgcolor="{RED}" height="4"></td></tr>',
-        f"<tr><td>{header()}</td></tr>",
-        f"<tr><td>{route(leg, direction)}</td></tr>",
-        f"<tr><td>{details(leg, date_field)}</td></tr>",
-        f"<tr><td>{connection(leg, 'conexao_aeroporto', 'CONEXÃO · AEROPORTO')}</td></tr>",
-        f"<tr><td>{connection(leg, 'conexao_voo', 'VOO DE CONEXÃO')}</td></tr>",
-        f"<tr><td>{perforation()}</td></tr>",
-        f"<tr><td>{stub(leg)}</td></tr>",
+        header(leg, direction, date_field),
+        route(leg),
+        perforation(),
+        passenger(),
+        info(leg),
+        footer(),
     ]
-    body = "\n".join(blocks)
-    edge = f'<td width="1" bgcolor="{BORDER}"></td>'  # contorno 1px feito de <td>
-    return (
-        f"<!-- CARTAO DE EMBARQUE — {direction} -->\n"
-        f'<table {TABLE}>\n'
-        f'<tr><td colspan="3" height="1" bgcolor="{BORDER}"></td></tr>\n'
-        f'<tr>{edge}<td bgcolor="{WHITE}">\n<table {TABLE}>\n{body}\n</table>\n</td>{edge}</tr>\n'
-        f'<tr><td colspan="3" height="1" bgcolor="{BORDER}"></td></tr>\n'
-        "</table>\n"
-    )
+    body = "\n".join(f"<tr><td>{b}</td></tr>" for b in blocks)
+    return f"<!-- CARTAO DE EMBARQUE — {direction} -->\n<table {TABLE}>\n{body}\n</table>\n"
 
 HEAD = """<!--
-CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · V4
+CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · V5
 GERADO por build.py — edite o script, não este arquivo.
 Cole todo este fragmento no editor HTML da plataforma.
-Markup legado apenas (table/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.\nbgcolor SEMPRE em <td>: o app descarta bgcolor em <table> (V3 renderizou texto branco sobre branco).
-Conexões ficam ocultas (inclusive rótulos) quando seus próprios campos estão vazios.
+Markup legado apenas (table/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.
+bgcolor SEMPRE em <td>: o app descarta bgcolor em <table>.
+Logo: campos voo_ida_cia / voo_volta_cia = código IATA (LA, G3, AD) → logos/<IATA>.png.
+Conexões ficam ocultas quando seus próprios campos estão vazios.
 Data_volta_ conserva o sublinhado final. Não substituir três chaves por duas.
 Campos entre {{{ }}} (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam {{ }}.
 -->
