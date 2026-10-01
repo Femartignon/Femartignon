@@ -1,0 +1,6 @@
+# Projeto Netlify: infield2026-widgets
+# No Netlify, configurar "Base directory" = encontro-infield (este arquivo é lido a partir dela).
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  command = ""
