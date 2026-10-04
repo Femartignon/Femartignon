@@ -60,16 +60,16 @@ def band(inner, bg, top=0, bottom=0):
     return f'<table {TABLE}>' + "".join(rows) + "</table>"
 
 # ── Blocos ────────────────────────────────────────────────────────────────
-def corners(bg, pos):
+def corners(bg, pos, r=R, page=PAGE):
     """Cantos arredondados desenhados só com <td> de 1 px (sem imagem).
     Imagens de canto deixavam uma faixa reta no app (o app interfere no layout de <img>);
     células com bgcolor e altura explícita são o que já provamos que ele respeita.
     Cada linha é uma tabela própria: recuo lateral na cor da página + miolo na cor do card."""
     rows = []
-    for y in range(R):
-        dy = R - y - 0.5                                   # distância ao centro do arco
-        inset = round(R - math.sqrt(max(R * R - dy * dy, 0)))
-        side = f'<td width="{inset}" height="1" bgcolor="{PAGE}"></td>' if inset else ""
+    for y in range(r):
+        dy = r - y - 0.5                                   # distância ao centro do arco
+        inset = round(r - math.sqrt(max(r * r - dy * dy, 0)))
+        side = f'<td width="{inset}" height="1" bgcolor="{page}"></td>' if inset else ""
         rows.append(f'<table {TABLE}><tr>{side}<td height="1" bgcolor="{bg}"></td>{side}</tr></table>')
     return "".join(rows if pos == "t" else rows[::-1])
 
