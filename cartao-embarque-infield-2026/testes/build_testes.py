@@ -14,7 +14,14 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from build import TABLE, text, v  # noqa: E402
+from build import v  # noqa: E402
+
+# Página de teste: markup enxuto (é colado à mão no app) — tabela e fonte curtas.
+TABLE = 'width="100%" border="0" cellspacing="0" cellpadding="0"'
+
+def text(t, size, color=None, bold=False):
+    t = f"<b>{t}</b>" if bold else t
+    return f'<font face="Arial" size="{size}"' + (f' color="{color}"' if color else "") + f'>{t}</font>'
 
 HERE = Path(__file__).resolve().parent
 REF = sys.argv[1] if len(sys.argv) > 1 else "claude/kind-babbage-gpnjey"
@@ -36,10 +43,8 @@ def item(num, title, how, result):
     """Bloco de teste: número + título, como ler, área de resultado.
     Chaves do título viram entidades: senão o app as interpretaria como template."""
     title = title.replace("{", "&#123;").replace("}", "&#125;")
-    head =(f'<table {TABLE}><tr><td height="22" valign="bottom">{text(f"<b>{num}</b> · {title}", 2, INK)}</td></tr>'
-            f'<tr><td height="18" valign="top">{text(how, 1, GRAY)}</td></tr></table>')
-    return (f'<table {TABLE}><tr><td bgcolor="{CARD}">'
-            f'<table {TABLE}><tr><td width="14"></td><td>{gap(8)}{head}{gap(6)}{result}{gap(12)}</td><td width="14"></td></tr></table>'
+    return (f'<table width="100%" border="0" cellspacing="0" cellpadding="12"><tr><td bgcolor="{CARD}">'
+            f'{text(f"<b>{num}</b> · {title}", 2, INK)}<br>{text(how, 1, GRAY)}{gap(8)}{result}'
             f'</td></tr></table>' + gap(10))
 
 def swatch(attrs, label, color="#FFFFFF", h=40):
@@ -50,9 +55,8 @@ def section(t):
     return gap(14) + f'<table {TABLE}><tr><td height="26" valign="bottom">{text(t, 3, INK, bold=True)}</td></tr></table>' + gap(6)
 
 def header(name, extra):
-    return (f'<table {TABLE}><tr><td bgcolor="{DARK}">'
-            f'<table {TABLE}><tr><td width="14"></td><td>{gap(10)}'
-            f'{text(name, 3, "#FFFFFF", bold=True)}<br>{text(extra, 1, "#C9D1D8")}{gap(10)}</td><td width="14"></td></tr></table>'
+    return (f'<table width="100%" border="0" cellspacing="0" cellpadding="12"><tr><td bgcolor="{DARK}">'
+            f'{text(name, 3, "#FFFFFF", bold=True)}<br>{text(extra, 1, "#C9D1D8")}'
             f'</td></tr></table>' + gap(6))
 
 def button(href, label):
