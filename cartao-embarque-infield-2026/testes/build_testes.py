@@ -1,7 +1,7 @@
 """Gera as páginas de teste de recursos do app (SpotMe) e seus assets.
 
   teste-A-html.html        → só HTML (estilo inline, div/span, links, details, QR, GIF, SVG)
-  teste-B-dados.html       → sintaxe de template já padrão do Handlebars ({{#unless}}, {{#with}}, outros objetos)
+  teste-B1/B2/B3-*.html    → {{#unless}}, {{#with}}, outros objetos — um por arquivo (o B junto deu erro de parse no app)
   teste-C-comparacao.html  → helper de comparação (eq) — isolado: helper inexistente pode derrubar a página inteira
   aviao.gif / aviao.svg    → assets dos testes 8 e 9 (servidos pelo GitHub raw)
 
@@ -127,21 +127,29 @@ OBJECTS = ["activatedPerson.fname", "activatedPerson.email", "activatedPerson.co
            "activatedPerson.title", "event.name", "event.title", "event.start_date",
            "currentUser.fname", "user.fname", "session.title"]
 
-def page_b():
-    rows = "".join(f'<tr><td height="22" valign="middle">{text(o, 1, GRAY)}</td>'
-                   f'<td align="right" valign="middle">{text("[" + "{{" + o + "}}" + "]", 2, INK, bold=True)}</td></tr>'
-                   for o in OBJECTS)
-    blocks = [
-        header("TESTE B · DADOS", "Se a página ficar em branco ou com erro, me avise: separo cada item."),
-        item("4", "{{#unless}} (mostra quando o campo está vazio)", "✅ verde = OK · nada = falhou",
+def page_b1():
+    return "\n".join([
+        header("TESTE B1 · UNLESS", "✅ verde = OK · nada = falhou · erro de parse = não suportado"),
+        item("4", "{{#unless}} (mostra quando o campo está vazio)", "✅ verde = OK",
              "{{#unless activatedPerson.campo_teste_inexistente}}"
              + text("✅ 4 unless OK", 2, OK, bold=True) + "{{/unless}}"),
-        item("4b", "{{#with}} (encurta as merge tags)", "seu primeiro nome após o ✅ = OK",
+    ])
+
+def page_b2():
+    return "\n".join([
+        header("TESTE B2 · WITH", "seu primeiro nome após o ✅ = OK · erro de parse = não suportado"),
+        item("4b", "{{#with}} (encurta as merge tags)", "✅ + nome = OK",
              "{{#with activatedPerson}}" + text("✅ 4b with OK — {{fname}}", 2, OK, bold=True) + "{{/with}}"),
-        item("10", "Outros objetos de dados", "[ ] vazio = não existe · com valor = existe",
-             f'<table {TABLE}>{rows}</table>'),
-    ]
-    return "\n".join(blocks)
+    ])
+
+def page_b3():
+    """Sem colchetes junto das chaves: o resultado vem depois de ':'."""
+    rows = "".join(f'<tr><td height="22" valign="middle">{text(o + ": " + "{{" + o + "}}", 2, INK)}</td></tr>'
+                   for o in OBJECTS)
+    return "\n".join([
+        header("TESTE B3 · OBJETOS", "nada depois de ':' = não existe · com valor = existe"),
+        item("10", "Outros objetos de dados", "valor após ':' = existe", f'<table {TABLE}>{rows}</table>'),
+    ])
 
 # ── Teste C · comparação ──────────────────────────────────────────────────
 def page_c():
@@ -194,7 +202,9 @@ def build():
     make_gif()
     (HERE / "aviao.svg").write_text(SVG, encoding="utf-8")
     for fname, title, fn in [("teste-A-html.html", "TESTE A · HTML", page_a),
-                             ("teste-B-dados.html", "TESTE B · DADOS", page_b),
+                             ("teste-B1-unless.html", "TESTE B1 · UNLESS", page_b1),
+                             ("teste-B2-with.html", "TESTE B2 · WITH", page_b2),
+                             ("teste-B3-objetos.html", "TESTE B3 · OBJETOS", page_b3),
                              ("teste-C-comparacao.html", "TESTE C · COMPARAÇÃO", page_c)]:
         (HERE / fname).write_text(HEAD.format(name=title) + fn() + "\n", encoding="utf-8")
 
