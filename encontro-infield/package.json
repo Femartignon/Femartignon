@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.71",
     "ai": "^7.0.127"
   }
 }
