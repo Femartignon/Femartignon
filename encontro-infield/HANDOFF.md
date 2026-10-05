@@ -34,6 +34,7 @@ encontro-infield/
 ├─ agente/agente.mjs               instruções, validação, chamada ao Claude
 ├─ agente/ferramentas.mjs          clima · trânsito · data e contagem
 ├─ agente/conhecimento.md          FONTE ÚNICA do que o agente sabe do evento
+├─ agente/faq.mjs                  modo sem chave: responde da base + ferramentas ao vivo
 ├─ agente/teste.mjs                teste sem chave e sem rede (npm test)
 └─ netlify/functions/transito.mjs  GET /api/transito (TomTom, cache CDN 10 min)
 ```
@@ -54,6 +55,7 @@ encontro-infield/
 ## 5b. Assistente Infield (Vercel)
 - **Página:** `public/agente.html` — chat mobile (tela cheia, claro/escuro, sugestões, "Nova conversa"). Fundo = `img/agente-fundo.webp` com véu e superfícies translúcidas; no celular o recorte mostra o assistente, em telas largas a arte inteira com a coluna do chat entre o logo e o assistente. Conversa guardada só na aba (`sessionStorage`). Texto da IA é escapado antes de formatar (sem HTML injetado).
 - **Rota:** `POST /api/agente` · corpo `{ mensagens: [{ role, content }] }` · resposta em texto streaming. Limites: 20 mensagens, 2.000 caracteres cada.
+- **Dois modos (automático):** sem `ANTHROPIC_API_KEY` no Vercel, a rota responde direto da base (`agente/faq.mjs`, por palavras-chave, mesmas ferramentas ao vivo). Com a chave cadastrada + redeploy, passa a responder com o Claude.
 - **Modelo:** Claude Opus 5.5 (`claude-opus-5-5`) via Vercel AI SDK · `effort: low` · `fallbacks: default` (recusa de classificador → modelo de fallback) · cache de prompt automático.
 - **Ferramentas:** `clima` (Open-Meteo, até 14 dias) · `transito` (reusa `infield2026-widgets.netlify.app/api/transito`; trocar por env `TRANSITO_URL`) · `data_e_contagem` (fuso Brasília).
 - **Regras:** responde só com a base de conhecimento; "A CONFIRMAR" = não inventa. Sem tema médico/produto, sem dados pessoais.

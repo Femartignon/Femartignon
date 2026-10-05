@@ -64,3 +64,24 @@ for (const [nome, entrada, esperado] of [['clima', { dias: 2 }, 'chance_chuva_pc
   assert(resultado.includes('tool_result') && resultado.includes(esperado), `${nome}: resultado da ferramenta volta ao modelo (${esperado})`);
   if (nome === 'clima') console.log('   amostra:', resultado.slice(0, 260));
 }
+
+// 4. Modo base de conhecimento (sem ANTHROPIC_API_KEY): responde da SSOT e das ferramentas ao vivo
+const { responderPelaBase, responderSemModelo } = await import('./faq.mjs');
+const casosBase = [
+  ['Como está o trânsito do Galeão até o hotel?', '52 min'],
+  ['Vai chover nos próximos dias?', 'chance de chuva 80%'],
+  ['Quantos dias faltam para o evento?', 'Faltam **'],
+  ['Qual o horário do check-in?', 'Check-in a partir das 15h'],
+  ['Qual o dress code?', 'ainda não divulgado'],
+  ['Onde vai ser a vacinação?', 'Lagoa 4'],
+  ['Qual o endereço do hotel?', 'Av. Lúcio Costa'],
+  ['Posso jantar fora do hotel?', 'reembolso'],
+  ['Qual a dose do remédio X?', 'não é tratado por este assistente'],
+  ['Qual a cor do céu em Marte?', 'Não encontrei essa informação'],
+];
+for (const [pergunta, esperado] of casosBase) {
+  const r = await responderPelaBase(pergunta);
+  assert(r.includes(esperado), `base: "${pergunta}" → contém "${esperado}"`);
+}
+const rBase = await responderSemModelo([{ role: 'user', content: 'Qual o dress code?' }]);
+assert(rBase.status === 200 && (await rBase.text()).includes('Traje'), 'base: rota responde 200 em texto');

@@ -72,7 +72,7 @@ A agenda oficial e as salas de cada atividade ficam no app do evento (menu Agend
 ## Chegada ao Rio, transfer e hotel
 - Aeroportos de chegada: Galeão (GIG) ou Santos Dumont (SDU), conforme o voo de cada participante.
 - Horários e pontos de embarque do transfer: A CONFIRMAR (consultar Mais › Logística do Evento).
-- Tempo de trajeto aeroporto → hotel com trânsito ao vivo: use a ferramenta de trânsito.
+- Tempo de trajeto aeroporto → hotel com trânsito ao vivo: pergunte aqui no assistente.
 
 ## App do evento
 - O app do encontro é acessado com o login corporativo (SSO).
