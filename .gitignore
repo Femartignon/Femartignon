@@ -6,3 +6,6 @@
 # HyperFrames project local artifacts
 gastro-academy-leadership-deck/snapshots/
 gastro-academy-leadership-deck/node_modules/
+
+# Dependências npm (raiz)
+/node_modules/
