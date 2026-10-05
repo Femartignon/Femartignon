@@ -76,6 +76,8 @@ const casosBase = [
   ['Onde vai ser a vacinação?', 'Lagoa 4'],
   ['Qual o endereço do hotel?', 'Av. Lúcio Costa'],
   ['Posso jantar fora do hotel?', 'reembolso'],
+  ['Qual a franquia de bagagem?', '23 kg'],
+  ['Como pego o transfer no aeroporto?', 'receptivo'],
   ['Qual a dose do remédio X?', 'não é tratado por este assistente'],
   ['Qual a cor do céu em Marte?', 'Não encontrei essa informação'],
 ];
