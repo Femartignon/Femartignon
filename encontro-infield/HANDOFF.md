@@ -28,6 +28,7 @@ encontro-infield/
 ├─ public/img/*.webp               6 fotos de clima
 ├─ public/agente.html              chat do Assistente Infield (Vercel)
 ├─ public/img/agente-icone.*       ícone do menu Mais (SVG + PNG 512)
+├─ public/img/agente-fundo.webp    arte de fundo do chat (Takeda + assistente, Rio)
 ├─ public/fonts/gotham-bold.otf    Gotham da página do agente
 ├─ api/agente.mjs                  POST /api/agente (Vercel Function)
 ├─ agente/agente.mjs               instruções, validação, chamada ao Claude
@@ -51,7 +52,7 @@ encontro-infield/
 - Coordenadas: hotel −23.0045, −43.3187 (mesmas do widget original) · GIG −22.8099, −43.2506 · SDU −22.9105, −43.1631. **Conferir a coordenada do Grand Hyatt.**
 
 ## 5b. Assistente Infield (Vercel)
-- **Página:** `public/agente.html` — chat mobile (tela cheia, claro/escuro, sugestões, "Nova conversa"). Conversa guardada só na aba (`sessionStorage`). Texto da IA é escapado antes de formatar (sem HTML injetado).
+- **Página:** `public/agente.html` — chat mobile (tela cheia, claro/escuro, sugestões, "Nova conversa"). Fundo = `img/agente-fundo.webp` com véu e superfícies translúcidas; no celular o recorte mostra o assistente, em telas largas a arte inteira com a coluna do chat entre o logo e o assistente. Conversa guardada só na aba (`sessionStorage`). Texto da IA é escapado antes de formatar (sem HTML injetado).
 - **Rota:** `POST /api/agente` · corpo `{ mensagens: [{ role, content }] }` · resposta em texto streaming. Limites: 20 mensagens, 2.000 caracteres cada.
 - **Modelo:** Claude Opus 5.5 (`claude-opus-5-5`) via Vercel AI SDK · `effort: low` · `fallbacks: default` (recusa de classificador → modelo de fallback) · cache de prompt automático.
 - **Ferramentas:** `clima` (Open-Meteo, até 14 dias) · `transito` (reusa `infield2026-widgets.netlify.app/api/transito`; trocar por env `TRANSITO_URL`) · `data_e_contagem` (fuso Brasília).
