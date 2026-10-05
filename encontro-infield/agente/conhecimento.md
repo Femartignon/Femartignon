@@ -28,9 +28,9 @@ FONTE ÚNICA do que o Assistente Infield sabe sobre o evento.
 A agenda oficial e as salas de cada atividade ficam no app do evento (menu Agenda). Agenda macro atual:
 - 16/11 (segunda), 12h–14h: Reunião de Liderança Infield, para os gerentes diretos dos times de campo.
 - 16/11 (segunda), à tarde: Plenária de abertura na Grand Ballroom, início às 14h30.
-- 17/11 e 18/11 (terça e quarta): Abertura de BUs, World Café e Salas de Produtos
-- 18/11 (quarta), Salas de Produtos e Jantar e Festa de encerramento no hotel.
-- 19/11 (quinta): atividades finais e saída. Horários de seu transfer serão enviados na véspera.
+- 17/11 e 18/11 (terça e quarta): Abertura de BUs, World Café e Salas de Produtos.
+- 18/11 (quarta): Salas de Produtos e, à noite, Jantar e Festa de encerramento no hotel.
+- 19/11 (quinta): atividades finais e saída. Os horários do seu transfer de saída serão enviados na véspera.
 - Alguns grupos têm programação específica e recebem as orientações diretamente pelo app.
 
 ## Credenciamento
@@ -42,16 +42,17 @@ A agenda oficial e as salas de cada atividade ficam no app do evento (menu Agend
 ## Hospedagem
 - Check-in a partir das 15h. Check-out até as 12h.
 - Entrada antecipada (early check-in) e saída tardia (late check-out) não estão incluídas: dependem da disponibilidade do hotel e não são garantidas. Quem chegar antes das 15h pode não ter acesso imediato ao quarto.
-- Guarda de bagagem e tipo de acomodação: O hotel guardará as bagagens até que o quarto seja liberado. Acomodação dupla
+- Guarda de bagagem: o hotel guarda as bagagens até o quarto ser liberado.
+- Tipo de acomodação: quarto duplo.
 
 ## Refeições
 - As refeições durante o encontro acontecem no restaurante do hotel.
 - Jantar de terça-feira (17/11): dinâmica livre, mas dentro do hotel, com custo coberto pela Takeda.
-- Por segurança, não é recomendado fazer refeições fora do hotel. Quem optar por sair arca com a despesa: não é permitido usar cartão corporativo nem pedir reembolso, exceto se previamente aprovado pelo comite organizador.
+- Por segurança, não é recomendado fazer refeições fora do hotel. Quem optar por sair arca com a despesa: não é permitido usar cartão corporativo nem pedir reembolso, exceto se previamente aprovado pelo comitê organizador.
 
 ## Vacinação (ação interna)
 - Haverá aplicação da segunda dose da vacina contra dengue para colaboradores, em 17/11 e 18/11, nos intervalos de almoço e coffee break (em 17/11 também no fim do dia), na sala Lagoa 4.
-- Horários exatos: fique de olho no APP pois será divulgado por esse canal
+- Horários exatos: serão divulgados pelo app — fique de olho nas notificações.
 - Dúvidas sobre a vacina, elegibilidade ou saúde: procurar a equipe de saúde no local. O assistente informa apenas local e horários.
 
 ## Segurança
@@ -59,20 +60,20 @@ A agenda oficial e as salas de cada atividade ficam no app do evento (menu Agend
 - Preserve seus dados pessoais e o número do seu quarto.
 - Mantenha celular, eletrônicos e objetos pessoais sempre por perto.
 - Em caso de dúvida ou emergência, procure a equipe do evento.
-- Contato de emergência e ponto de atendimento no local: 
+- Contato de emergência e ponto de atendimento no local: A CONFIRMAR.
 
 ## Viagem aérea
 - Os dados do voo de cada participante (horários, assento, localizador) estão no cartão de embarque, no app do evento (menu Meu Voo).
 - Chegue ao aeroporto com 2 horas de antecedência.
 - Tenha em mãos um documento oficial com foto.
 - Faça o check-in pelo app ou site da companhia aérea.
-- Franquia de bagagem: 1 mala de até 23Kg e 1 mochila de até 10Kg e uma bolsa
+- Franquia de bagagem: 1 mala de até 23 kg, 1 mochila de até 10 kg e 1 bolsa.
 - Dúvidas ou alteração de voo: menu Mais › Suporte da Agência.
 
 ## Chegada ao Rio, transfer e hotel
 - Aeroportos de chegada: Galeão (GIG) ou Santos Dumont (SDU), conforme o voo de cada participante.
-- Horários e pontos de embarque do transfer: procurer pelo receptivo portanto sinalização do evento, Ele terá todas as informações necessárias
-- Tempo de trajeto aeroporto → hotel com trânsito ao vivo: use a ferramenta de trânsito.
+- Transfer na chegada: procure o receptivo com a sinalização do evento no aeroporto; a equipe terá todas as informações necessárias.
+- Tempo de trajeto aeroporto → hotel com trânsito ao vivo: pergunte aqui no assistente.
 
 ## App do evento
 - Menus: Feed, Agenda, Meu Voo, Notificações e Mais.
@@ -81,4 +82,4 @@ A agenda oficial e as salas de cada atividade ficam no app do evento (menu Agend
 ## Contatos
 - Logística (transfer, hotel): menu Mais › Logística do Evento.
 - Voo: menu Mais › Suporte da Agência.
-- Outras dúvidas: procure pelo time de eventos
+- Outras dúvidas: procure o time de Eventos.

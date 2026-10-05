@@ -36,7 +36,7 @@ const PALAVRAS = {
   'Refeições': ['refeicao', 'refeicoes', 'jantar', 'almoco', 'cafe', 'comida', 'restaurante', 'comer', 'reembolso', 'cartao corporativo'],
   'Vacinação (ação interna)': ['vacina', 'vacinacao', 'dengue', 'dose'],
   'Segurança': ['seguranca', 'emergencia', 'saida de emergencia', 'perigo', 'roubo'],
-  'Viagem aérea': ['voo', 'aereo', 'aerea', 'passagem', 'embarque', 'companhia', 'localizador', 'assento', 'aeroporto'],
+  'Viagem aérea': ['voo', 'aereo', 'aerea', 'passagem', 'embarque', 'companhia', 'localizador', 'assento', 'aeroporto', 'franquia', 'franquia de bagagem', 'quantos kg', 'peso da mala', 'mochila'],
   'Chegada ao Rio, transfer e hotel': ['transfer', 'traslado', 'chegada', 'buscar', ' van', 'onibus'],
   'App do evento': ['app', 'aplicativo', 'login', 'senha', 'sso', 'menu'],
   'Contatos': ['contato', 'suporte', 'ajuda', 'falar com', 'telefone', 'organizacao'],
