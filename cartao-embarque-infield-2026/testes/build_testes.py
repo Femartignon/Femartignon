@@ -3,6 +3,7 @@
   teste-A-html.html        → só HTML (estilo inline, div/span, links, details, QR, GIF, SVG)
   teste-B1/B2/B3-*.html    → {{#unless}}, {{#with}}, outros objetos — um por arquivo (o B junto deu erro de parse no app)
   teste-C-comparacao.html  → helper de comparação (eq) — isolado: helper inexistente pode derrubar a página inteira
+  teste-D-nativas.html     → formato real das tags nativas (workspace.*, campos nativos) + convite como link
   aviao.gif / aviao.svg    → assets dos testes 8 e 9 (servidos pelo GitHub raw)
 
 Leitura: verde = funcionou · vermelho = não funcionou · 👆 = tocar para testar.
@@ -151,6 +152,26 @@ def page_b3():
         item("10", "Outros objetos de dados", "valor após ':' = existe", f'<table {TABLE}>{rows}</table>'),
     ])
 
+# ── Teste D · tags nativas ─────────────────────────────────────────────────
+# Lista oficial de tags nativas do app (workspace.* e campos nativos de activatedPerson).
+NATIVE = ["workspace.name", "workspace.organization_name", "workspace.start_date", "workspace.end_date",
+          "workspace.timezone", "workspace.location", "workspace.country", "workspace.country_code",
+          "workspace.in_app_display", "workspace.calendar_invite",
+          "activatedPerson.position", "activatedPerson.BU", "activatedPerson.attendance_type",
+          "activatedPerson.attendance_status", "activatedPerson.registrationtype",
+          "activatedPerson.language", "activatedPerson.fp_locale"]
+
+def page_d():
+    """Mostra o formato real de cada tag nativa (data, local, convite) para decidir onde usar."""
+    rows = "".join(f'<tr><td height="22" valign="middle">{text(t + ": " + "{{" + t + "}}", 2, INK)}</td></tr>'
+                   for t in NATIVE)
+    return "\n".join([
+        header("TESTE D · TAGS NATIVAS", "Mande um print: preciso ver o formato de cada valor."),
+        item("11", "Valores das tags nativas", "valor após ':' = formato real", f'<table {TABLE}>{rows}</table>'),
+        item("12", "Convite de calendário como link 👆", "toque: abre o convite / adiciona à agenda?",
+             button("{{workspace.calendar_invite}}", "12 · Adicionar à agenda")),
+    ])
+
 # ── Teste C · comparação ──────────────────────────────────────────────────
 def page_c():
     cia = "activatedPerson.voo_ida_cia"
@@ -205,6 +226,7 @@ def build():
                              ("teste-B1-unless.html", "TESTE B1 · UNLESS", page_b1),
                              ("teste-B2-with.html", "TESTE B2 · WITH", page_b2),
                              ("teste-B3-objetos.html", "TESTE B3 · OBJETOS", page_b3),
+                             ("teste-D-nativas.html", "TESTE D · TAGS NATIVAS", page_d),
                              ("teste-C-comparacao.html", "TESTE C · COMPARAÇÃO", page_c)]:
         (HERE / fname).write_text(HEAD.format(name=title) + fn() + "\n", encoding="utf-8")
 
