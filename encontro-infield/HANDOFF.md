@@ -13,11 +13,14 @@ Widget HTML embutido no app do Encontro Infield 2026 (Takeda): clima ao vivo do 
 | Chave TomTom | Env var `TOMTOM_API_KEY` no projeto `infield2026-widgets` (cadastrada; **marcar como secret pela interface**) |
 | Deploy | **Pendente:** ligar o projeto ao GitHub (base directory `encontro-infield`) |
 | App | **Pendente:** trocar o endereço do widget para https://infield2026-widgets.netlify.app |
+| Projeto Vercel | **`encontro-Infield-2026`** · Root Directory = `encontro-infield` · dependência `ai` (Vercel AI SDK) em `package.json` |
 | Projeto antigo `polite-stroopwafel-cfdd45` | Versão anterior (clima + relógio D/H/M). Desativar depois que o novo estiver no app |
 
 ## 3. Estrutura
 ```
 encontro-infield/
+├─ package.json                    dependência `ai` (projeto Vercel encontro-Infield-2026)
+├─ package-lock.json
 ├─ netlify.toml                    publish=public · functions=netlify/functions
 ├─ public/index.html               widget (arquivo único, fontes embutidas)
 ├─ public/img/*.webp               6 fotos de clima
