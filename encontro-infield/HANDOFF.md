@@ -1,6 +1,6 @@
-# Project Handoff — Widget Encontro Infield 2026 (clima · dias · trânsito)
+# Project Handoff — Widget Encontro Infield 2026 (clima · dias · trânsito) + Assistente Infield
 
-Atualizado: 01/10/2026
+Atualizado: 05/10/2026
 
 ## 1. Objetivo
 Widget HTML embutido no app do Encontro Infield 2026 (Takeda): clima ao vivo do hotel, contagem de dias para o evento e trânsito aeroporto → hotel.
@@ -13,17 +13,27 @@ Widget HTML embutido no app do Encontro Infield 2026 (Takeda): clima ao vivo do 
 | Chave TomTom | Env var `TOMTOM_API_KEY` no projeto `infield2026-widgets` (cadastrada; **marcar como secret pela interface**) |
 | Deploy | **Pendente:** ligar o projeto ao GitHub (base directory `encontro-infield`) |
 | App | **Pendente:** trocar o endereço do widget para https://infield2026-widgets.netlify.app |
-| Projeto Vercel | **`encontro-Infield-2026`** · Root Directory = `encontro-infield` · dependências `ai` (Vercel AI SDK) + `@ai-sdk/anthropic` em `package.json` · **Pendente:** env var `ANTHROPIC_API_KEY` no projeto Vercel |
+| Projeto Vercel | **`encontro-Infield-2026`** · Root Directory = `encontro-infield` · hospeda o **Assistente Infield** (`/agente.html` + `/api/agente`) · **Pendente:** criar o projeto e cadastrar `ANTHROPIC_API_KEY` (Sensitive) |
+| App — menu Mais | **Pendente:** item "Assistente Infield" → `https://<domínio-vercel>/agente.html`, ícone `public/img/agente-icone.png` |
 | Projeto antigo `polite-stroopwafel-cfdd45` | Versão anterior (clima + relógio D/H/M). Desativar depois que o novo estiver no app |
 
 ## 3. Estrutura
 ```
 encontro-infield/
-├─ package.json                    dependências `ai` + `@ai-sdk/anthropic` (projeto Vercel encontro-Infield-2026)
+├─ package.json                    ai + @ai-sdk/anthropic + zod · npm test
 ├─ package-lock.json
+├─ vercel.json                     inclui agente/** na função do Vercel
 ├─ netlify.toml                    publish=public · functions=netlify/functions
 ├─ public/index.html               widget (arquivo único, fontes embutidas)
 ├─ public/img/*.webp               6 fotos de clima
+├─ public/agente.html              chat do Assistente Infield (Vercel)
+├─ public/img/agente-icone.*       ícone do menu Mais (SVG + PNG 512)
+├─ public/fonts/gotham-bold.otf    Gotham da página do agente
+├─ api/agente.mjs                  POST /api/agente (Vercel Function)
+├─ agente/agente.mjs               instruções, validação, chamada ao Claude
+├─ agente/ferramentas.mjs          clima · trânsito · data e contagem
+├─ agente/conhecimento.md          FONTE ÚNICA do que o agente sabe do evento
+├─ agente/teste.mjs                teste sem chave e sem rede (npm test)
 └─ netlify/functions/transito.mjs  GET /api/transito (TomTom, cache CDN 10 min)
 ```
 
@@ -39,6 +49,15 @@ encontro-infield/
 - Trechos da barra: seções TRAFFIC (`magnitudeOfDelay` ≥3 intenso; ≥1 ou JAM moderado), proporcionais à distância.
 - Cache: `Netlify-CDN-Cache-Control: durable, s-maxage=600` → ~290 chamadas/dia, independente do nº de participantes.
 - Coordenadas: hotel −23.0045, −43.3187 (mesmas do widget original) · GIG −22.8099, −43.2506 · SDU −22.9105, −43.1631. **Conferir a coordenada do Grand Hyatt.**
+
+## 5b. Assistente Infield (Vercel)
+- **Página:** `public/agente.html` — chat mobile (tela cheia, claro/escuro, sugestões, "Nova conversa"). Conversa guardada só na aba (`sessionStorage`). Texto da IA é escapado antes de formatar (sem HTML injetado).
+- **Rota:** `POST /api/agente` · corpo `{ mensagens: [{ role, content }] }` · resposta em texto streaming. Limites: 20 mensagens, 2.000 caracteres cada.
+- **Modelo:** Claude Opus 5.5 (`claude-opus-5-5`) via Vercel AI SDK · `effort: low` · `fallbacks: default` (recusa de classificador → modelo de fallback) · cache de prompt automático.
+- **Ferramentas:** `clima` (Open-Meteo, até 14 dias) · `transito` (reusa `infield2026-widgets.netlify.app/api/transito`; trocar por env `TRANSITO_URL`) · `data_e_contagem` (fuso Brasília).
+- **Regras:** responde só com a base de conhecimento; "A CONFIRMAR" = não inventa. Sem tema médico/produto, sem dados pessoais.
+- **Alterar respostas:** editar `agente/conhecimento.md` → commit no `main` → deploy automático.
+- **Risco aberto:** rota pública sem autenticação nem limite por usuário. Monitorar uso no console da Anthropic; se preciso, ativar Firewall/rate limit do Vercel.
 
 ## 6. Decisões tomadas
 - Sem conteúdo de lazer/praia (evento corporativo). Relógio split-flap só com dias. Foto de clima só à esquerda.
