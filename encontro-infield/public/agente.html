@@ -26,6 +26,9 @@
     --chip-bg:#f3eeec;
     --chip-text:#5b4a48;
     --focus:rgba(225,36,42,.35);
+    --glass:rgba(255,255,255,.72);
+    --glass-strong:rgba(255,255,255,.90);
+    --veil:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.10) 45%,rgba(255,255,255,.35) 100%);
   }
   @media (prefers-color-scheme: dark){
     :root{
@@ -38,6 +41,9 @@
       --user-text:#17181b;
       --chip-bg:#2c2426;
       --chip-text:#e8dedc;
+      --glass:rgba(23,24,27,.70);
+      --glass-strong:rgba(35,36,39,.92);
+      --veil:linear-gradient(180deg,rgba(23,24,27,.80) 0%,rgba(23,24,27,.55) 45%,rgba(23,24,27,.75) 100%);
     }
   }
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -49,6 +55,12 @@
     -webkit-font-smoothing:antialiased;
     -webkit-text-size-adjust:100%;
   }
+  /* Fundo: arte do evento fixa atrás do chat + véu para legibilidade.
+     No retrato o recorte mostra o assistente; em telas largas, a arte inteira. */
+  body::before,body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;}
+  body::before{background:url(img/agente-fundo.webp) 80% center/cover no-repeat;}
+  body::after{background:var(--veil);}
+  @media (min-aspect-ratio: 4/3){ body::before{background-position:center;} }
   .app{
     display:flex;flex-direction:column;
     height:100vh;height:100dvh;
@@ -62,6 +74,8 @@
     padding:calc(env(safe-area-inset-top) + 14px) 16px 12px;
     display:flex;align-items:center;gap:12px;
     border-bottom:1px solid var(--border);
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   }
   header .title{flex:1;min-width:0;}
   h1{font-family:'Gotham',-apple-system,sans-serif;font-weight:700;font-size:17px;letter-spacing:.01em;}
@@ -80,13 +94,14 @@
     padding:20px 16px 8px;
     display:flex;flex-direction:column;gap:12px;
   }
-  .welcome{margin:auto 0;padding:8px 0 4px;}
+  .welcome{margin:0 0 auto;padding:16px;border-radius:20px;background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
   .welcome h2{font-family:'Gotham',-apple-system,sans-serif;font-weight:700;font-size:22px;line-height:1.2;}
   .welcome p{color:var(--muted);font-size:15px;line-height:1.45;margin-top:8px;}
   .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
   .chip{
     border:0;border-radius:999px;padding:9px 14px;
-    background:var(--chip-bg);color:var(--chip-text);
+    background:var(--glass-strong);color:var(--chip-text);
+    box-shadow:0 1px 2px rgba(0,0,0,.06);
     font:inherit;font-size:14px;text-align:left;cursor:pointer;
   }
   .msg{max-width:86%;font-size:15.5px;line-height:1.45;overflow-wrap:anywhere;}
@@ -95,13 +110,14 @@
     padding:10px 14px;border-radius:18px 18px 4px 18px;white-space:pre-wrap;
   }
   .msg.bot{
-    align-self:flex-start;background:var(--surface);
+    align-self:flex-start;background:var(--glass-strong);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     padding:10px 14px;border-radius:18px 18px 18px 4px;
   }
   .msg.bot p+p,.msg.bot p+ul,.msg.bot ul+p{margin-top:8px;}
   .msg.bot ul{padding-left:18px;}
   .msg.bot li+li{margin-top:4px;}
-  .msg.error{align-self:flex-start;color:var(--muted);font-size:14px;}
+  .msg.error{align-self:flex-start;color:var(--text);font-size:14px;background:var(--glass-strong);padding:8px 12px;border-radius:12px;}
   .msg.error button{
     margin-left:6px;border:0;background:none;color:var(--takeda-red);
     font:inherit;font-weight:600;cursor:pointer;text-decoration:underline;
@@ -117,7 +133,8 @@
     flex:none;
     padding:8px 12px calc(env(safe-area-inset-bottom) + 10px);
     border-top:1px solid var(--border);
-    background:var(--bg);
+    background:var(--glass);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
   }
   form{display:flex;align-items:flex-end;gap:8px;}
   textarea{
@@ -134,6 +151,10 @@
   #send:disabled{opacity:.4;cursor:default;}
   .note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px;}
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  /* Telas largas: coluna estreita no espaço livre da arte, entre o logo e o assistente */
+  @media (min-width: 1024px) and (min-aspect-ratio: 4/3){
+    .app{max-width:420px;margin:0 0 0 calc(47.5vw - 210px);}
+  }
 </style>
 </head>
 <body>
