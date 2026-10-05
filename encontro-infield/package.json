@@ -1,0 +1,13 @@
+{
+  "name": "encontro-infield-2026",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node agente/teste.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.71",
+    "ai": "^7.0.127",
+    "zod": "^4.6.5"
+  }
+}
