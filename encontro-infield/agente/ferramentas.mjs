@@ -40,7 +40,7 @@ export function contagem(agora = new Date()) {
   const dias = Math.round((Date.parse(evento) - Date.parse(hoje)) / 86400000);
   return {
     agora_brasilia: agora.toLocaleString('pt-BR', { timeZone: TZ, dateStyle: 'full', timeStyle: 'short' }),
-    inicio_evento: '16/11/2026, 08:00 (Brasília)',
+    periodo_evento: '16 a 19/11/2026 (segunda a quinta-feira)',
     dias_para_o_evento: dias,
     situacao: dias > 0 ? 'antes do evento' : dias === 0 ? 'hoje é o dia de abertura' : 'evento já iniciado',
   };
