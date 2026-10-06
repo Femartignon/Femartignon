@@ -5,7 +5,7 @@ legado (table/tr/td/font/bgcolor/img) + Handlebars. Um arquivo por trecho (cada 
 vai numa aba do app), com o bloco "Antes de embarcar" ao final de ambos —
 mas a fonte única de verdade é este script.
 
-Layout "Meu Voo — versão A": bilhete creme 390 px com cabeçalho de marca
+Layout "Meu Voo — versão A": bilhete creme de largura fluida (100%, como a V6) com cabeçalho de marca
 (fita + logos Infield/Takeda), passageiro, rota com picote vermelho e avião,
 grade 2×2 (Data, Horário, Voo, Localizador), conexão condicional e
 código de barras ilustrativo no rodapé.
@@ -32,7 +32,6 @@ ACCENT = "#E1242A"       # vermelho Takeda: picote, avião, localizador, rótulo
 MUTED = "#7A8591"        # rótulos (INK suavizado sobre o creme)
 HAIR = "#E4DDD2"         # filetes divisórios
 WHITE = "#FFFFFF"
-W = 390                  # largura do bilhete (px)
 G = 20                   # gutter lateral (px)
 CODE_H = 56              # altura da linha dos códigos IATA (fonte 48 px)
 R = 12                   # raio dos cantos (px), desenhado com <td> de 1 px
@@ -128,10 +127,10 @@ def corners(bg, pos):
     return "".join(rows if pos == "t" else rows[::-1])
 
 def header():
-    """Fita de marca (780×192 → 350×86) e, logo abaixo, Infield à esquerda / Takeda à direita.
+    """Fita de marca (780×192, largura 100% da coluna) e, logo abaixo, Infield à esquerda / Takeda à direita.
     Sem CSS não há sobreposição de imagens: os logos ficam numa linha própria."""
     fita = (f'<img src="{BRAND}header-fita-780x192.png" alt="Encontro Infield 2026" '
-            f'width="{W - 2 * G}" style="display:block;">')
+            f'width="100%" style="display:block;">')
     logos = (f'<table {TABLE}><tr>'
              f'<td valign="middle"><img src="{BRAND}logo-infield.png" alt="Infield" height="{LOGO_H}" style="display:block;"></td>'
              f'<td valign="middle" align="right"><img src="{BRAND}logo-takeda-pilula.png" alt="Takeda" height="{LOGO_H}" style="display:block;"></td>'
@@ -203,7 +202,7 @@ def connection(leg):
 def footer():
     """Picote cinza + código de barras ilustrativo + nota de apoio."""
     perf = "".join(f'<td height="1" bgcolor="{MUTED if i % 2 == 0 else CREAM}"></td>' for i in range(40))
-    bars = f'<img src="{BARCODE}" alt="" width="{W - 2 * G}" height="40" style="display:block;">'
+    bars = f'<img src="{BARCODE}" alt="" width="100%" height="40" style="display:block;">'
     note = text("Documento de apoio · no embarque, use o cartão da cia aérea.", 1, MUTED)
     return band(f'<table {TABLE}><tr>{perf}</tr></table>' + gap(18) + bars + gap(10)
                 + f'<table {TABLE}><tr><td align="center">{note}</td></tr></table>', CREAM, bottom=10)
@@ -223,7 +222,7 @@ def card(leg, direction, date_field):
     # Sem voo cadastrado (ex.: participante local) → o cartão inteiro some.
     return (f"<!-- CARTAO DE EMBARQUE — {direction} -->\n"
             + when(f"voo_{leg}_origem",
-                   f'\n<table role="presentation" width="{W}" align="center" border="0" cellspacing="0" cellpadding="0">\n'
+                   f'\n<table {TABLE}>\n'
                    f"{body}\n</table>\n<br>\n")
             + "\n")
 
