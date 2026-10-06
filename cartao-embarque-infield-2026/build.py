@@ -1,8 +1,9 @@
-"""Gera cartao-embarque.html (IDA + VOLTA) a partir de um único template.
+"""Gera cartao-embarque-ida.html e cartao-embarque-volta.html a partir de um único template.
 
 Restrição da plataforma: sem JS, sem <style>, sem <div>/flexbox. Só markup
-legado (table/tr/td/font/bgcolor/img) + Handlebars. Por isso os dois cartões são
-emitidos como HTML duplicado — mas a fonte única de verdade é este script.
+legado (table/tr/td/font/bgcolor/img) + Handlebars. Um arquivo por trecho (cada um
+vai numa aba do app), com o bloco "Antes de embarcar" ao final de ambos —
+mas a fonte única de verdade é este script.
 
 Layout "Meu Voo — versão A": bilhete creme 390 px com cabeçalho de marca
 (fita + logos Infield/Takeda), passageiro, rota com picote vermelho e avião,
@@ -13,7 +14,7 @@ código de barras ilustrativo no rodapé.
 - Cantos arredondados: linhas de <td> de 1 px (recuo na cor da página) — sem imagem.
 - Chegada: horario_<trecho>_chegada sob o destino (vazio = nada aparece).
 
-Uso: python3 build.py  → sobrescreve cartao-embarque.html  (requer Pillow)
+Uso: python3 build.py  → sobrescreve cartao-embarque-ida.html e cartao-embarque-volta.html  (requer Pillow)
 """
 import base64
 import io
@@ -249,23 +250,26 @@ def guide():
     return f"<!-- ORIENTAÇÕES -->\n<table {TABLE}>\n{body}\n</table>\n"
 
 HEAD = """<!--
-CARTÃO DE EMBARQUE — ENCONTRO INFIELD 2026 · MEU VOO — VERSÃO A
+CARTÃO DE EMBARQUE — {direction} — ENCONTRO INFIELD 2026 · MEU VOO — VERSÃO A
 GERADO por build.py — edite o script, não este arquivo.
 Cole todo este fragmento no editor HTML da plataforma.
 Markup legado apenas (table/tr/td/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.
 bgcolor SEMPRE em <td>: o app descarta bgcolor em <table>.
 Imagens de marca em https://super-cuchufli-2ce835.netlify.app/ (header-fita-780x192.png,
 logo-infield.png, logo-takeda-pilula.png). Avião e código de barras embutidos (data URI).
-Conexão oculta quando voo_<trecho>_conexao_aeroporto está vazio; cartão inteiro oculto sem voo_<trecho>_origem.
-Chegada: horario_ida_chegada / horario_volta_chegada. Bloco "Antes de embarcar" ao final.
+Conexão oculta quando voo_{leg}_conexao_aeroporto está vazio; cartão inteiro oculto sem voo_{leg}_origem.
+Chegada: horario_{leg}_chegada. Bloco "Antes de embarcar" ao final.
 Data_volta_ conserva o sublinhado final. Não substituir três chaves por duas.
-Campos entre {{{ }}} (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam {{ }}.
+Campos entre três chaves (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam duas.
 -->
 """
 
+LEGS = [("ida", "IDA", "Data_ida"), ("volta", "VOLTA", "Data_volta_")]
+
 def build():
-    html = HEAD + card("ida", "IDA", "Data_ida") + card("volta", "VOLTA", "Data_volta_") + guide()
-    Path(__file__).with_name("cartao-embarque.html").write_text(html, encoding="utf-8")
+    for leg, direction, date_field in LEGS:
+        html = HEAD.format(direction=direction, leg=leg) + card(leg, direction, date_field) + guide()
+        Path(__file__).with_name(f"cartao-embarque-{leg}.html").write_text(html, encoding="utf-8")
 
 if __name__ == "__main__":
     build()
