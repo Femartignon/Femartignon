@@ -41,10 +41,11 @@ A agenda oficial, com horários e salas de cada atividade, fica no app (menu Age
 - Alguns grupos têm programação específica e recebem as orientações diretamente pelo app.
 
 ## Credenciamento
-- Horário e local: A CONFIRMAR.
+- Onde: na área de check-in de grupos, ao chegar no hotel.
 
 ## Traje (dress code)
-- Encontro: A CONFIRMAR.
+- Encontro: roupas leves e confortáveis para os momentos sem agenda.
+- Dias em sala: leve um agasalho, pois os ambientes são fortemente refrigerados.
 - Festa de encerramento: A CONFIRMAR.
 
 ## Hospedagem
@@ -72,7 +73,7 @@ A agenda oficial, com horários e salas de cada atividade, fica no app (menu Age
 - Preserve seus dados pessoais e o número do seu quarto.
 - Mantenha celular, eletrônicos e objetos pessoais sempre por perto.
 - Em caso de dúvida ou emergência, procure a equipe do evento.
-- Contato de emergência e ponto de atendimento no local: A CONFIRMAR.
+- Contato de emergência e ponto de atendimento no local: confira a seção Guia de Segurança, no app.
 
 ## Viagem aérea
 - Os dados do seu voo (horários, assento, localizador) ficam no cartão do menu Meu Voo, no app. O cartão de embarque da companhia aérea é emitido no check-in.
@@ -97,5 +98,5 @@ A agenda oficial, com horários e salas de cada atividade, fica no app (menu Age
 | Logística (transfer, hotel) | Menu Mais › Logística do Evento |
 | Voo (dúvidas, alterações) | Menu Mais › Suporte da Agência |
 | Vacina e saúde | Equipe de saúde no local |
-| Emergência | Equipe do evento |
+| Emergência | Equipe do evento e seção Guia de Segurança, no app |
 | Outras dúvidas | Equipe do evento |
