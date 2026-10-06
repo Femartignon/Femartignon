@@ -49,7 +49,7 @@ const PALAVRAS = {
   'Evento': ['evento', 'endereco', 'onde fica', 'local', 'tema', 'datas', 'quando e', 'quem participa', 'participantes', 'estagiario', 'terceiro', 'hotel fica'],
   'Agenda': ['agenda', 'programacao', 'cronograma', 'abertura', 'plenaria', 'festa', 'encerramento', 'lideranca', 'treinamento', 'atividade', 'que horas', 'horario', 'programa'],
   'Credenciamento': ['credenciamento', 'cracha', 'credencial', 'registro'],
-  'Traje': ['traje', 'roupa', 'dress', 'vestir', 'vestimenta', 'look'],
+  'Traje': ['traje', 'roupa', 'dress', 'vestir', 'vestimenta', 'look', 'agasalho', 'casaco', 'blusa', 'ar condicionado', 'o que levar'],
   'Hospedagem': ['hospedagem', 'check-in', 'checkin', 'check in', 'check-out', 'checkout', 'check out', 'quarto', 'apartamento', 'early', 'late', 'bagagem', 'mala'],
   'Refeições': ['refeicao', 'refeicoes', 'jantar', 'almoco', 'cafe', 'comida', 'restaurante', 'comer', 'reembolso', 'cartao corporativo'],
   'Vacinação': ['vacina', 'vacinacao', 'dengue', 'dose'],
