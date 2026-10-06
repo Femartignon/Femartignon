@@ -40,7 +40,7 @@ PAGE = "#FFFFFF"         # fundo da página do app (cor fora da curva)
 LOGO_H = 28              # altura dos logos de marca no cabeçalho
 
 # Imagens de marca: base pública onde ficam os três arquivos (trocar aqui se mudar).
-BRAND = "https://super-cuchufli-2ce835.netlify.app/"
+BRAND = "https://cartao-embarque-infield-2026.netlify.app/"
 
 TABLE = 'role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0"'
 
@@ -255,7 +255,7 @@ GERADO por build.py — edite o script, não este arquivo.
 Cole todo este fragmento no editor HTML da plataforma.
 Markup legado apenas (table/tr/td/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.
 bgcolor SEMPRE em <td>: o app descarta bgcolor em <table>.
-Imagens de marca em https://super-cuchufli-2ce835.netlify.app/ (header-fita-780x192.png,
+Imagens de marca em https://cartao-embarque-infield-2026.netlify.app/ (header-fita-780x192.png,
 logo-infield.png, logo-takeda-pilula.png). Avião e código de barras embutidos (data URI).
 Conexão oculta quando voo_{leg}_conexao_aeroporto está vazio; cartão inteiro oculto sem voo_{leg}_origem.
 Chegada: horario_{leg}_chegada. Bloco "Antes de embarcar" ao final.
