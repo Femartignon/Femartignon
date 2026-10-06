@@ -85,5 +85,8 @@ for (const [pergunta, esperado] of casosBase) {
   const r = await responderPelaBase(pergunta);
   assert(r.includes(esperado), `base: "${pergunta}" → contém "${esperado}"`);
 }
+const agenda = await responderPelaBase('Qual a agenda?');
+assert(agenda.includes('- 16/11 (segunda):') && !agenda.includes('|'), 'base: tabela da Agenda vira lista, sem "|"');
+assert(!(await responderPelaBase('Quais as regras para o assistente?')).includes('Nunca deduza'), 'base: seção "Regras para o assistente" não aparece ao participante');
 const rBase = await responderSemModelo([{ role: 'user', content: 'Qual o dress code?' }]);
 assert(rBase.status === 200 && (await rBase.text()).includes('Traje'), 'base: rota responde 200 em texto');

@@ -5,6 +5,21 @@
 import { readFileSync } from 'node:fs';
 import { ferramentas } from './ferramentas.mjs';
 
+// Linhas de tabela markdown viram itens: "| 16/11 | Plenária |" → "- 16/11: Plenária".
+// O cabeçalho (linha antes do separador |---|) e o próprio separador são descartados.
+const SEPARADOR = /^\|[\s:|-]+\|$/;
+function tabelaParaLista(linhas) {
+  return linhas.flatMap((linha, i) => {
+    if (!linha.startsWith('|')) return [linha];
+    if (SEPARADOR.test(linha) || SEPARADOR.test(linhas[i + 1] ?? '')) return [];
+    const [chave, ...resto] = linha.split('|').map((c) => c.trim()).filter(Boolean);
+    return [resto.length ? `- ${chave}: ${resto.join(' — ')}` : `- ${chave}`];
+  });
+}
+
+// Seções internas da base, que orientam o assistente mas não são exibidas ao participante
+const INTERNAS = ['regras para o assistente', 'como ler esta base'];
+
 // Seções "## Título" da base → { titulo, linhas }
 export function lerBase(texto) {
   const secoes = [];
@@ -18,27 +33,30 @@ export function lerBase(texto) {
       atual.linhas.push(linha.trim());
     }
   }
-  return secoes.filter((s) => s.titulo !== 'Como ler esta base');
+  return secoes
+    .filter((s) => !INTERNAS.some((t) => normaliza(s.titulo).startsWith(t)))
+    .map((s) => ({ ...s, linhas: tabelaParaLista(s.linhas) }));
 }
+
+const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
 const BASE = lerBase(readFileSync(new URL('./conhecimento.md', import.meta.url), 'utf8'));
 
-const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-
-// Palavras-chave por seção (sem acento). O título da seção também conta,
-// então uma seção nova na base já é encontrada pelas palavras do próprio título.
+// Palavras-chave por seção (sem acento), ligadas pelo início do título da seção
+// ("Agenda" vale para "Agenda (previsto)"). O título também conta, então uma seção
+// nova na base já é encontrada pelas palavras do próprio título.
 const PALAVRAS = {
   'Evento': ['evento', 'endereco', 'onde fica', 'local', 'tema', 'datas', 'quando e', 'quem participa', 'participantes', 'estagiario', 'terceiro', 'hotel fica'],
   'Agenda': ['agenda', 'programacao', 'cronograma', 'abertura', 'plenaria', 'festa', 'encerramento', 'lideranca', 'treinamento', 'atividade', 'que horas', 'horario', 'programa'],
   'Credenciamento': ['credenciamento', 'cracha', 'credencial', 'registro'],
-  'Traje (dress code)': ['traje', 'roupa', 'dress', 'vestir', 'vestimenta', 'look'],
+  'Traje': ['traje', 'roupa', 'dress', 'vestir', 'vestimenta', 'look'],
   'Hospedagem': ['hospedagem', 'check-in', 'checkin', 'check in', 'check-out', 'checkout', 'check out', 'quarto', 'apartamento', 'early', 'late', 'bagagem', 'mala'],
   'Refeições': ['refeicao', 'refeicoes', 'jantar', 'almoco', 'cafe', 'comida', 'restaurante', 'comer', 'reembolso', 'cartao corporativo'],
-  'Vacinação (ação interna)': ['vacina', 'vacinacao', 'dengue', 'dose'],
+  'Vacinação': ['vacina', 'vacinacao', 'dengue', 'dose'],
   'Segurança': ['seguranca', 'emergencia', 'saida de emergencia', 'perigo', 'roubo'],
   'Viagem aérea': ['voo', 'aereo', 'aerea', 'passagem', 'embarque', 'companhia', 'localizador', 'assento', 'aeroporto', 'franquia', 'franquia de bagagem', 'quantos kg', 'peso da mala', 'mochila'],
-  'Chegada ao Rio, transfer e hotel': ['transfer', 'traslado', 'chegada', 'buscar', ' van', 'onibus'],
-  'App do evento': ['app', 'aplicativo', 'login', 'senha', 'sso', 'menu'],
+  'Transfer': ['transfer', 'traslado', 'receptivo', 'chegada', 'buscar', ' van', 'onibus', 'saida do hotel'],
+  'App': ['app', 'aplicativo', 'login', 'senha', 'sso', 'menu'],
   'Contatos': ['contato', 'suporte', 'ajuda', 'falar com', 'telefone', 'organizacao'],
 };
 
@@ -49,7 +67,7 @@ const INTENCOES = {
 };
 
 // Palavras de título genéricas demais para indicar uma seção sozinhas
-const GENERICAS = ['hotel', 'evento', 'acao', 'interna', 'chegada'];
+const GENERICAS = ['hotel', 'evento', 'acao', 'interna', 'chegada', 'previsto', 'contra'];
 
 const FORA_DO_ESCOPO = ['medicamento', 'remedio', 'doenca', 'tratamento', 'estudo clinico', 'bula', 'posologia', 'dosagem', 'concorrente', 'meta comercial', 'preco'];
 
@@ -66,7 +84,8 @@ export function escolherSecoes(pergunta) {
   const q = normaliza(pergunta);
   return BASE.map((s) => {
     const doTitulo = normaliza(s.titulo).split(/[^a-z]+/).filter((p) => p.length > 3 && !GENERICAS.includes(p));
-    const termos = [...(PALAVRAS[s.titulo] ?? []), ...doTitulo];
+    const chave = Object.keys(PALAVRAS).find((k) => normaliza(s.titulo).startsWith(normaliza(k)));
+    const termos = [...(PALAVRAS[chave] ?? []), ...doTitulo];
     const pontos = termos.reduce((n, t) => n + (q.includes(t) ? t.length : 0), 0);
     return { s, pontos };
   })
