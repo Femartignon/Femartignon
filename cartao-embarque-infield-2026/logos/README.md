@@ -1,6 +1,6 @@
 # Logos das companhias aéreas
 
-Usados pelo cartão de embarque (`cartao-embarque.html`). O cartão monta a URL
+Usados pelo cartão de embarque (`cartao-embarque-ida.html` / `cartao-embarque-volta.html`). O cartão monta a URL
 a partir do campo `voo_ida_cia` / `voo_volta_cia` (código IATA):
 
 `https://raw.githubusercontent.com/Femartignon/Femartignon/main/cartao-embarque-infield-2026/logos/<IATA>.png`
