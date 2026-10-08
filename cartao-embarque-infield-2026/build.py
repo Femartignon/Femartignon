@@ -5,14 +5,18 @@ legado (table/tr/td/font/bgcolor/img) + Handlebars. Um arquivo por trecho (cada 
 vai numa aba do app), com o bloco "Antes de embarcar" ao final de ambos —
 mas a fonte única de verdade é este script.
 
-Layout "Meu Voo — versão A": bilhete creme de largura fluida (100%, como a V6) com cabeçalho de marca
-(fita + logos Infield/Takeda), passageiro, rota com picote vermelho e avião,
-grade 2×2 (Data, Horário, Voo, Localizador), conexão condicional e
-código de barras ilustrativo no rodapé.
+Layout "Meu Voo — versão A.1 (detalhe do voo)": bilhete creme de largura fluida (100%, como a
+V6) com cabeçalho de marca (fita + logos Infield/Takeda), passageiro, título "<cidade origem> a
+<cidade destino>", selo com o número do voo, colunas Partida/Chegada (data, horário + código,
+cidade) com o picote e o avião ao centro, Operado por/Duração (opcionais), Localizador (vermelho),
+conexão condicional e código de barras ilustrativo no rodapé. Inspirado no modal "Detalhe do voo"
+de apps de companhia aérea.
 - Imagens de marca: hospedadas em BRAND (header-fita, logo-infield, logo-takeda-pilula).
 - Avião e código de barras: PNG gerados aqui e embutidos como data URI (sem hospedagem).
-- Cantos arredondados: linhas de <td> de 1 px (recuo na cor da página) — sem imagem.
-- Chegada: horario_<trecho>_chegada sob o destino (vazio = nada aparece).
+- Cantos arredondados: linhas de <td> de 1 px (recuo na cor da página) — sem imagem; o selo do
+  voo usa style="border-radius" (também validado no app).
+- Cidade/operadora/duração são campos opcionais: sem cadastro, caem no código IATA ou somem.
+- Chegada: horario_<trecho>_chegada sob o destino (vazio = mostra só o código, sem horário).
 
 Uso: python3 build.py  → sobrescreve cartao-embarque-ida.html e cartao-embarque-volta.html  (requer Pillow)
 """
@@ -31,9 +35,9 @@ INK = "#1E2A38"          # texto
 ACCENT = "#E1242A"       # vermelho Takeda: picote, avião, localizador, rótulo do trecho
 MUTED = "#7A8591"        # rótulos (INK suavizado sobre o creme)
 HAIR = "#E4DDD2"         # filetes divisórios
+HAIR2 = "#EFEAE0"        # fundo do selo do número do voo
 WHITE = "#FFFFFF"
 G = 20                   # gutter lateral (px)
-CODE_H = 56              # altura da linha dos códigos IATA (fonte 48 px)
 R = 12                   # raio dos cantos (px), desenhado com <td> de 1 px
 PAGE = "#FFFFFF"         # fundo da página do app (cor fora da curva)
 LOGO_H = 28              # altura dos logos de marca no cabeçalho
@@ -151,40 +155,70 @@ def dots(n=7):
     cells = "".join(f'<td height="2" bgcolor="{ACCENT if i % 2 == 0 else CREAM}"></td>' for i in range(n))
     return f'<table {TABLE}><tr>{cells}</tr></table>'
 
-def route(leg):
-    """Rótulos / códigos / chegada: cada texto na própria linha com altura explícita —
-    o app impõe line-height fixo e, com <br>, o código de 48 px invade o rótulo."""
-    p = f"voo_{leg}"
-    sep = (f'<table {TABLE}><tr>'
-           f'<td width="8"></td><td valign="middle">{dots()}</td>'
-           f'<td width="36" align="center" valign="middle"><img src="{PLANE}" alt="" width="24" height="24" style="display:block;"></td>'
-           f'<td valign="middle">{dots()}</td><td width="8"></td>'
-           f'</tr></table>')
-    row = lambda h, l, c, r, va="middle": (
-        f'<tr><td width="30%" height="{h}" valign="{va}">{l}</td>'
-        f'<td width="40%" valign="{va}" align="center">{c}</td>'
-        f'<td width="30%" valign="{va}" align="right">{r}</td></tr>')
-    arrival = when(f"horario_{leg}_chegada", text("Chegada " + v(f"horario_{leg}_chegada"), 2, MUTED))
-    return band(
-        f'<table {TABLE}>'
-        + row(16, label("ORIGEM"), "", label("DESTINO"), "bottom")
-        + row(CODE_H, text(v(f"{p}_origem"), 7, INK, bold=True), sep, text(v(f"{p}_destino"), 7, INK, bold=True))
-        + row(20, "", "", arrival, "top")
-        + "</table>", CREAM, bottom=16)
+def either(field, yes_html, no_html):
+    return "{{#if activatedPerson." + field + "}}" + yes_html + "{{else}}" + no_html + "{{/if}}"
 
 def cell(name, value, color=INK, size=3):
     return (f'<table {TABLE}><tr><td height="16" valign="bottom">{label(name)}</td></tr>'
             f'<tr><td height="28" valign="middle">{text(value, size, color, bold=True)}</td></tr></table>')
 
-def grid(leg, date_field):
-    """Grade 2×2: Data | Horário / Voo | Localizador (vermelho)."""
-    pair = lambda a, b: (f'<table {TABLE}><tr><td width="50%" valign="top">{a}</td>'
-                         f'<td width="50%" valign="top">{b}</td></tr></table>')
+def route_title(leg):
+    """'<cidade origem> a <cidade destino>', como no modal 'Detalhe do voo'.
+    Sem a cidade cadastrada, cai no código IATA (campos opcionais)."""
+    p = f"voo_{leg}"
+    origem = either(f"{p}_origem_cidade", v(f"{p}_origem_cidade"), v(f"{p}_origem"))
+    destino = either(f"{p}_destino_cidade", v(f"{p}_destino_cidade"), v(f"{p}_destino"))
+    titulo = text(origem, 5, INK, bold=True) + text(" a ", 5, MUTED) + text(destino, 5, INK, bold=True)
+    return band(f'<table {TABLE}><tr><td height="34" valign="middle">{titulo}</td></tr></table>', CREAM, bottom=14)
+
+def flight_chip(leg):
+    """Selo com o número do voo — 'LA 3122' —, igual ao topo do card de detalhe."""
+    inner = f'<table {TABLE}><tr><td height="36" align="center" valign="middle" bgcolor="{HAIR2}" style="border-radius:8px">{text(v(f"voo_{leg}_partida", triple=True), 3, INK, bold=True)}</td></tr></table>'
+    return band(inner + gap(16) + hair(), CREAM, bottom=16)
+
+def route_detail(leg, date_field):
+    """Colunas Partida/Chegada (data, horário + código, cidade) com o picote e o avião ao centro —
+    reaproveita o separador já validado no app, só que agora entre os blocos, não entre dois códigos soltos."""
+    p = f"voo_{leg}"
+    sep = (f'<table {TABLE}><tr>'
+           f'<td width="8"></td><td valign="middle">{dots(5)}</td>'
+           f'<td width="36" align="center" valign="middle"><img src="{PLANE}" alt="" width="22" height="22" style="display:block;"></td>'
+           f'<td valign="middle">{dots(5)}</td><td width="8"></td>'
+           f'</tr></table>')
+    partida = (f'<table {TABLE}>'
+               f'<tr><td height="18" valign="bottom">{text(v(date_field), 1, MUTED)}</td></tr>'
+               f'<tr><td height="6"></td></tr>'
+               f'<tr><td height="30" valign="middle">{text(v(f"horario_{leg}"), 5, INK, bold=True)}&nbsp;&nbsp;{text(v(f"{p}_origem"), 4, MUTED, bold=True)}</td></tr>'
+               f'<tr><td height="18" valign="top">{when(f"{p}_origem_cidade", text(v(f"{p}_origem_cidade"), 2, MUTED))}</td></tr>'
+               f'</table>')
+    chegada_hora = either(f"horario_{leg}_chegada",
+                          text(v(f"horario_{leg}_chegada"), 5, INK, bold=True) + "&nbsp;&nbsp;" + text(v(f"{p}_destino"), 4, MUTED, bold=True),
+                          text(v(f"{p}_destino"), 5, INK, bold=True))
+    chegada = (f'<table {TABLE}>'
+               f'<tr><td height="18" valign="bottom">{text(v(date_field), 1, MUTED)}</td></tr>'
+               f'<tr><td height="6"></td></tr>'
+               f'<tr><td height="30" valign="middle">{chegada_hora}</td></tr>'
+               f'<tr><td height="18" valign="top">{when(f"{p}_destino_cidade", text(v(f"{p}_destino_cidade"), 2, MUTED))}</td></tr>'
+               f'</table>')
+    row = (f'<tr><td width="40%" valign="top">{partida}</td>'
+           f'<td width="20%" valign="middle" align="center">{sep}</td>'
+           f'<td width="40%" valign="top" align="right">{chegada}</td></tr>')
+    labels = (f'<tr><td width="40%" height="18" valign="bottom">{label("PARTIDA")}</td>'
+              f'<td width="20%"></td>'
+              f'<td width="40%" height="18" valign="bottom" align="right">{label("CHEGADA")}</td></tr>')
+    return band(f'<table {TABLE}>{labels}{row}</table>', CREAM, bottom=16)
+
+def operator(leg):
+    """Operado por (nome da cia, opcional) / Duração (opcional) — some a linha inteira se os dois faltarem."""
+    p = f"voo_{leg}"
+    pair = lambda a, b: (f'<table {TABLE}><tr><td width="60%" valign="top">{a}</td>'
+                         f'<td width="40%" valign="top">{b}</td></tr></table>')
     inner = (hair() + gap(14)
-             + pair(cell("DATA", v(date_field)), cell("HORÁRIO", v(f"horario_{leg}")))
-             + gap(10)
-             + pair(cell("VOO", v(f"voo_{leg}_partida", triple=True)),
-                    cell("LOCALIZADOR", v(f"voo_{leg}_localizador"), ACCENT, 4)))
+             + pair(cell("OPERADO POR", v(f"{p}_operadora", triple=True)), cell("DURAÇÃO", v(f"{p}_duracao"))))
+    return when(f"{p}_operadora", band(inner, CREAM, bottom=16))
+
+def locator(leg):
+    inner = hair() + gap(14) + cell("LOCALIZADOR", v(f"voo_{leg}_localizador"), ACCENT, 4)
     return band(inner, CREAM, bottom=16)
 
 def connection(leg):
@@ -212,8 +246,11 @@ def card(leg, direction, date_field):
         corners(CREAM, "t"),
         header(),
         passenger(direction),
-        route(leg),
-        grid(leg, date_field),
+        route_title(leg),
+        flight_chip(leg),
+        route_detail(leg, date_field),
+        operator(leg),
+        locator(leg),
         connection(leg),
         footer(),
         corners(CREAM, "b"),
@@ -249,17 +286,20 @@ def guide():
     return f"<!-- ORIENTAÇÕES -->\n<table {TABLE}>\n{body}\n</table>\n"
 
 HEAD = """<!--
-CARTÃO DE EMBARQUE — {direction} — ENCONTRO INFIELD 2026 · MEU VOO — VERSÃO A
+CARTÃO DE EMBARQUE — {direction} — ENCONTRO INFIELD 2026 · MEU VOO — VERSÃO A.1 (DETALHE DO VOO)
 GERADO por build.py — edite o script, não este arquivo.
 Cole todo este fragmento no editor HTML da plataforma.
 Markup legado apenas (table/tr/td/font/bgcolor/img): sem JS, <style>, <div> ou flexbox.
 bgcolor SEMPRE em <td>: o app descarta bgcolor em <table>.
 Imagens de marca em https://cartao-embarque-infield-2026.netlify.app/ (header-fita-780x192.png,
 logo-infield.png, logo-takeda-pilula.png). Avião e código de barras embutidos (data URI).
+Campos novos e opcionais: voo_{leg}_origem_cidade, voo_{leg}_destino_cidade (sem eles, usa o
+código IATA), voo_{leg}_operadora (sem ela, a linha Operado por/Duração some) e voo_{leg}_duracao.
 Conexão oculta quando voo_{leg}_conexao_aeroporto está vazio; cartão inteiro oculto sem voo_{leg}_origem.
-Chegada: horario_{leg}_chegada. Bloco "Antes de embarcar" ao final.
-Data_volta_ conserva o sublinhado final. Não substituir três chaves por duas.
-Campos entre três chaves (Cia+Nº, conexões) aceitam HTML/entidades sem escapar; os demais usam duas.
+Chegada: horario_{leg}_chegada (vazio = mostra só o código do destino, sem horário).
+Bloco "Antes de embarcar" ao final. Data_volta_ conserva o sublinhado final.
+Não substituir três chaves por duas. Campos entre três chaves (Cia+Nº, operadora, conexões)
+aceitam HTML/entidades sem escapar; os demais usam duas.
 -->
 """
 

@@ -10,18 +10,22 @@ IDA e VOLTA ficam em **abas separadas** do app → **um arquivo por trecho**.
 
 ## Estado atual
 
-- Design em produção: **"Meu Voo — versão A"**. Bilhete creme com:
+- Design em produção: **"Meu Voo — versão A.1 (detalhe do voo)"**, inspirado no modal "Detalhe
+  do voo" de apps de cia aérea. Bilhete creme com:
   - fita de marca e logos Infield à esquerda e Takeda à direita;
   - passageiro;
-  - rota com picote vermelho e avião;
-  - grade 2×2: Data, Horário, Voo, Localizador (em vermelho);
+  - título "<cidade origem> a <cidade destino>" (cai no código IATA sem a cidade cadastrada);
+  - selo com o número do voo (`style="border-radius"`);
+  - colunas PARTIDA/CHEGADA: data, horário + código, cidade — com o picote e o avião ao centro;
+  - OPERADO POR / DURAÇÃO (linha some por inteiro sem `voo_<trecho>_operadora`);
+  - LOCALIZADOR (vermelho);
   - linha de conexão condicional;
   - código de barras ilustrativo;
   - bloco "Antes de embarcar".
 - Largura **fluida (`width="100%"`)**, igual à V6 validada. Largura fixa (390 px) fez o
   cartão transbordar para a direita no app. Não voltar a fixar.
 - Entregáveis: `cartao-embarque-ida.html` e `cartao-embarque-volta.html`.
-- Pendente: o usuário ainda não confirmou no app a versão A depois da correção de largura.
+- Pendente: o usuário ainda não confirmou no app a versão A.1.
 
 ## Arquivos
 
@@ -58,8 +62,11 @@ os HTML ao usuário (como arquivo e/ou texto para colar).
 | `voo_<trecho>_localizador` | Localizador (vermelho) |
 | `voo_<trecho>_conexao_aeroporto` | Linha "Conexão" só aparece se preenchido — `{{{ }}}` |
 | `voo_<trecho>_conexao_voo` | Opcional dentro da linha de conexão — `{{{ }}}` |
-| `Data_ida` / `Data_volta_` | Data. **`Data_volta_` tem sublinhado final.** |
-| `voo_<trecho>_cia`, `voo_<trecho>_cor` | Usados só na V6 (logo e cor por cia). A versão A não usa. |
+| `Data_ida` / `Data_volta_` | Data (texto livre, ex. "Ter. 13 out. 2026"). **`Data_volta_` tem sublinhado final.** |
+| `voo_<trecho>_origem_cidade` / `_destino_cidade` | Opcional. Sem elas, o título usa o código IATA. |
+| `voo_<trecho>_operadora` | Opcional, ex. "LATAM Airlines Brasil" — `{{{ }}}`. Sem ela, a linha OPERADO POR/DURAÇÃO some. |
+| `voo_<trecho>_duracao` | Opcional, ex. "1h 15m". Só aparece se `_operadora` também estiver preenchido. |
+| `voo_<trecho>_cia`, `voo_<trecho>_cor` | Usados só na V6 (logo e cor por cia). A versão A.1 não usa. |
 
 Tags nativas do app (formato dos valores ainda não verificado):
 - `workspace.`: `name`, `id`, `organization_name`, `start_date`, `end_date`, `timezone`,
@@ -109,7 +116,8 @@ Tags nativas do app (formato dos valores ainda não verificado):
 1. `python3 build.py`
 2. `python3 preview.py cartao-embarque-ida.html` e `python3 preview.py cartao-embarque-volta.html --conexao`
    → gera `preview-*.html` (ignorado pelo git), que descarta `bgcolor` de tabela, força
-   line-height e resolve `if`/`else`.
+   line-height e resolve `if`/`else`. `--minimo` omite cidade/operadora/duração, para testar
+   o fallback desses campos opcionais.
 3. Screenshot a 360 px:
    ```
    /opt/pw-browsers/chromium --headless --no-sandbox --hide-scrollbars --force-device-scale-factor=2 \
@@ -129,6 +137,10 @@ Tags nativas do app (formato dos valores ainda não verificado):
   por cia removidos. Separação em dois arquivos (pedido do usuário). Logos numa linha sob a fita,
   porque sem CSS não há sobreposição de imagens.
 - PR #40: largura fluida (100%).
+- Versão A.1 (detalhe do voo): layout refeito a partir de um print do modal "Detalhe do voo" de
+  um app de cia aérea (título com cidades, selo do número do voo, colunas Partida/Chegada,
+  Operado por/Duração). Reaproveita o separador picote+avião já validado. Campos novos opcionais:
+  `_origem_cidade`, `_destino_cidade`, `_operadora`, `_duracao`.
 
 ## Preferências do usuário
 
