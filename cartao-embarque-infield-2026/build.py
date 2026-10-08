@@ -209,8 +209,13 @@ def vline(h):
 def icon_label(icon, t):
     return (f'<table border="0" cellspacing="0" cellpadding="0"><tr>'
             f'<td valign="middle"><img src="{icon}" alt="" width="14" height="14" style="display:block;"></td>'
-            f'<td width="4"></td><td valign="middle">{label(t, MUTED2)}</td>'
+            f'<td width="4"></td><td valign="middle">{text(t, 2, INK2)}</td>'
             f'</tr></table>')
+
+def plain_cell(name, value):
+    """Rótulo em caixa normal e peso regular + valor em peso regular — como 'Operado por' no print."""
+    return (f'<table {TABLE}><tr><td height="18" valign="bottom">{text(name, 2, MUTED2)}</td></tr>'
+            f'<tr><td height="26" valign="middle">{text(value, 3, INK2)}</td></tr></table>')
 
 def flight_detail(leg, date_field):
     """Bloco 'Detalhe do voo': zona cinza com o título (cidades) e, dentro dela, o cartão branco
@@ -222,8 +227,8 @@ def flight_detail(leg, date_field):
     # Título — cai no código IATA sem a cidade cadastrada (campo opcional).
     origem = either(f"{p}_origem_cidade", v(f"{p}_origem_cidade"), v(f"{p}_origem"))
     destino = either(f"{p}_destino_cidade", v(f"{p}_destino_cidade"), v(f"{p}_destino"))
-    titulo = text(origem, 5, NAVY, bold=True) + text(" a ", 5, MUTED2) + text(destino, 5, NAVY, bold=True)
-    titulo_row = band(f'<table {TABLE}><tr><td height="34" valign="middle">{titulo}</td></tr></table>',
+    titulo = text(origem, 4, NAVY, bold=True) + text(" a ", 4, MUTED2) + text(destino, 4, NAVY, bold=True)
+    titulo_row = band(f'<table {TABLE}><tr><td height="34" valign="middle" align="center">{titulo}</td></tr></table>',
                        ZONE_BG, top=18, bottom=16)
 
     # Selo do voo — número puro, sem fundo, como no print (o antigo selo com bgcolor saiu daqui).
@@ -232,29 +237,29 @@ def flight_detail(leg, date_field):
     # Colunas Partida/Chegada, linha a linha: rótulo+ícone, data, horário+código, cidade —
     # com a linha vertical (e o avião ao centro, na linha do horário) entre as duas.
     chegada_hora = either(f"horario_{leg}_chegada",
-                          text(v(f"horario_{leg}_chegada"), 5, NAVY, bold=True) + "&nbsp;&nbsp;" + text(v(f"{p}_destino"), 4, MUTED2),
+                          text(v(f"horario_{leg}_chegada"), 5, NAVY, bold=True) + "&nbsp;&nbsp;" + text(v(f"{p}_destino"), 3, MUTED2),
                           text(v(f"{p}_destino"), 5, NAVY, bold=True))
     rows = (
-        f'<tr><td width="40%" height="20" valign="bottom">{icon_label(TAKEOFF, "Partida")}</td>'
-        f'<td width="20%" valign="bottom">{vline(20)}</td>'
-        f'<td width="40%" height="20" valign="bottom" align="right">{icon_label(LANDING, "Chegada")}</td></tr>'
-        f'<tr><td height="18" valign="top">{text(v(date_field), 1, MUTED2)}</td>'
-        f'<td>{vline(18)}</td>'
-        f'<td height="18" valign="top" align="right">{text(v(date_field), 1, MUTED2)}</td></tr>'
-        f'<tr><td height="6"></td><td>{vline(6)}</td><td></td></tr>'
-        f'<tr><td height="34" valign="middle">{text(v(f"horario_{leg}"), 5, NAVY, bold=True)}&nbsp;&nbsp;{text(v(f"{p}_origem"), 4, MUTED2)}</td>'
-        f'<td align="center" valign="middle"><img src="{CONNECTOR}" alt="" width="40" height="40" style="display:block;"></td>'
-        f'<td height="34" valign="middle" align="right">{chegada_hora}</td></tr>'
-        f'<tr><td height="20" valign="top">{when(f"{p}_origem_cidade", text(v(f"{p}_origem_cidade"), 2, INK2))}</td>'
+        f'<tr><td width="41%" height="22" valign="bottom">{icon_label(TAKEOFF, "Partida")}</td>'
+        f'<td width="18%" valign="bottom">{vline(22)}</td>'
+        f'<td width="41%" height="22" valign="bottom" align="left">{icon_label(LANDING, "Chegada")}</td></tr>'
+        f'<tr><td height="20" valign="top">{text(v(date_field), 2, INK2)}</td>'
         f'<td>{vline(20)}</td>'
-        f'<td height="20" valign="top" align="right">{when(f"{p}_destino_cidade", text(v(f"{p}_destino_cidade"), 2, INK2))}</td></tr>'
+        f'<td height="20" valign="top" align="left">{text(v(date_field), 2, INK2)}</td></tr>'
+        f'<tr><td height="8"></td><td>{vline(8)}</td><td></td></tr>'
+        f'<tr><td height="36" valign="middle">{text(v(f"horario_{leg}"), 5, NAVY, bold=True)}&nbsp;&nbsp;{text(v(f"{p}_origem"), 3, MUTED2)}</td>'
+        f'<td align="center" valign="middle"><img src="{CONNECTOR}" alt="" width="30" height="30" style="display:block;"></td>'
+        f'<td height="36" valign="middle" align="left">{chegada_hora}</td></tr>'
+        f'<tr><td height="22" valign="top">{when(f"{p}_origem_cidade", text(v(f"{p}_origem_cidade"), 2, INK2))}</td>'
+        f'<td>{vline(22)}</td>'
+        f'<td height="22" valign="top" align="left">{when(f"{p}_destino_cidade", text(v(f"{p}_destino_cidade"), 2, INK2))}</td></tr>'
     )
     detail_band = band(f'<table {TABLE}>{rows}</table>', CARD_BG)
 
     # Operado por/Duração (opcionais) — sem operadora, fecha com o mesmo respiro, sem a linha.
     pair = (f'<table {TABLE}><tr>'
-           f'<td width="60%" valign="top">{cell("OPERADO POR", v(f"{p}_operadora", triple=True), INK2, label_color=MUTED2)}</td>'
-           f'<td width="40%" valign="top">{cell("DURAÇÃO", v(f"{p}_duracao"), INK2, label_color=MUTED2)}</td>'
+           f'<td width="66%" valign="top">{plain_cell("Operado por", v(f"{p}_operadora", triple=True))}</td>'
+           f'<td width="34%" valign="top">{plain_cell("Duração", v(f"{p}_duracao"))}</td>'
            f'</tr></table>')
     # band() aqui repõe o gutter G que pair() não tem sozinho — sem ele "Operado por" ficava
     # colado na borda do cartão branco, 20 px mais à esquerda que "LA 3050"/"Partida" acima.
