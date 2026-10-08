@@ -92,3 +92,14 @@ assert(agenda.includes('- 16/11 (segunda):') && !agenda.includes('|'), 'base: ta
 assert(!(await responderPelaBase('Quais as regras para o assistente?')).includes('Nunca deduza'), 'base: seção "Regras para o assistente" não aparece ao participante');
 const rBase = await responderSemModelo([{ role: 'user', content: 'Qual o dress code?' }]);
 assert(rBase.status === 200 && (await rBase.text()).includes('Traje'), 'base: rota responde 200 em texto');
+
+// 5. Rota compartilhada: Netlify e Vercel respondem igual (sem chave → base de conhecimento)
+const { default: rotaNetlify } = await import('../netlify/functions/agente.mjs');
+const { POST: rotaVercel } = await import('../api/agente.mjs');
+delete process.env.ANTHROPIC_API_KEY;
+for (const [nome, rota] of [['netlify', rotaNetlify], ['vercel', rotaVercel]]) {
+  const r = await rota(new Request('http://x/api/agente', { method: 'POST', body: JSON.stringify({ mensagens: [{ role: 'user', content: 'Onde é o credenciamento?' }] }) }));
+  assert(r.status === 200 && (await r.text()).includes('check-in de grupos'), `rota ${nome}: responde pela base`);
+}
+const rGet = await rotaNetlify(new Request('http://x/api/agente'));
+assert(rGet.status === 405, 'rota: GET recusado com 405');
