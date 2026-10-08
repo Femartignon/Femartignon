@@ -16,15 +16,19 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 BRAND = "https://cartao-embarque-infield-2026.netlify.app/"
 
-def sample(conexao):
-    d = {"fname": "Felipe", "lname": "Martignon", "Data_ida": "16/11/2026", "Data_volta_": "19/11/2026"}
-    for leg, (o, de, h, c) in {"ida": ("GRU", "SDU", "09:00", "10:05"),
-                               "volta": ("SDU", "GRU", "18:30", "19:35")}.items():
+def sample(conexao, minimo=False):
+    d = {"fname": "Felipe", "lname": "Martignon", "Data_ida": "Ter. 13 out. 2026", "Data_volta_": "Qui. 15 out. 2026"}
+    legs = {"ida": ("CGH", "São Paulo", "CNF", "Belo Horizonte", "11:05", "12:20"),
+            "volta": ("CNF", "Belo Horizonte", "CGH", "São Paulo", "17:40", "18:55")}
+    for leg, (o, oc, de, dc, h, c) in legs.items():
         d.update({f"voo_{leg}_origem": o, f"voo_{leg}_destino": de, f"horario_{leg}": h,
-                  f"horario_{leg}_chegada": c, f"voo_{leg}_partida": "LA 3122",
+                  f"horario_{leg}_chegada": c, f"voo_{leg}_partida": "LA 3050",
                   f"voo_{leg}_localizador": "ECWYJA",
                   f"voo_{leg}_conexao_aeroporto": "BSB" if conexao else "",
                   f"voo_{leg}_conexao_voo": "LA 4410" if conexao else ""})
+        if not minimo:                                                # campos novos opcionais
+            d.update({f"voo_{leg}_origem_cidade": oc, f"voo_{leg}_destino_cidade": dc,
+                      f"voo_{leg}_operadora": "LATAM Airlines Brasil", f"voo_{leg}_duracao": "1h 15m"})
     return d
 
 IF = re.compile(r"\{\{#if activatedPerson\.(\w+)\}\}((?:(?!\{\{#if).)*?)"
@@ -42,10 +46,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("arquivo")
     ap.add_argument("--conexao", action="store_true", help="preenche os campos de conexão")
+    ap.add_argument("--minimo", action="store_true", help="omite os campos novos opcionais (cidade/operadora/duração)")
     ap.add_argument("--largura", type=int, default=360, help="largura da tela simulada (px)")
     a = ap.parse_args()
     path = HERE / a.arquivo
-    body = render(path.read_text(encoding="utf-8"), sample(a.conexao))
+    body = render(path.read_text(encoding="utf-8"), sample(a.conexao, a.minimo))
     out = HERE / f"preview-{path.stem}.html"
     out.write_text('<!doctype html><html><head><meta charset="utf-8">'
                    '<style>body{line-height:22px}img{vertical-align:middle}</style></head>'
