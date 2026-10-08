@@ -10,22 +10,30 @@ IDA e VOLTA ficam em **abas separadas** do app → **um arquivo por trecho**.
 
 ## Estado atual
 
-- Design em produção: **"Meu Voo — versão A.1 (detalhe do voo)"**, inspirado no modal "Detalhe
-  do voo" de apps de cia aérea. Bilhete creme com:
-  - fita de marca e logos Infield à esquerda e Takeda à direita;
-  - passageiro;
-  - título "<cidade origem> a <cidade destino>" (cai no código IATA sem a cidade cadastrada);
-  - selo com o número do voo (`style="border-radius"`);
-  - colunas PARTIDA/CHEGADA: data, horário + código, cidade — com o picote e o avião ao centro;
-  - OPERADO POR / DURAÇÃO (linha some por inteiro sem `voo_<trecho>_operadora`);
-  - LOCALIZADOR (vermelho);
-  - linha de conexão condicional;
-  - código de barras ilustrativo;
-  - bloco "Antes de embarcar".
+- Design em produção: **"Meu Voo — versão A.2 (detalhe do voo)"**. Bilhete creme com fita de
+  marca, logos Infield/Takeda, passageiro e o bloco **"Detalhe do voo"**, replicado o mais perto
+  possível de um print de app de cia aérea fornecido pelo usuário (paleta própria, ver abaixo):
+  - zona cinza (`ZONE_BG`) com o título "<cidade origem> a <cidade destino>" em navy
+    (cai no código IATA sem a cidade cadastrada);
+  - dentro dela, um cartão branco (`CARD_BG`) com: o número do voo; colunas PARTIDA/CHEGADA
+    (ícone fino de decolagem/pouso, data, horário em navy + código do aeroporto, cidade) com uma
+    linha vertical e um avião num círculo cinza ao centro; e OPERADO POR/DURAÇÃO (a linha some
+    por inteiro sem `voo_<trecho>_operadora`).
+  - Fora desse bloco, como já era: LOCALIZADOR (vermelho), conexão condicional, código de barras
+    e o bloco "Antes de embarcar". O usuário pediu explicitamente para manter esses elementos
+    (perguntei antes de remover; resposta: "visual do print + tudo que já existe").
+- **Fonte:** o app só aceita `<font>`/`<b>` — sem CSS, não existe peso "thin" (precisaria de
+  fonte customizada carregada via `@font-face`, que o app não permite). "Thin" do print = aqui,
+  texto sem `<b>` na cor `MUTED2` (cinza mais claro); "bold" = com `<b>`.
 - Largura **fluida (`width="100%"`)**, igual à V6 validada. Largura fixa (390 px) fez o
   cartão transbordar para a direita no app. Não voltar a fixar.
 - Entregáveis: `cartao-embarque-ida.html` e `cartao-embarque-volta.html`.
-- Pendente: o usuário ainda não confirmou no app a versão A.1.
+- Pendente: o usuário ainda não confirmou a versão A.2 no app.
+- **Cuidado ao editar `flight_detail()`:** qualquer peça colocada como item solto na lista de
+  `white_card` (não dentro de um `band(..., CARD_BG, ...)`) precisa do seu próprio `bgcolor`
+  explícito — um `gap()`/`<td>` sem cor aí herda o cinza da zona por trás (já aconteceu: ver
+  `card_gap` e o comentário acima de `trailing`). O mesmo vale para a zona (`ZONE_BG`) dentro
+  do creme (`CREAM`).
 
 ## Arquivos
 
@@ -35,7 +43,7 @@ IDA e VOLTA ficam em **abas separadas** do app → **um arquivo por trecho**.
 | `cartao-embarque-ida.html` / `cartao-embarque-volta.html` | Saída gerada, colada no app (uma aba cada). |
 | `preview.py` | Simula o render do app (ver "Validação"). |
 | `header-fita-780x192.png`, `logo-infield.png`, `logo-takeda-pilula.png` | Imagens de marca, publicadas pelo Netlify. |
-| `logos/LA.png`, `AD.png`, `G3.png` | Logos brancos das cias, da V6. Não usados na versão A, mas mantidos. |
+| `logos/LA.png`, `AD.png`, `G3.png` | Logos brancos das cias, da V6. Não usados na versão A.2, mas mantidos. |
 
 Fluxo: editar `build.py` → `python3 build.py` (requer Pillow) → validar → commit/PR → entregar
 os HTML ao usuário (como arquivo e/ou texto para colar).
@@ -66,7 +74,7 @@ os HTML ao usuário (como arquivo e/ou texto para colar).
 | `voo_<trecho>_origem_cidade` / `_destino_cidade` | Opcional. Sem elas, o título usa o código IATA. |
 | `voo_<trecho>_operadora` | Opcional, ex. "LATAM Airlines Brasil" — `{{{ }}}`. Sem ela, a linha OPERADO POR/DURAÇÃO some. |
 | `voo_<trecho>_duracao` | Opcional, ex. "1h 15m". Só aparece se `_operadora` também estiver preenchido. |
-| `voo_<trecho>_cia`, `voo_<trecho>_cor` | Usados só na V6 (logo e cor por cia). A versão A.1 não usa. |
+| `voo_<trecho>_cia`, `voo_<trecho>_cor` | Usados só na V6 (logo e cor por cia). A versão A.2 não usa. |
 
 Tags nativas do app (formato dos valores ainda não verificado):
 - `workspace.`: `name`, `id`, `organization_name`, `start_date`, `end_date`, `timezone`,
@@ -137,10 +145,15 @@ Tags nativas do app (formato dos valores ainda não verificado):
   por cia removidos. Separação em dois arquivos (pedido do usuário). Logos numa linha sob a fita,
   porque sem CSS não há sobreposição de imagens.
 - PR #40: largura fluida (100%).
-- Versão A.1 (detalhe do voo): layout refeito a partir de um print do modal "Detalhe do voo" de
-  um app de cia aérea (título com cidades, selo do número do voo, colunas Partida/Chegada,
-  Operado por/Duração). Reaproveita o separador picote+avião já validado. Campos novos opcionais:
-  `_origem_cidade`, `_destino_cidade`, `_operadora`, `_duracao`.
+- Versão A.1 (PR #42, 1ª rodada): primeira tentativa do layout "Detalhe do voo", ainda com a
+  paleta do resto do cartão (vermelho/creme) e um selo com fundo para o número do voo.
+- Versão A.2 (PR #42, 2ª rodada): o usuário pediu o visual **exatamente** igual ao print (cores,
+  peso de fonte), mantendo Passageiro/Localizador/Conexão/código de barras. Perguntei antes de
+  remover esses elementos (ver "Estado atual"). Reescrita com paleta própria (zona cinza, cartão
+  branco, navy só no título/horários, resto em cinza-grafite — cores tiradas por amostragem de
+  pixel do print) e `corners()` ganhou o parâmetro `page` para aninhar zona-dentro-do-creme e
+  cartão-branco-dentro-da-zona. Campos novos opcionais: `_origem_cidade`, `_destino_cidade`,
+  `_operadora`, `_duracao`.
 
 ## Preferências do usuário
 
