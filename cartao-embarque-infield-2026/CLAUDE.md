@@ -28,6 +28,8 @@ IDA e VOLTA ficam em **abas separadas** do app → **um arquivo por trecho**.
 - Largura **fluida (`width="100%"`)**, igual à V6 validada. Largura fixa (390 px) fez o
   cartão transbordar para a direita no app. Não voltar a fixar.
 - Entregáveis: `cartao-embarque-ida.html` e `cartao-embarque-volta.html`.
+- Fonte dos dados: **as próprias merge tags do SpotMe** (`voo_<trecho>_*`, `horario_*`, `Data_*`, etc.). A AviationStack **não entra** neste projeto: não há camada de normalização em JS nem Python para ela, porque o SpotMe não roda código e os dados já chegam pelos campos.
+- Campos opcionais de cidade, operadora e duração (`_origem_cidade`, `_destino_cidade`, `_operadora`, `_duracao`) **confirmados no painel do SpotMe** pelo usuário.
 - Pendente: o usuário ainda não confirmou a versão A.2 no app.
 - **Cuidado ao editar `flight_detail()`:** qualquer peça colocada como item solto na lista de
   `white_card` (não dentro de um `band(..., CARD_BG, ...)`) precisa do seu próprio `bgcolor`
