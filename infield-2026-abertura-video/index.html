@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>Takeda · Encontro Infield 2026 · Futuro Infield em Foco — Vídeo de abertura (V2)</title>
+<script src="./assets/js/gsap.min.js"></script>
+<style>
+@font-face{font-family:'Gotham';src:url('./assets/fonts/gotham-bold.otf');font-weight:700;font-display:block}
+@font-face{font-family:'Montserrat var';src:url('./assets/fonts/Montserrat-var.woff2') format('woff2');font-weight:100 900;font-display:block}
+@font-face{font-family:'Caveat';src:url('./assets/fonts/caveat-latin-700-normal.woff2') format('woff2');font-weight:700;font-display:block}
+:root{--red:#E1242A;--deep:#0B0B0C;--white:#F5F5F7;--cream:#F8F7F3}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1920px;height:1080px;background:#000;overflow:hidden}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#000;font-family:'Montserrat var',system-ui,sans-serif;color:var(--white)}
+.layer{position:absolute;inset:0}
+.plate{position:absolute;inset:0;opacity:0;visibility:hidden}
+.plate svg{position:absolute;inset:0;width:1920px;height:1080px}
+.tag{position:absolute;left:56px;top:124px;font:600 20px/1.2 'Montserrat var';letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.78);background:rgba(0,0,0,.45);padding:9px 14px;border-radius:6px;border-left:4px solid var(--red)}
+.review-off .tag,.review-off .chip,.review-off #cap{display:none}
+.vig{background:radial-gradient(ellipse at center,rgba(0,0,0,.3) 40%,rgba(0,0,0,.62) 100%);pointer-events:none}
+.grain{opacity:.07;mix-blend-mode:overlay;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.5) 0 1px,transparent 1px 3px)}
+#ser{position:absolute;inset:0;width:1920px;height:1080px;overflow:visible}
+#ser path{fill:none;stroke:var(--red);stroke-linecap:round;stroke-linejoin:round}
+.dot{fill:var(--red)}
+.lt{position:absolute;left:0;width:1920px;text-align:center;font-family:'Gotham','Montserrat var';font-weight:700;text-transform:uppercase;color:#fff;opacity:0;visibility:hidden;text-shadow:0 6px 30px rgba(0,0,0,.55);letter-spacing:.02em;line-height:1}
+.lt .r{color:var(--red)}
+.hand{font-family:'Caveat',cursive;text-transform:none;letter-spacing:0}
+#cap{position:absolute;left:160px;width:1600px;bottom:56px;height:110px;text-align:center;font:600 38px/1.28 'Montserrat var';color:#fff;text-shadow:0 3px 18px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.9)}
+.chip{white-space:nowrap;position:absolute;top:44px;left:56px;font:700 20px/1 'Montserrat var';letter-spacing:.18em;text-transform:uppercase;color:#fff;background:rgba(225,36,42,.92);padding:10px 16px;border-radius:4px;opacity:0}
+.chip small{font-weight:500;letter-spacing:.08em;opacity:.85;margin-left:10px}
+.badge{position:absolute;opacity:0;background:var(--cream);border-radius:18px;padding:16px 26px;box-shadow:0 18px 60px rgba(0,0,0,.45)}
+.badge img{display:block;height:84px}
+#flash{background:#fff;opacity:0}
+.conf{position:absolute;top:-40px;width:14px;height:22px;opacity:0}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-start="0" data-duration="145" data-width="1920" data-height="1080">
+  <audio id="trilha" src="./assets/trilha.wav" data-start="0" data-duration="145" data-track-index="0" data-volume="1"></audio>
+  <!-- Locução: gravar o locutor, salvar em assets/locucao.wav e adicionar aqui um <audio> igual ao da trilha (track-index 1). -->
+
+  <div id="plates" class="layer"></div>
+    <div class="layer grain"></div>
+  <svg id="ser" viewBox="0 0 1920 1080"></svg>
+  <div id="lts" class="layer"></div>
+  <div id="cap"></div>
+    <div class="badge" id="selo" style="left:660px;top:430px"><img src="./assets/img/logo-infield.png" style="height:130px"></div>
+  <div class="badge" id="takeda" style="left:1500px;top:60px"><img src="./assets/img/logo-takeda-pilula.png"></div>
+  <div class="layer" id="confs"></div>
+  <div class="layer" id="flash"></div>
+</div>
+
+<script>
+/* ================= utilidades determinísticas ================= */
+let _s = 20260;
+const rnd = () => (_s = (_s * 1664525 + 1013904223) % 4294967296) / 4294967296;
+const REVIEW = true;                       // false = sem legendas da locução / chips / tags de footage
+if (!REVIEW) document.getElementById('root').classList.add('review-off');
+const NS = 'http://www.w3.org/2000/svg';
+const RED = '#E1242A', SKIN = ['#E8B796', '#C98B63', '#8D5A3B', '#F1C9A5', '#6B4128'];
+const $ = (id) => document.getElementById(id);
+
+/* ================= placas (stand-ins ilustrados do stock do roteiro) ================= */
+const figure = (x, y, s, shirt, skin, o = {}) => {
+  const hair = o.hair || '#2a1a12';
+  return `<g transform="translate(${x} ${y}) scale(${s})">
+    <rect x="-70" y="-230" width="140" height="230" rx="46" fill="${shirt}"/>
+    ${o.coat ? '<rect x="-70" y="-230" width="140" height="230" rx="46" fill="#fff" opacity=".92"/><rect x="-14" y="-230" width="28" height="230" fill="#d8dde3"/>' : ''}
+    <rect x="-18" y="-262" width="36" height="46" rx="12" fill="${skin}"/>
+    <circle cx="0" cy="-300" r="52" fill="${skin}"/>
+    <path d="M-54 -300a54 50 0 0 1 108 0c-20-22-70-24-108 0z" fill="${hair}"/>
+    ${o.smile ? '<path d="M-20 -282q20 20 40 0" stroke="#7a2e2a" stroke-width="6" fill="none" stroke-linecap="round"/>' : ''}
+    <circle cx="-18" cy="-304" r="5" fill="#1b1b1b"/><circle cx="18" cy="-304" r="5" fill="#1b1b1b"/>
+  </g>`;
+};
+const sky = (a, b) => `<defs><linearGradient id="g${a.slice(1)}${b.slice(1)}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1920" height="1080" fill="url(#g${a.slice(1)}${b.slice(1)})"/>`;
+const bokeh = (n, cols) => Array.from({ length: n }, () => `<circle cx="${rnd() * 1920}" cy="${rnd() * 700}" r="${20 + rnd() * 60}" fill="${cols[(rnd() * cols.length) | 0]}" opacity="${.12 + rnd() * .2}"/>`).join('');
+const hand = (x, y, rot = 0, s = 1, skin = SKIN[1]) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><ellipse cx="0" cy="0" rx="120" ry="95" fill="${skin}"/>${[-84, -30, 24, 76].map((dx, i) => `<rect x="${dx - 22}" y="${-250 + i % 2 * 24}" width="44" height="190" rx="22" fill="${skin}"/>`).join('')}<rect x="96" y="-60" width="40" height="150" rx="20" fill="${skin}" transform="rotate(38 116 20)"/><rect x="-150" y="70" width="300" height="300" fill="${skin}"/></g>`;
+const ground = (c, y = 760) => `<rect y="${y}" width="1920" height="${1080 - y}" fill="${c}"/>`;
+
+const PLATES = {
+  alvorada: ['Amanhecer no Rio · Cristo e Pão de Açúcar', () => sky('#0b1330', '#ff8a4a') + `<circle id="sun" cx="960" cy="760" r="120" fill="#ffd27a"/><path d="M0 800L180 640 330 740 520 560 700 760 900 690 1240 760 1500 600 1700 700 1920 640V1080H0z" fill="#10192e"/><path d="M1180 760q60-260 170-260t170 260z" fill="#0a1020"/><path d="M1340 500v-90M1300 440h80" stroke="#0a1020" stroke-width="14"/><rect y="860" width="1920" height="220" fill="#0e3a52"/>${Array.from({ length: 14 }, (_, i) => `<rect x="${60 + i * 140}" y="${890 + (i % 3) * 40}" width="90" height="5" fill="#ffd27a" opacity=".5"/>`).join('')}`],
+  mao_desenhando: ['Close · mão desenhando o primeiro traço', () => sky('#2b2622', '#4a3f35') + `<rect x="420" y="520" width="1080" height="560" rx="10" fill="#f6f2ea" transform="rotate(-3 960 800)"/><path d="M520 820q160-200 300 0t300-40 280 0" stroke="${RED}" stroke-width="16" fill="none" stroke-linecap="round"/>${hand(1180, 760, -35, 1.1)}<polygon points="1010,620 1034,610 1100,730 1060,760" fill="#222"/>`],
+  microscopio: ['Close · cientista no microscópio', () => sky('#102a3c', '#1d4a63') + `<rect x="1180" y="860" width="500" height="40" rx="12" fill="#cfd6dc"/><rect x="1380" y="420" width="70" height="460" fill="#dfe5ea"/><rect x="1180" y="420" width="260" height="70" rx="26" fill="#dfe5ea" transform="rotate(-18 1310 460)"/><rect x="1100" y="330" width="80" height="260" rx="30" fill="#aab4bc" transform="rotate(-18 1140 460)"/>${figure(760, 1040, 2.3, '#e9eef2', SKIN[0], { coat: true })}<circle cx="1480" cy="360" r="220" fill="#1d8bd0" opacity=".08"/>`],
+  aperto: ['Close · colegas se cumprimentando', () => sky('#2b3340', '#46546a') + `<rect x="120" y="470" width="900" height="150" rx="75" fill="#d6dbe4" transform="rotate(12 570 540)"/><rect x="900" y="470" width="900" height="150" rx="75" fill="#1c2430" transform="rotate(-12 1350 540)"/><circle cx="960" cy="590" r="105" fill="${SKIN[1]}"/><path d="M880 570l160 30M880 620l160-24" stroke="#00000030" stroke-width="8"/>`],
+  aniversario: ['Aniversário em família · momento espontâneo', () => sky('#5a2d2a', '#e08a57') + bokeh(14, ['#ffd27a', '#ff9a8a', '#fff']) + ground('#7a4730', 820) + `<rect x="760" y="760" width="400" height="260" rx="20" fill="#8a5a3a"/><rect x="850" y="690" width="220" height="90" rx="14" fill="#f7e2cf"/><rect x="850" y="690" width="220" height="30" rx="14" fill="#e8497a"/>${[890, 960, 1030].map((x) => `<rect x="${x}" y="640" width="10" height="50" fill="#fff"/><ellipse cx="${x + 5}" cy="625" rx="9" ry="18" fill="#ffb02e"/>`).join('')}${figure(450, 1060, 1.9, '#2f7d6d', SKIN[2], { smile: 1 })}${figure(1470, 1060, 1.9, '#d9a441', SKIN[0], { smile: 1 })}${figure(300, 1060, 1.3, '#8a5acb', SKIN[3], { smile: 1 })}${figure(1640, 1060, 1.3, '#cf5a5a', SKIN[1], { smile: 1 })}${figure(1130, 1060, 1.1, '#4a8ad1', SKIN[3], { smile: 1 })}`],
+  avo_neto: ['Avô leva o neto até o portão da escola', () => sky('#79b7e6', '#f5d9a4') + `<circle cx="1620" cy="190" r="110" fill="#fff0b3"/>${ground('#d8c9a0', 800)}<rect x="1250" y="300" width="500" height="520" fill="#c9553d"/><rect x="1330" y="440" width="340" height="380" fill="#3e2a22"/><path d="M1250 300l250-120 250 120z" fill="#8c3a2c"/>${figure(620, 1040, 2.6, '#486a8f', SKIN[2], { smile: 1, hair: '#d9d9d9' })}${figure(1010, 1040, 1.3, '#e34b4b', SKIN[2], { smile: 1 })}<rect x="945" y="740" width="70" height="110" rx="18" fill="#ffd34a"/><rect x="760" y="760" width="250" height="26" rx="13" fill="${SKIN[2]}"/>`],
+  domingo: ['Almoço de domingo em família · luz de Rio', () => sky('#ffd9a0', '#f29a5b') + `<rect x="260" y="720" width="1400" height="60" rx="18" fill="#a2623a"/><rect x="340" y="780" width="40" height="300" fill="#7a4628"/><rect x="1540" y="780" width="40" height="300" fill="#7a4628"/>${[500, 760, 1020, 1280].map((x, i) => `<ellipse cx="${x}" cy="715" rx="90" ry="22" fill="#fff"/><circle cx="${x}" cy="705" r="${24 + i % 2 * 8}" fill="${['#e5564a', '#6cae52', '#f3bf3a', '#e5564a'][i]}"/>`).join('')}${figure(420, 760, 1.5, '#d36b3f', SKIN[0], { smile: 1 })}${figure(780, 760, 1.5, '#3f8fa0', SKIN[2], { smile: 1 })}${figure(1140, 760, 1.5, '#9b5ec8', SKIN[3], { smile: 1 })}${figure(1500, 760, 1.5, '#4ba36b', SKIN[1], { smile: 1 })}`],
+  baqueta_surdo: ['Close · baqueta parada sobre o surdo (slow)', () => sky('#18110d', '#3a2418') + `<ellipse cx="960" cy="820" rx="560" ry="190" fill="#e8d7b5"/><ellipse cx="960" cy="820" rx="500" ry="150" fill="#f5ead0"/><rect x="400" y="820" width="1120" height="260" fill="#9b1c20"/><rect x="1020" y="260" width="30" height="460" rx="15" fill="#e7c28b" transform="rotate(14 1035 490)"/><circle cx="1085" cy="720" r="38" fill="#f5ead0"/>${hand(1010, 250, 14, .8)}`],
+  profissional: ['Profissional olhando para a câmera · "em foco"', () => sky('#1f2530', '#3c4658') + bokeh(8, ['#9ec6ff', '#ffffff']) + figure(960, 1100, 3.4, '#33415c', SKIN[1], { hair: '#17110d' }) + `<path d="M890 700q70-30 140 0" stroke="#111" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M900 780q60 24 120 0" stroke="#5c231f" stroke-width="9" fill="none" stroke-linecap="round"/>`],
+  clinica: ['Profissional chegando à clínica (sem jaleco)', () => sky('#cfe3f1', '#f0f3f6') + ground('#c7ccd2', 840) + `<rect x="900" y="200" width="800" height="650" fill="#f7f8fa"/><rect x="1240" y="260" width="120" height="120" fill="#fff"/><path d="M1270 320h60M1300 290v60" stroke="${RED}" stroke-width="16"/><rect x="1180" y="560" width="240" height="290" fill="#6fa6c4" opacity=".7"/>${figure(520, 1040, 2.5, '#2d4a6e', SKIN[1])}`],
+  conversa_medica: ['Conversa com a médica', () => sky('#e6edf2', '#c7d3dd') + `<rect x="1180" y="240" width="460" height="320" fill="#fff" opacity=".7"/>${figure(620, 1060, 2.7, '#33527a', SKIN[0])}${figure(1280, 1060, 2.7, '#fff', SKIN[2], { coat: true, smile: 1 })}<path d="M780 460q80-60 160 0" stroke="#fff" stroke-width="0"/>`],
+  reuniao_em_pe: ['Reunião rápida em pé', () => sky('#d9e2ea', '#aebccb') + ground('#8c99a8', 880) + `<rect x="620" y="700" width="680" height="50" rx="8" fill="#6b7482"/>${figure(480, 1010, 2.2, '#3a5a88', SKIN[3])}${figure(960, 1010, 2.2, '#c9573b', SKIN[1])}${figure(1440, 1010, 2.2, '#4a8a6a', SKIN[0])}<rect x="880" y="660" width="170" height="40" rx="8" fill="#222"/>`],
+  celular: ['Mensagem no celular', () => sky('#232c3a', '#3b4a60') + hand(980, 940, -8, 1.2) + `<rect x="760" y="300" width="360" height="640" rx="54" fill="#101418"/><rect x="782" y="330" width="316" height="580" rx="34" fill="#eaf1f8"/><rect x="820" y="400" width="190" height="64" rx="30" fill="#c8d6e5"/><rect x="880" y="490" width="200" height="64" rx="30" fill="${RED}"/><rect x="820" y="580" width="150" height="64" rx="30" fill="#c8d6e5"/>`],
+  postits: ['Equipe reorganizando post-its no quadro', () => sky('#e9eef3', '#cfd8e0') + `<rect x="260" y="140" width="1400" height="700" rx="14" fill="#fff" stroke="#b9c3cc" stroke-width="12"/>${Array.from({ length: 18 }, (_, i) => `<rect x="${340 + (i % 6) * 210}" y="${220 + ((i / 6) | 0) * 190}" width="160" height="150" fill="${['#ffd54a', '#ff8fa3', '#7fd6ff', '#9bf0a2'][i % 4]}" transform="rotate(${(i * 7) % 9 - 4} ${420 + (i % 6) * 210} ${300 + ((i / 6) | 0) * 190})"/>`).join('')}${hand(1500, 960, -20, 1)}`],
+  rosto: ['Rosto concentrado · olhar firme', () => sky('#101216', '#262b34') + `<circle cx="960" cy="540" r="380" fill="${SKIN[2]}"/><path d="M590 470q370-260 740 0q-20-160-370-170t-370 170z" fill="#120d0a"/><path d="M700 520q90-26 170 0M1050 520q90-26 170 0" stroke="#1a1a1a" stroke-width="22" stroke-linecap="round" fill="none"/><circle cx="790" cy="570" r="30" fill="#111"/><circle cx="1130" cy="570" r="30" fill="#111"/><path d="M880 780q80 36 160 0" stroke="#5c231f" stroke-width="14" fill="none" stroke-linecap="round"/><rect x="0" y="0" width="1920" height="1080" fill="url(#none)"/>`],
+  caminhando: ['Pessoa caminhando rápido · cortes de ação', () => sky('#f2f4f7', '#bcc7d3') + ground('#9ba7b4', 900) + [0, 1, 2].map((i) => `<rect x="${200 + i * 60}" y="${760 + i * 30}" width="380" height="14" rx="7" fill="#fff" opacity="${.5 - i * .14}"/>`).join('') + figure(1020, 1080, 3.1, '#c0392b', SKIN[1]) + `<rect x="920" y="820" width="200" height="230" rx="36" fill="#1d2430" transform="rotate(-22 1020 930)"/>`],
+  reuniao_mesa: ['Reunião em volta da mesa · alguém levanta a mão', () => sky('#dfe6ec', '#b7c3cf') + `<ellipse cx="960" cy="850" rx="780" ry="130" fill="#7c5a3a"/><ellipse cx="960" cy="830" rx="780" ry="125" fill="#a77a4f"/>${figure(380, 1000, 2.1, '#3d63a6', SKIN[3])}${figure(820, 940, 2, '#d1553d', SKIN[0])}${figure(1180, 940, 2, '#2e8b67', SKIN[2])}${figure(1560, 1000, 2.1, '#8a4fb0', SKIN[1])}<rect x="1100" y="440" width="46" height="260" rx="23" fill="${SKIN[2]}" transform="rotate(8 1123 700)"/><circle cx="1136" cy="430" r="38" fill="${SKIN[2]}"/>`],
+  banda: ['Banda · estilo brasileiro', () => sky('#2a1450', '#d9566b') + bokeh(10, ['#ffd27a', '#fff']) + ground('#2a1630', 860) + figure(520, 1020, 2.3, '#f2c94c', SKIN[2], { smile: 1 }) + figure(900, 1020, 2.3, '#4cc0f2', SKIN[1], { smile: 1 }) + figure(1280, 1020, 2.3, '#e5564a', SKIN[0], { smile: 1 }) + figure(1600, 1020, 2.3, '#6fd08a', SKIN[3], { smile: 1 }) + `<ellipse cx="520" cy="780" rx="90" ry="64" fill="#e8d7b5"/><rect x="860" y="740" width="160" height="26" rx="13" fill="#b07a3a" transform="rotate(-28 940 750)"/>`],
+  avenida: ['Drone · avenida e arquibancada', () => sky('#201733', '#3a2150') + `<rect x="0" y="380" width="1920" height="330" fill="#3c3340"/><path d="M0 545H1920" stroke="#d9b45a" stroke-width="6" stroke-dasharray="40 30"/>${Array.from({ length: 140 }, () => `<circle cx="${rnd() * 1920}" cy="${rnd() < .5 ? 80 + rnd() * 280 : 740 + rnd() * 280}" r="${9 + rnd() * 9}" fill="${['#ffd27a', '#ff6f61', '#7fd6ff', '#fff'][(rnd() * 4) | 0]}" opacity=".8"/>`).join('')}${Array.from({ length: 70 }, (_, i) => `<circle cx="${60 + i * 27}" cy="${480 + Math.sin(i / 3) * 40 + (i % 3) * 36}" r="12" fill="${['#2f9e6b', '#f3c13a', '#fff'][i % 3]}"/>`).join('')}<rect x="1180" y="430" width="560" height="170" rx="20" fill="#e5564a" opacity=".85"/>`],
+  tambor: ['Músico tocando tambor · celebração noturna', () => sky('#0a0f26', '#201340') + bokeh(12, ['#ff9a3d', '#ffd27a']) + `<rect x="300" y="300" width="14" height="440" fill="#4a2f1a"/><ellipse cx="307" cy="288" rx="22" ry="40" fill="#ff8a1a"/><rect x="1600" y="300" width="14" height="440" fill="#4a2f1a"/><ellipse cx="1607" cy="288" rx="22" ry="40" fill="#ff8a1a"/>${figure(960, 1100, 3, '#7a1f2a', SKIN[2], { smile: 1 })}<ellipse cx="960" cy="860" rx="300" ry="110" fill="#e8d7b5"/><rect x="660" y="860" width="600" height="220" fill="#9b1c20"/><rect x="560" y="600" width="26" height="280" rx="13" fill="#e7c28b" transform="rotate(-24 573 740)"/><rect x="1340" y="600" width="26" height="280" rx="13" fill="#e7c28b" transform="rotate(24 1353 740)"/>`],
+  rio_kv: ['Rio de Janeiro · KV', () => sky('#101a3a', '#f08a4b') + `<path d="M0 820L260 560 460 760 760 610 1020 780 1400 640 1700 760 1920 700V1080H0z" fill="#111a30"/>`],
+};
+const plateEls = {};
+const plates = $('plates');
+Object.entries(PLATES).forEach(([k, [label, draw]]) => {
+  const d = document.createElement('div');
+  d.className = 'plate'; d.id = 'pl_' + k;
+  d.innerHTML = `<svg viewBox="0 0 1920 1080">${draw()}</svg><div class="layer vig"></div><div class="tag">Footage · ${label}</div>`;
+  plates.appendChild(d); plateEls[k] = d;
+});
+
+/* ================= serpentina (linha vermelha do KV) ================= */
+const ser = $('ser');
+const P = {}; // id -> {el, len}
+const mkPath = (id, d, w = 14) => {
+  const p = document.createElementNS(NS, 'path');
+  p.setAttribute('d', d); p.setAttribute('pathLength', '1'); p.id = id;
+  p.style.strokeWidth = w + 'px'; p.style.strokeDasharray = '1'; p.style.strokeDashoffset = '1'; p.style.opacity = 0;
+  ser.appendChild(p); P[id] = p; return p;
+};
+const mkDot = (id, x, y, r = 16) => {
+  const c = document.createElementNS(NS, 'circle');
+  c.setAttribute('cx', x); c.setAttribute('cy', y); c.setAttribute('r', r); c.setAttribute('class', 'dot'); c.id = id;
+  c.style.opacity = 0; c.style.transformOrigin = `${x}px ${y}px`; ser.appendChild(c); return c;
+};
+mkPath('s1', 'M-60 760C240 960 420 420 760 560S1100 940 1400 560 1700 240 1980 460', 18);             // 0:08 entra em curvas
+mkPath('s2', 'M-60 940C320 820 560 1000 960 780S1500 560 1980 760', 16);                              // 0:28 trabalho -> vida lá fora
+mkPath('s3', 'M-60 540C300 160 640 180 960 540S1560 960 1980 540', 16);                               // 1:24 passa por ponto, curva acentuada
+mkPath('s3b', 'M960 540C1040 640 1060 980 1340 1020S1700 880 1980 960', 16);
+mkPath('s4', 'M-60 900C260 640 520 960 760 700S1160 460 1400 640 1700 700 1980 520', 16);             // fundo do KV final
+mkPath('sL', 'M60 1040C60 700 120 300 380 120', 14);                                                  // laterais KV final
+mkPath('sR', 'M1860 1040C1860 700 1800 300 1540 120', 14);
+mkDot('d_pt1', 960, 540, 20);
+mkDot('d_c1', 960, 540, 54);   // ponto pulsante centro (concentração)
+[['k1', 380, 120], ['k2', 1540, 120], ['k3', 60, 1040], ['k4', 1860, 1040], ['k5', 960, 120], ['k6', 960, 1010]].forEach(([i, x, y]) => mkDot(i, x, y, 14));
+/* pessoas ilustradas do KV (line art) */
+const kvPeople = document.createElementNS(NS, 'g'); kvPeople.id = 'kvp'; ser.appendChild(kvPeople);
+const kvPos = [[560, 800, '#fff'], [760, 760, '#fff'], [960, 740, RED], [1160, 760, '#fff'], [1360, 800, '#fff']];
+kvPos.forEach(([x, y, c], i) => {
+  const g = document.createElementNS(NS, 'g'); g.id = 'kp' + i; g.style.opacity = 0;
+  g.innerHTML = `<circle cx="${x}" cy="${y - 150}" r="34" fill="none" stroke="${c}" stroke-width="7"/><path d="M${x - 46} ${y + 40}q0-130 46-130t46 130" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round"/><path d="M${x - 46} ${y - 40}q-40 30-60 70M${x + 46} ${y - 40}q40 30 60 70" fill="none" stroke="${c}" stroke-width="7" stroke-linecap="round" ${i === 2 ? 'opacity=".0"' : ''}/>`;
+  kvPeople.appendChild(g);
+});
+const pao = document.createElementNS(NS, 'path'); pao.id = 'pao';
+pao.setAttribute('d', 'M1180 640q30-210 170-210t170 210'); pao.style.cssText = 'fill:none;stroke:#fff;stroke-width:7px;opacity:0;stroke-linecap:round';
+ser.appendChild(pao);
+const pao2 = document.createElementNS(NS, 'path'); pao2.id = 'pao2';
+pao2.setAttribute('d', 'M1520 640q20-130 110-130t110 130'); pao2.style.cssText = 'fill:none;stroke:#fff;stroke-width:7px;opacity:0;stroke-linecap:round';
+ser.appendChild(pao2);
+
+/* ================= lettering ================= */
+const lts = $('lts');
+const LT = {};
+const mkLT = (id, html, top, size, cls = '') => {
+  const d = document.createElement('div'); d.className = 'lt ' + cls; d.id = id;
+  d.style.top = top + 'px'; d.style.fontSize = size + 'px'; d.innerHTML = html; lts.appendChild(d); LT[id] = d; return d;
+};
+mkLT('l245', '245<span class="r">+</span> anos', 380, 260);
+mkLT('lsub245', 'de história', 690, 54);
+['Desafio.', 'Descoberta.', 'Superação.', 'Aprendizado.', 'E muita conquista.'].forEach((w, i) =>
+  mkLT('lw' + i, w, 400, i === 4 ? 190 : 210, 'hand'));
+mkLT('lpres', 'Presença.', 440, 190);
+mkLT('lfoco', 'Foco.', 440, 190);
+mkLT('lati', 'Atitude.', 410, 260, 'r');
+mkLT('lfec', 'Fechar o ano<br><span class="r">com força</span>', 360, 190);
+mkLT('lscen', 'O cenário mudou.', 440, 150);
+mkLT('lperf', 'Per<span class="r">for</span>mance', 420, 210);
+mkLT('ldec', 'Decisão<br>e <span class="r">agilidade</span>', 340, 190);
+mkLT('lpen', 'Pensamento<br><span class="r">estratégico</span>', 340, 190);
+mkLT('ltit', 'Futuro<br><span class="r">Infield</span><br>em foco', 230, 150);
+mkLT('lass', 'a <span class="r hand" style="font-size:150px">melhor</span> história é a que construímos <span class="r hand" style="font-size:150px">juntos</span>', 800, 56);
+mkLT('lolha', 'Olha a <span class="r">Takeda</span> aí, gente!', 760, 120);
+
+/* ================= cortes na batida (plate, início, duração) ================= */
+const B = 0.5; // beat (120 bpm)
+const CUTS = [
+  // 0–10 Esquenta
+  ['alvorada', 3.0, 5.0], ['rio_kv', 8.0, 2.0],
+  // 10–28 Barracão: closes de mãos no ritmo
+  ['mao_desenhando', 10.0, 1.0], ['aperto', 11.0, 1.0], ['microscopio', 12.0, 1.0], ['mao_desenhando', 13.0, 1.0], ['aperto', 14.0, 1.0], ['microscopio', 15.0, 1.0],
+  ['mao_desenhando', 16.0, 1.0], ['aperto', 17.0, 1.0], ['microscopio', 18.0, 1.0], ['mao_desenhando', 19.0, 1.0], ['aperto', 20.0, 1.0],
+  ['microscopio', 21.0, 1.0], ['mao_desenhando', 22.0, 1.0], ['aperto', 23.0, 0.5], ['mao_desenhando', 23.5, 0.5], ['microscopio', 24.0, 0.5], ['aperto', 24.5, 0.5], ['mao_desenhando', 25.0, 0.5],
+  ['microscopio', 25.5, 0.5], ['aperto', 26.0, 0.5], ['mao_desenhando', 26.5, 0.5], ['microscopio', 27.0, 0.5], ['aperto', 27.5, 0.5],
+  // 28–52 Propósito
+  ['rio_kv', 28.0, 5.0], ['aniversario', 33.0, 3.0], ['aniversario', 36.0, 3.5], ['avo_neto', 39.5, 3.0], ['avo_neto', 42.5, 1.5], ['domingo', 44.0, 3.0], ['domingo', 47.0, 2.0], ['aniversario', 49.0, 1.5], ['avo_neto', 50.5, 1.5],
+  // 52–63 Concentração
+  ['baqueta_surdo', 56.0, 3.0], ['profissional', 59.0, 4.0],
+  // 63–84 Avenida
+  ['clinica', 66.5, 2.0], ['conversa_medica', 68.5, 1.5], ['reuniao_em_pe', 70.0, 1.5], ['celular', 71.5, 1.5], ['clinica', 73.0, 1.5], ['conversa_medica', 74.5, 1.5], ['reuniao_em_pe', 76.0, 1.5],
+  ['celular', 77.5, 1.5], ['clinica', 79.0, 1.5], ['conversa_medica', 80.5, 1.5], ['reuniao_em_pe', 82.0, 1.5],
+  // 84–98 Paradinha
+  ['postits', 84.0, 8.0], ['postits', 92.0, 1.0], ['reuniao_em_pe', 93.0, 1.0], ['postits', 94.0, 1.0], ['celular', 95.0, 1.0], ['postits', 96.0, 1.0], ['reuniao_mesa', 97.0, 1.0],
+  // 98–112 Grito
+  ['rosto', 98.0, 4.0], ['caminhando', 102.0, 1.0], ['caminhando', 103.0, 1.0], ['clinica', 104.0, 1.0], ['caminhando', 105.0, 1.0], ['clinica', 106.0, 1.0], ['reuniao_mesa', 107.0, 5.0],
+  // 112–125 Escola
+  ['banda', 112.0, 2.5], ['avenida', 114.5, 2.5], ['tambor', 117.0, 3.0], ['rio_kv', 120.0, 5.0],
+  // 125–145 Desfile
+  ['rio_kv', 125.0, 20.0],
+];
+CUTS.forEach(([k]) => { if (!plateEls[k]) throw new Error('placa inexistente: ' + k); });
+
+/* ================= legendas da locução ================= */
+const CAPS = [
+  [10.3, 14.2, 'Toda história começa com um primeiro traço.'],
+  [14.4, 19.2, 'E o nosso foi desenhado há mais de 245 anos.'],
+  [19.4, 22.6, 'De lá para cá, cada capítulo foi escrito por muitas mãos.'],
+  [23.0, 27.9, 'Teve desafio. Descoberta. Superação. Aprendizado. E muita conquista.'],
+  [28.4, 32.6, 'Mas os capítulos mais bonitos não ficam aqui dentro.'],
+  [33.0, 34.8, 'Estão lá fora.'],
+  [35.0, 38.8, 'No aniversário com a família toda reunida.'],
+  [39.5, 42.8, 'No primeiro dia de aula do neto.'],
+  [43.2, 48.6, 'Num domingo de sol, que ganha outro sentido quando estar presente é possível.'],
+  [49.2, 52.0, 'É por isso que a gente faz o que faz.'],
+  [52.4, 55.6, 'Agora, essa história pede um novo capítulo.'],
+  [56.0, 58.8, 'É hora de entrar na avenida.'],
+  [59.0, 60.2, 'E isso exige presença.'],
+  [60.3, 61.2, 'Foco.'],
+  [61.3, 62.2, 'E, principalmente…'],
+  [62.8, 63.6, 'atitude.'],
+  [64.0, 66.6, 'Porque nenhum futuro se escreve sozinho.'],
+  [66.8, 75.5, 'Ele se escreve no dia a dia: em cada visita, em cada conversa, em cada decisão.'],
+  [76.0, 83.2, 'E o nosso objetivo está claro: fechar o ano com força, bater as metas e fazer de cada oportunidade um resultado.'],
+  [84.2, 85.9, 'O cenário mudou.'],
+  [86.0, 87.6, 'A gente sabe.'],
+  [88.2, 91.6, 'E quando o cenário muda, quem escreve a história muda junto.'],
+  [92.2, 97.8, 'Muda o jeito de olhar, de decidir, de agir.'],
+  [98.4, 102.2, 'Mais performance para transformar esforço em resultado.'],
+  [102.4, 107.2, 'Mais decisão e agilidade para fazer acontecer.'],
+  [107.4, 111.8, 'Mais pensamento estratégico e atitude para escolher onde colocar a nossa energia.'],
+  [112.4, 114.8, 'Cada um com o seu papel.'],
+  [115.0, 117.2, 'Cada um escrevendo a sua parte.'],
+  [117.4, 119.8, 'E todo mundo no mesmo ritmo.'],
+  [120.2, 124.4, 'É assim que um time ganha força.'],
+  [125.4, 130.0, 'O futuro que a gente quer começa no resultado que construímos agora.'],
+  [131.7, 134.2, 'O próximo capítulo começa hoje.'],
+  [135.4, 140.2, 'Porque a melhor história é aquela que construímos juntos.'],
+  [141.0, 143.2, 'Olha a Takeda aí, gente!'],
+];
+const capEl = $('cap');
+
+/* ================= chips de bloco (revisão) ================= */
+const BLOCKS = [
+  [0, 'Esquenta', 'O Rio entra no ritmo'], [10, 'Barracão', 'Feita por muitas mãos'], [28, 'Propósito', 'Os capítulos lá fora'],
+  [52, 'Concentração', 'Hora de entrar na avenida'], [63, 'Avenida', 'Fechar o ano com força'], [84, 'Paradinha', 'O cenário mudou'],
+  [98, 'Grito', 'Performance, decisão e estratégia'], [112, 'Escola', 'Todo mundo no mesmo ritmo'], [125, 'Desfile', 'O próximo capítulo começa hoje'],
+];
+
+/* ================= confete ================= */
+const confs = $('confs');
+const CONF = Array.from({ length: 90 }, (_, i) => {
+  const d = document.createElement('div'); d.className = 'conf';
+  d.style.left = (rnd() * 1900) + 'px'; d.style.background = ['#E1242A', '#ffd27a', '#fff', '#7fd6ff', '#f08a4b'][i % 5];
+  d.style.transform = `rotate(${rnd() * 360}deg)`; confs.appendChild(d); return { d, x: (rnd() - .5) * 220, r: (rnd() - .5) * 900, dl: rnd() * 2.5, dur: 3 + rnd() * 1.6 };
+});
+
+/* ================= timeline ================= */
+const tl = gsap.timeline({ paused: true });
+// fromTo sem imediateRender: o estado de repouso vem do CSS, não do último fromTo escrito
+const _ft = tl.fromTo.bind(tl);
+tl.fromTo = (el, a, b, t) => _ft(el, a, { ...b, immediateRender: false }, t);
+const show = (el, t, d, o = {}) => {
+  tl.set(el, { visibility: 'visible', opacity: o.op ?? 1 }, t);
+  if (o.inDur) tl.fromTo(el, { opacity: 0 }, { opacity: o.op ?? 1, duration: o.inDur, ease: 'none' }, t);
+  tl.set(el, { opacity: 0, visibility: 'hidden' }, t + d);
+};
+
+// placas com micro-zoom (Ken Burns) e corte seco
+CUTS.forEach(([k, t, d], i) => {
+  const el = plateEls[k];
+  const flip = i % 2 ? -1 : 1;
+  tl.set(el, { visibility: 'visible', opacity: 1, scale: 1.06, x: 20 * flip, zIndex: i }, t);
+  tl.to(el, { scale: 1.0, x: 0, duration: Math.max(d, .5), ease: 'none' }, t);
+  tl.set(el, { opacity: 0, visibility: 'hidden' }, t + d);
+});
+
+// 0–3 tela preta; amanhecer: sol sobe, brilho cresce
+tl.fromTo('#pl_alvorada', { filter: 'brightness(.25)' }, { filter: 'brightness(1)', duration: 5, ease: 'power1.in' }, 3);
+tl.fromTo('#sun', { y: 120 }, { y: -140, duration: 5, ease: 'power1.out' }, 3);
+tl.fromTo('#pl_rio_kv', { filter: 'brightness(.8)' }, { filter: 'brightness(1)', duration: .1 }, 8);
+
+// 8,0 explosão: flash seco + serpentina + selo
+tl.fromTo('#flash', { opacity: 0 }, { opacity: .95, duration: .04, ease: 'none' }, 8.0);
+tl.to('#flash', { opacity: 0, duration: .5, ease: 'power2.out' }, 8.04);
+tl.set('#s1', { opacity: 1 }, 8.0);
+tl.to('#s1', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.out' }, 8.0);
+tl.fromTo('#selo', { opacity: 0, scale: .6 }, { opacity: 1, scale: 1, duration: .35, ease: 'back.out(2)' }, 8.15);
+tl.to('#selo', { opacity: 0, duration: .4 }, 9.7);
+tl.set('#s1', { opacity: .0 }, 10.4);
+
+// serpentina de apoio fina nos closes de mão (fio condutor)
+tl.set('#s1', { opacity: .85, strokeDashoffset: 0 }, 10.0);
+tl.set('#s1', { opacity: 0 }, 10.01);
+
+// Barracão
+const lt = (id, t, d, i = .12) => { show(LT[id], t, d); tl.fromTo(LT[id], { y: 24, scale: .92 }, { y: 0, scale: 1, duration: i, ease: 'back.out(2.2)' }, t); };
+lt('l245', 17.0, 2.5, .2); lt('lsub245', 17.5, 2.0, .2);
+['lw0', 'lw1', 'lw2', 'lw3', 'lw4'].forEach((id, i) => lt(id, 23.0 + i * 1.0, i === 4 ? 1.0 : 1.0, .15));
+// riscos manuscritos em vermelho sob a palavra final (traço do KV)
+
+// 28 serpentina cruza a tela: passagem do trabalho para a vida lá fora
+tl.set('#s2', { opacity: 1 }, 28.0);
+tl.to('#s2', { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' }, 28.0);
+tl.to('#s2', { strokeDashoffset: -1, duration: 1.6, ease: 'power2.inOut' }, 29.7);
+tl.set('#s2', { opacity: 0 }, 31.4);
+// serpentina leve acompanhando a vida lá fora
+tl.fromTo('#s4', { strokeDashoffset: 1, opacity: .9 }, { strokeDashoffset: 0, duration: 6, ease: 'none' }, 35.0);
+tl.to('#s4', { opacity: 0, duration: .6 }, 49.4);
+
+// 52 ponto pulsante no tempo do surdo
+tl.set('#d_c1', { opacity: 1, scale: 1 }, 52.0);
+for (let t = 52.0; t < 55.9; t += 1.0) {
+  tl.fromTo('#d_c1', { scale: .55 }, { scale: 1, duration: .45, ease: 'power3.out' }, t + 0.5);
+  tl.fromTo('#d_c1', { scale: .85 }, { scale: .7, duration: .4, ease: 'power2.out' }, t);
+}
+tl.set('#d_c1', { opacity: 0 }, 56.0);
+
+// 56–59 baqueta em slow motion (zoom lento mais profundo)
+tl.fromTo('#pl_baqueta_surdo svg', { scale: 1.0 }, { scale: 1.12, duration: 3, ease: 'none' }, 56.0);
+// 59–61.5 desfoque -> foco no profissional
+tl.fromTo('#pl_profissional svg', { filter: 'blur(38px)' }, { filter: 'blur(0px)', duration: 2.0, ease: 'power2.out' }, 59.0);
+lt('lpres', 59.0, 1.3, .2); lt('lfoco', 60.3, 1.0, .2);
+// silêncio total 61.5–62.7 (apenas respiro visual)
+tl.fromTo('#pl_profissional', { filter: 'brightness(1)' }, { filter: 'brightness(.55)', duration: 1.2, ease: 'none' }, 61.5);
+// 62.7 apito + virada: ATITUDE em vermelho, com peso
+tl.fromTo('#flash', { opacity: 0 }, { opacity: .6, duration: .05 }, 62.7);
+tl.to('#flash', { opacity: 0, duration: .4 }, 62.75);
+show(LT.lati, 62.7, 1.3);
+tl.fromTo(LT.lati, { scale: 1.8, opacity: 0 }, { scale: 1, opacity: 1, duration: .22, ease: 'power4.out' }, 62.7);
+tl.fromTo('#pl_profissional', { scale: 1 }, { scale: 1.08, duration: .6, ease: 'power3.out' }, 62.7);
+
+// 63–84 Avenida: lettering FECHAR O ANO COM FORÇA
+lt('lfec', 76.5, 7.0, .25);
+// cortes aceleram com o surdo: pulso de zoom em cada batida (a cada 1 s)
+for (let t = 66.5; t < 83.5; t += 1.0) tl.fromTo('#plates', { scale: 1.035 }, { scale: 1, duration: .35, ease: 'power3.out' }, t);
+
+// 83.5 paradinha: bateria para, imagem desacelera; serpentina passa por ponto e muda de direção
+tl.fromTo('#pl_postits', { filter: 'brightness(1) saturate(1)' }, { filter: 'brightness(.8) saturate(.55)', duration: 1.2, ease: 'none' }, 83.5);
+lt('lscen', 84.2, 4.0, .35);
+tl.set('#s3', { opacity: 1 }, 86.0);
+tl.to('#s3', { strokeDashoffset: 0, duration: 2.6, ease: 'power1.inOut' }, 86.0);
+tl.set('#d_pt1', { opacity: 1, scale: 0 }, 88.0);
+tl.to('#d_pt1', { scale: 1, duration: .3, ease: 'back.out(3)' }, 88.0);
+tl.set('#s3b', { opacity: 1 }, 88.6);
+tl.to('#s3b', { strokeDashoffset: 0, duration: 2.2, ease: 'power2.out' }, 88.6);
+tl.to(['#s3', '#s3b', '#d_pt1'], { opacity: 0, duration: .4 }, 92.0);
+tl.fromTo('#pl_postits', { filter: 'brightness(.8) saturate(.55)' }, { filter: 'brightness(1) saturate(1)', duration: .3 }, 92.0);
+
+// 98–112 Grito: lettering grande, batida seca na entrada (convenção)
+const hit = (id, t, d) => {
+  show(LT[id], t, d);
+  tl.fromTo(LT[id], { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: .14, ease: 'power4.out' }, t);
+  tl.fromTo('#flash', { opacity: 0 }, { opacity: .22, duration: .03 }, t); tl.to('#flash', { opacity: 0, duration: .25 }, t + .03);
+  tl.fromTo('#plates', { scale: 1.06 }, { scale: 1, duration: .4, ease: 'power3.out' }, t);
+};
+hit('lperf', 98.5, 3.8); hit('ldec', 102.5, 4.8); hit('lpen', 107.5, 4.4);
+
+// 112–125 Escola: imagens em corte seco; pessoas do KV entram, serpentina liga
+const kpTimes = [120.4, 121.2, 122.0, 122.8, 123.6];
+kpTimes.forEach((t, i) => {
+  tl.fromTo('#kp' + i, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }, t);
+});
+tl.set('#s4', { opacity: 1, strokeDashoffset: 1 }, 120.4);
+tl.to('#s4', { strokeDashoffset: 0, duration: 3.4, ease: 'none' }, 120.4);
+tl.fromTo('#plates', { filter: 'brightness(1)' }, { filter: 'brightness(.7)', duration: 1.5 }, 120.0);
+// grupo abraçado: as pessoas se aproximam (abraço)
+kpTimes.forEach((t, i) => tl.to('#kp' + i, { x: (2 - i) * 70, duration: .9, ease: 'power2.inOut' }, 124.0));
+
+// 125–145 Desfile
+// 130.0 bateria corta; silêncio 1 s; última batida em 131.3; volta inteira em 131.5
+tl.fromTo('#plates', { filter: 'brightness(.7)' }, { filter: 'brightness(.5)', duration: 1.3 }, 130.0);
+tl.set(['#kp0', '#kp1', '#kp2', '#kp3', '#kp4', '#s4'], { opacity: 0 }, 130.0);
+tl.fromTo('#plates', { scale: 1.05 }, { scale: 1, duration: .3, ease: 'power3.out' }, 131.3);
+tl.set('#plates', { filter: 'brightness(.62)' }, 131.5);
+// KV em camadas sincronizado com a fala
+tl.set(['#sL', '#sR'], { opacity: 1 }, 131.6);
+tl.to('#sL', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.out' }, 131.6);
+tl.to('#sR', { strokeDashoffset: 0, duration: 1.4, ease: 'power2.out' }, 131.6);
+['k1', 'k2', 'k3', 'k4', 'k5', 'k6'].forEach((id, i) => {
+  tl.set('#' + id, { opacity: 1, scale: 0 }, 132.6 + i * .12);
+  tl.to('#' + id, { scale: 1, duration: .3, ease: 'back.out(3)' }, 132.6 + i * .12);
+});
+tl.set('#s4', { opacity: 1, strokeDashoffset: 1 }, 132.0);
+tl.to('#s4', { strokeDashoffset: 0, duration: 2.0, ease: 'power2.out' }, 132.0);
+tl.set('#pao', { opacity: 1 }, 133.2); tl.set('#pao2', { opacity: 1 }, 133.2);
+kpTimes.forEach((t, i) => {
+  tl.set('#kp' + i, { x: (2 - i) * 70, y: 0 }, 133.0);
+  tl.fromTo('#kp' + i, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .5, ease: 'power2.out' }, 133.2 + i * .15);
+});
+// título: de desfoque para foco
+show(LT.ltit, 134.0, 11.0);
+tl.fromTo(LT.ltit, { filter: 'blur(40px)', opacity: 0 }, { filter: 'blur(0px)', opacity: 1, duration: 1.1, ease: 'power2.out' }, 134.0);
+// título sobe um pouco para abrir espaço para a assinatura
+tl.to(LT.ltit, { y: -90, duration: .8, ease: 'power2.inOut' }, 135.4);
+tl.to(['#kp0', '#kp1', '#kp2', '#kp3', '#kp4', '#pao', '#pao2'], { y: 40, duration: .8, ease: 'power2.inOut' }, 135.4);
+// assinatura: "melhor" e "juntos" escritos à mão (clip reveal)
+const assin = LT.lass;
+assin.querySelectorAll('.hand').forEach((s) => { s.style.display = 'inline-block'; s.style.clipPath = 'inset(0 100% 0 0)'; });
+show(assin, 135.4, 8.0);
+tl.fromTo(assin, { y: 16 }, { y: 0, duration: .6 }, 135.4);
+const hands = assin.querySelectorAll('.hand');
+tl.to(hands[0], { clipPath: 'inset(0 0% 0 0)', duration: .9, ease: 'none' }, 136.2);
+tl.to(hands[1], { clipPath: 'inset(0 0% 0 0)', duration: 1.1, ease: 'none' }, 139.0);
+// confete sobre o KV
+CONF.forEach((c, i) => {
+  const t0 = 136.5 + c.dl + (i % 2) * 0.01;
+  tl.set(c.d, { opacity: 1, y: 0, x: 0, rotation: 0 }, t0);
+  tl.to(c.d, { y: 1180, x: c.x, rotation: c.r, duration: c.dur, ease: 'none' }, t0);
+  tl.set(c.d, { opacity: 0 }, t0 + c.dur);
+});
+// 141.0 explosão final: Olha a Takeda aí, gente!
+tl.set(assin, { opacity: 0, visibility: 'hidden' }, 140.9);
+tl.fromTo('#flash', { opacity: 0 }, { opacity: .85, duration: .05 }, 141.0);
+tl.to('#flash', { opacity: 0, duration: .6, ease: 'power2.out' }, 141.05);
+tl.set(LT.ltit, { y: -90 }, 141.0);
+show(LT.lolha, 141.0, 4.0);
+tl.fromTo(LT.lolha, { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 1, duration: .25, ease: 'power4.out' }, 141.0);
+tl.fromTo('#takeda', { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: .4, ease: 'power2.out' }, 141.4);
+tl.set('#selo', { left: 120, top: 860, scale: 1.0, opacity: 0 }, 141.3);
+tl.fromTo('#selo', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }, 141.6);
+CONF.forEach((c, i) => {
+  const t0 = 141.0 + c.dl * .5;
+  tl.set(c.d, { opacity: 1, y: 0, x: 0, rotation: 0 }, t0);
+  tl.to(c.d, { y: 1180, x: c.x * 1.4, rotation: c.r, duration: c.dur * .8, ease: 'none' }, t0);
+  tl.set(c.d, { opacity: 0 }, t0 + c.dur * .8);
+});
+// fade final (a bateria segue e emenda com a abertura oficial)
+tl.fromTo('#root', { opacity: 1 }, { opacity: 0, duration: .9, ease: 'none' }, 144.1);
+
+// legendas (um elemento por fala: seek-safe)
+CAPS.forEach(([a, b, t], i) => {
+  const d = document.createElement('div');
+  d.style.cssText = 'position:absolute;left:0;right:0;bottom:0;opacity:0;visibility:hidden';
+  d.className = 'capl'; d.textContent = t; capEl.appendChild(d);
+  tl.set(d, { opacity: 1, visibility: 'visible' }, a);
+  tl.set(d, { opacity: 0, visibility: 'hidden' }, b);
+});
+// chips de bloco
+BLOCKS.forEach(([t, n, s], i) => {
+  const end = i + 1 < BLOCKS.length ? BLOCKS[i + 1][0] : 145;
+  const d = document.createElement('div'); d.className = 'chip';
+  d.innerHTML = `${i + 1} · ${n}<small>${s}</small>`; $('root').appendChild(d);
+  tl.set(d, { opacity: 1 }, t + 0.001);
+  tl.set(d, { opacity: 0 }, end - 0.001);
+});
+// takeda: oculto até 141.4
+tl.set('#takeda', { opacity: 0 }, 0);
+
+window.__timelines = window.__timelines || {};
+window.__timelines['root'] = tl;
+</script>
+</body>
+</html>
