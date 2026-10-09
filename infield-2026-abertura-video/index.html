@@ -14,6 +14,7 @@
 html,body{width:1920px;height:1080px;background:#000;overflow:hidden}
 #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#000;font-family:'Montserrat var',system-ui,sans-serif;color:var(--white)}
 .layer{position:absolute;inset:0}
+#plates{z-index:0;isolation:isolate}
 .plate{position:absolute;inset:0;opacity:0;visibility:hidden}
 .plate svg{position:absolute;inset:0;width:1920px;height:1080px}
 .tag{position:absolute;left:56px;top:124px;font:600 20px/1.2 'Montserrat var';letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.78);background:rgba(0,0,0,.45);padding:9px 14px;border-radius:6px;border-left:4px solid var(--red)}
@@ -45,7 +46,7 @@ html,body{width:1920px;height:1080px;background:#000;overflow:hidden}
   <svg id="ser" viewBox="0 0 1920 1080"></svg>
   <div id="lts" class="layer"></div>
   <div id="cap"></div>
-    <div class="badge" id="selo" style="left:660px;top:430px"><img src="./assets/img/logo-infield.png" style="height:130px"></div>
+    <div class="badge" id="selo" style="left:740px;top:430px"><img src="./assets/img/logo-infield.png" style="height:130px"></div>
   <div class="badge" id="takeda" style="left:1500px;top:60px"><img src="./assets/img/logo-takeda-pilula.png"></div>
   <div class="layer" id="confs"></div>
   <div class="layer" id="flash"></div>
@@ -169,9 +170,9 @@ mkLT('lscen', 'O cenário mudou.', 440, 150);
 mkLT('lperf', 'Per<span class="r">for</span>mance', 420, 210);
 mkLT('ldec', 'Decisão<br>e <span class="r">agilidade</span>', 340, 190);
 mkLT('lpen', 'Pensamento<br><span class="r">estratégico</span>', 340, 190);
-mkLT('ltit', 'Futuro<br><span class="r">Infield</span><br>em foco', 230, 150);
-mkLT('lass', 'a <span class="r hand" style="font-size:150px">melhor</span> história é a que construímos <span class="r hand" style="font-size:150px">juntos</span>', 800, 56);
-mkLT('lolha', 'Olha a <span class="r">Takeda</span> aí, gente!', 760, 120);
+mkLT('ltit', 'Futuro<br><span class="r">Infield</span><br>em foco', 190, 120);
+mkLT('lass', 'a <span class="r hand" style="font-size:150px">melhor</span> história é a que construímos <span class="r hand" style="font-size:150px">juntos</span>', 870, 52);
+mkLT('lolha', 'Olha a <span class="r">Takeda</span> aí, gente!', 870, 96);
 
 /* ================= cortes na batida (plate, início, duração) ================= */
 const B = 0.5; // beat (120 bpm)
@@ -235,8 +236,6 @@ const CAPS = [
   [120.2, 124.4, 'É assim que um time ganha força.'],
   [125.4, 130.0, 'O futuro que a gente quer começa no resultado que construímos agora.'],
   [131.7, 134.2, 'O próximo capítulo começa hoje.'],
-  [135.4, 140.2, 'Porque a melhor história é aquela que construímos juntos.'],
-  [141.0, 143.2, 'Olha a Takeda aí, gente!'],
 ];
 const capEl = $('cap');
 
@@ -392,8 +391,7 @@ kpTimes.forEach((t, i) => {
 show(LT.ltit, 134.0, 11.0);
 tl.fromTo(LT.ltit, { filter: 'blur(40px)', opacity: 0 }, { filter: 'blur(0px)', opacity: 1, duration: 1.1, ease: 'power2.out' }, 134.0);
 // título sobe um pouco para abrir espaço para a assinatura
-tl.to(LT.ltit, { y: -90, duration: .8, ease: 'power2.inOut' }, 135.4);
-tl.to(['#kp0', '#kp1', '#kp2', '#kp3', '#kp4', '#pao', '#pao2'], { y: 40, duration: .8, ease: 'power2.inOut' }, 135.4);
+tl.to(LT.ltit, { y: -60, duration: .8, ease: 'power2.inOut' }, 135.4);
 // assinatura: "melhor" e "juntos" escritos à mão (clip reveal)
 const assin = LT.lass;
 assin.querySelectorAll('.hand').forEach((s) => { s.style.display = 'inline-block'; s.style.clipPath = 'inset(0 100% 0 0)'; });
@@ -413,11 +411,10 @@ CONF.forEach((c, i) => {
 tl.set(assin, { opacity: 0, visibility: 'hidden' }, 140.9);
 tl.fromTo('#flash', { opacity: 0 }, { opacity: .85, duration: .05 }, 141.0);
 tl.to('#flash', { opacity: 0, duration: .6, ease: 'power2.out' }, 141.05);
-tl.set(LT.ltit, { y: -90 }, 141.0);
 show(LT.lolha, 141.0, 4.0);
 tl.fromTo(LT.lolha, { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 1, duration: .25, ease: 'power4.out' }, 141.0);
 tl.fromTo('#takeda', { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: .4, ease: 'power2.out' }, 141.4);
-tl.set('#selo', { left: 120, top: 860, scale: 1.0, opacity: 0 }, 141.3);
+tl.set('#selo', { left: 56, top: 196, scale: .8, transformOrigin: '0 0', opacity: 0 }, 141.3);
 tl.fromTo('#selo', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .45, ease: 'power2.out' }, 141.6);
 CONF.forEach((c, i) => {
   const t0 = 141.0 + c.dl * .5;
