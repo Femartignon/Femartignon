@@ -1,0 +1,11 @@
+{
+  "name": "infield-2026-abertura-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audio": "python3 -I tools/audio.py",
+    "dev": "npx --yes hyperframes@0.8.46 preview",
+    "check": "npx --yes hyperframes@0.8.46 check",
+    "render": "npx --yes hyperframes@0.8.46 render"
+  }
+}
