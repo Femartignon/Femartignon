@@ -4,3 +4,7 @@
   publish = "public"
   functions = "netlify/functions"
   command = ""
+
+# Assistente Infield: a função lê a base de conhecimento (agente/conhecimento.md) em tempo de execução
+[functions.agente]
+  included_files = ["agente/**"]

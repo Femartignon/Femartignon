@@ -1,18 +1,18 @@
 // Núcleo do Assistente Infield: instruções, validação da conversa e chamada ao Claude.
 // A rota (api/agente.mjs) só repassa a requisição; o modelo é injetável para testes.
 
-import { readFileSync } from 'node:fs';
 import { streamText, stepCountIs } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { ferramentas } from './ferramentas.mjs';
+import { lerConhecimento } from './base.mjs';
 
 export const MODELO = 'claude-opus-5-5';
 
-const CONHECIMENTO = readFileSync(new URL('./conhecimento.md', import.meta.url), 'utf8')
+const conhecimento = () => lerConhecimento()
   .replace(/<!--[\s\S]*?-->/g, '')
   .trim();
 
-const INSTRUCOES = `Você é o Assistente Infield, o assistente virtual dos participantes do Encontro Infield 2026 da Takeda. Ele aparece no menu Mais do app do evento e é usado pelo celular, muitas vezes em trânsito.
+const instrucoes = () => `Você é o Assistente Infield, o assistente virtual dos participantes do Encontro Infield 2026 da Takeda. Ele aparece no menu Mais do app do evento e é usado pelo celular, muitas vezes em trânsito.
 
 Como responder:
 - Responda em português do Brasil, em tom cordial e direto, com no máximo 3 parágrafos curtos ou uma lista curta. Use **negrito** só para o dado principal (horário, local, menu do app).
@@ -26,7 +26,7 @@ Limites (evento da indústria farmacêutica):
 - Nunca peça nem registre dados pessoais ou sensíveis.
 
 <base_de_conhecimento>
-${CONHECIMENTO}
+${conhecimento()}
 </base_de_conhecimento>`;
 
 // Limites de entrada: protegem custo e evitam abuso do endpoint público
@@ -53,7 +53,7 @@ export function validarConversa(corpo) {
 export function responder(conversa, { model = anthropic(MODELO) } = {}) {
   const resultado = streamText({
     model,
-    instructions: INSTRUCOES,
+    instructions: instrucoes(),
     messages: conversa,
     tools: ferramentas,
     stopWhen: stepCountIs(5),

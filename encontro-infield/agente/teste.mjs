@@ -81,14 +81,32 @@ const casosBase = [
   ['Qual a franquia de bagagem?', '23 kg'],
   ['Como pego o transfer no aeroporto?', 'receptivo'],
   ['Qual a dose do remédio X?', 'não é tratado por este assistente'],
-  ['Qual a cor do céu em Marte?', 'Não encontrei essa informação'],
+  ['Qual a cor do céu em Marte?', 'ainda não está comigo'],
+  ['Quais as salas da BU Onco Hemato no dia 18?', 'Rio Ballroom 2'],
+  ['Onde fica a Lagoa 4?', 'Agenda'],
 ];
 for (const [pergunta, esperado] of casosBase) {
   const r = await responderPelaBase(pergunta);
   assert(r.includes(esperado), `base: "${pergunta}" → contém "${esperado}"`);
 }
+for (const [frase, resposta] of [['oi', 'Olá! Como posso ajudar?'], ['Oi!', 'Olá! Como posso ajudar?'], ['bom dia', 'Bom dia! Como posso ajudar?'], ['obrigado', 'Imagina!'], ['tchau', 'Até mais!']]) {
+  assert((await responderPelaBase(frase)).startsWith(resposta), `conversa: "${frase}" responde no tom da base`);
+}
+assert(!(await responderPelaBase('oi')).includes('Não encontrei') && !(await responderPelaBase('oi')).includes('ainda não está comigo'), 'conversa: saudação nunca cai em "não encontrei"');
 const agenda = await responderPelaBase('Qual a agenda?');
+assert(!agenda.includes('### ') && agenda.includes('**Visão geral**'), 'base: subtítulos aparecem como rótulo em negrito, sem ###');
 assert(agenda.includes('- 16/11 (segunda):') && !agenda.includes('|'), 'base: tabela da Agenda vira lista, sem "|"');
 assert(!(await responderPelaBase('Quais as regras para o assistente?')).includes('Nunca deduza'), 'base: seção "Regras para o assistente" não aparece ao participante');
 const rBase = await responderSemModelo([{ role: 'user', content: 'Qual o dress code?' }]);
 assert(rBase.status === 200 && (await rBase.text()).includes('Traje'), 'base: rota responde 200 em texto');
+
+// 5. Rota compartilhada: Netlify e Vercel respondem igual (sem chave → base de conhecimento)
+const { default: rotaNetlify } = await import('../netlify/functions/agente.mjs');
+const { POST: rotaVercel } = await import('../api/agente.mjs');
+delete process.env.ANTHROPIC_API_KEY;
+for (const [nome, rota] of [['netlify', rotaNetlify], ['vercel', rotaVercel]]) {
+  const r = await rota(new Request('http://x/api/agente', { method: 'POST', body: JSON.stringify({ mensagens: [{ role: 'user', content: 'Onde é o credenciamento?' }] }) }));
+  assert(r.status === 200 && (await r.text()).includes('check-in de grupos'), `rota ${nome}: responde pela base`);
+}
+const rGet = await rotaNetlify(new Request('http://x/api/agente'));
+assert(rGet.status === 405, 'rota: GET recusado com 405');
