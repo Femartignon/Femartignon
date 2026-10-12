@@ -30,6 +30,7 @@ encontro-infield/
 ├─ public/img/agente-icone.*       ícone do menu Mais (SVG + PNG 512)
 ├─ public/img/agente-fundo.webp    arte de fundo do chat (Takeda + assistente, Rio)
 ├─ public/fonts/gotham-bold.otf    Gotham da página do agente
+├─ agente/base.mjs                 leitura da SSOT (testa caminhos do Vercel e do Netlify)
 ├─ agente/rota.mjs                 lógica da rota POST /api/agente (compartilhada)
 ├─ netlify/functions/agente.mjs    /api/agente no Netlify → agente/rota.mjs
 ├─ api/agente.mjs                  /api/agente no Vercel → agente/rota.mjs

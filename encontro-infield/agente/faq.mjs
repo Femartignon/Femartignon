@@ -2,19 +2,41 @@
 // Lê a mesma SSOT (conhecimento.md) e as mesmas ferramentas ao vivo do modo Claude,
 // escolhendo a resposta por palavras-chave. Usado quando não há ANTHROPIC_API_KEY.
 
-import { readFileSync } from 'node:fs';
 import { ferramentas } from './ferramentas.mjs';
+import { lerConhecimento } from './base.mjs';
 
-// Linhas de tabela markdown viram itens: "| 16/11 | Plenária |" → "- 16/11: Plenária".
-// O cabeçalho (linha antes do separador |---|) e o próprio separador são descartados.
+// Tabelas viram itens de lista, com os títulos das colunas:
+//   | Sala | 17/11 | 18/11 |  +  | BU X | 8h–12h | — |   →   "- BU X — 17/11: 8h–12h"
+// Tabela de duas colunas vira "- chave: valor". Células vazias ou "—" são omitidas.
 const SEPARADOR = /^\|[\s:|-]+\|$/;
-function tabelaParaLista(linhas) {
-  return linhas.flatMap((linha, i) => {
-    if (!linha.startsWith('|')) return [linha];
-    if (SEPARADOR.test(linha) || SEPARADOR.test(linhas[i + 1] ?? '')) return [];
-    const [chave, ...resto] = linha.split('|').map((c) => c.trim()).filter(Boolean);
-    return [resto.length ? `- ${chave}: ${resto.join(' — ')}` : `- ${chave}`];
+const celulas = (linha) => linha.split('|').slice(1, -1).map((c) => c.trim());
+
+function converteTabela(bloco) {
+  const [cabecalho, ...linhas] = bloco.filter((l) => !SEPARADOR.test(l)).map(celulas);
+  return linhas.map(([chave, ...valores]) => {
+    const itens = valores
+      .map((v, j) => ({ titulo: cabecalho[j + 1], valor: v }))
+      .filter(({ valor }) => valor && valor !== '—' && valor !== '-');
+    if (cabecalho.length <= 2) return `- ${chave}: ${itens.map((i) => i.valor).join('; ')}`.replace(/: $/, '');
+    return itens.length
+      ? `- ${chave} — ${itens.map((i) => `${i.titulo}: ${i.valor}`).join('; ')}`
+      : `- ${chave}`;
   });
+}
+
+function tabelaParaLista(linhas) {
+  const saida = [];
+  let i = 0;
+  while (i < linhas.length) {
+    if (!linhas[i].startsWith('|')) {
+      saida.push(linhas[i++]);
+      continue;
+    }
+    const bloco = [];
+    while (i < linhas.length && linhas[i].startsWith('|')) bloco.push(linhas[i++]);
+    saida.push(...converteTabela(bloco));
+  }
+  return saida;
 }
 
 // Seções internas da base, que orientam o assistente mas não são exibidas ao participante
@@ -30,7 +52,9 @@ export function lerBase(texto) {
       atual = { titulo: h[1].trim(), linhas: [] };
       secoes.push(atual);
     } else if (atual && linha.trim()) {
-      atual.linhas.push(linha.trim());
+      // Subtítulos (###) viram rótulo em negrito, sem o símbolo
+      const sub = linha.trim().match(/^###\s+(.+)/);
+      atual.linhas.push(sub ? `**${sub[1]}**` : linha.trim());
     }
   }
   return secoes
@@ -40,18 +64,19 @@ export function lerBase(texto) {
 
 const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-const BASE = lerBase(readFileSync(new URL('./conhecimento.md', import.meta.url), 'utf8'));
+const BASE = lerBase(lerConhecimento());
 
 // Palavras-chave por seção (sem acento), ligadas pelo início do título da seção
 // ("Agenda" vale para "Agenda (previsto)"). O título também conta, então uma seção
 // nova na base já é encontrada pelas palavras do próprio título.
 const PALAVRAS = {
-  'Evento': ['evento', 'endereco', 'onde fica', 'local', 'tema', 'datas', 'quando e', 'quem participa', 'participantes', 'estagiario', 'terceiro', 'hotel fica'],
-  'Agenda': ['agenda', 'programacao', 'cronograma', 'abertura', 'plenaria', 'festa', 'encerramento', 'lideranca', 'treinamento', 'atividade', 'que horas', 'horario', 'programa'],
+  'Evento': ['evento', 'endereco', 'tema', 'datas', 'quando e', 'quem participa', 'participantes', 'estagiario', 'terceiro', 'hotel fica'],
+  'Agenda': ['agenda', 'programacao', 'cronograma', 'abertura', 'plenaria', 'festa', 'encerramento', 'lideranca', 'treinamento', 'atividade', 'que horas', 'horario', 'programa', 'sala', 'salas', ' bu ', 'bus', 'grupo', 'lagoa', 'ballroom', 'world cafe', 'hemato', 'onco', 'raras', 'specialty', 'market access', 'gastro', 'retail', 'medical affairs', 'msl'],
   'Credenciamento': ['credenciamento', 'cracha', 'credencial', 'registro'],
   'Traje': ['traje', 'roupa', 'dress', 'vestir', 'vestimenta', 'look', 'agasalho', 'casaco', 'blusa', 'ar condicionado', 'o que levar'],
   'Hospedagem': ['hospedagem', 'check-in', 'checkin', 'check in', 'check-out', 'checkout', 'check out', 'quarto', 'apartamento', 'early', 'late', 'bagagem', 'mala'],
   'Refeições': ['refeicao', 'refeicoes', 'jantar', 'almoco', 'cafe', 'comida', 'restaurante', 'comer', 'reembolso', 'cartao corporativo'],
+  'Ações no evento': ['vacina', 'vacinacao', 'dengue', 'dose', 'voluntariado', 'natal', 'totem', 'presidente', 'cafe com', 'qr code'],
   'Vacinação': ['vacina', 'vacinacao', 'dengue', 'dose'],
   'Segurança': ['seguranca', 'emergencia', 'saida de emergencia', 'perigo', 'roubo'],
   'Viagem aérea': ['voo', 'aereo', 'aerea', 'passagem', 'embarque', 'companhia', 'localizador', 'assento', 'aeroporto', 'franquia', 'franquia de bagagem', 'quantos kg', 'peso da mala', 'mochila'],
@@ -81,7 +106,7 @@ function formataSecao(secao) {
 }
 
 export function escolherSecoes(pergunta) {
-  const q = normaliza(pergunta);
+  const q = ` ${normaliza(pergunta)} `;
   return BASE.map((s) => {
     const doTitulo = normaliza(s.titulo).split(/[^a-z]+/).filter((p) => p.length > 3 && !GENERICAS.includes(p));
     const chave = Object.keys(PALAVRAS).find((k) => normaliza(s.titulo).startsWith(normaliza(k)));
@@ -117,8 +142,35 @@ async function respostaContagem() {
 
 const SUGESTAO = 'Posso ajudar com agenda, hotel, refeições, voo, transfer, vacinação, segurança, app, clima e trânsito.';
 
+// Conversas do dia a dia: respostas da seção "Regras para o assistente".
+// Só casa a mensagem inteira (sem pontuação), para não engolir perguntas reais.
+const CONVERSA = [
+  [['oi', 'ola', 'oii', 'e ai', 'hey', 'opa'], 'Olá! Como posso ajudar?'],
+  [['bom dia'], 'Bom dia! Como posso ajudar?'],
+  [['boa tarde'], 'Boa tarde! Como posso ajudar?'],
+  [['boa noite'], 'Boa noite! Como posso ajudar?'],
+  [['tudo bem', 'como vai', 'tudo bem como vai'], 'Tudo ótimo por aqui, obrigado por perguntar! E com você? Em que posso ajudar sobre o Encontro?'],
+  [['obrigado', 'obrigada', 'valeu', 'brigado', 'show', 'perfeito'], 'Imagina! Se precisar de mais alguma coisa, é só chamar.'],
+  [['tchau', 'ate mais', 'ate logo', 'falou'], 'Até mais! Aproveite o Encontro Infield.'],
+  [['ok', 'certo', 'entendi', 'beleza'], 'Combinado! Precisa de mais alguma coisa?'],
+  [['quem e voce', 'o que voce faz', 'como funciona'], 'Sou o Assistente Infield, o help desk do Encontro Infield 2026 aqui no app. Posso tirar dúvidas sobre agenda, salas, voo, transfer, hospedagem, refeições, segurança e uso do app. Como posso ajudar?'],
+  [['ajuda', 'menu', 'o que posso perguntar'], 'Pode me perguntar, por exemplo: Onde é a minha sala? Que horas começa a plenária? Como chego ao hotel? Qual o horário de check-in? Onde é a vacinação?'],
+  [['voce e otimo', 'voce ajudou muito', 'ajudou muito'], 'Que bom que ajudei! Estou por aqui se precisar.'],
+  [['quero falar com uma pessoa', 'falar com alguem', 'falar com uma pessoa'], 'Claro! Você pode falar com a agência pelo menu Mais › Suporte da Agência ou procurar a equipe do evento, identificada em todos os ambientes do hotel.'],
+];
+
+// Mensagem inteira sem pontuação (ex.: "Oi!" → "oi")
+const semPontuacao = (s) => normaliza(s).replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+
 export async function responderPelaBase(pergunta) {
-  const q = normaliza(pergunta);
+  const q = ` ${normaliza(pergunta)} `;
+  const simples = semPontuacao(pergunta);
+
+  const conversa = CONVERSA.find(([frases]) => frases.includes(simples));
+  if (conversa) return conversa[1];
+  if (simples.replace(/ /g, '').length < 2) {
+    return 'Não entendi bem. Pode me contar com um pouco mais de detalhe o que você precisa?';
+  }
 
   if (tem(q, FORA_DO_ESCOPO) && !tem(q, ['vacina'])) {
     return `Esse tema não é tratado por este assistente. Para esse assunto, procure a área responsável da Takeda.\n\n${SUGESTAO}`;
@@ -144,7 +196,7 @@ export async function responderPelaBase(pergunta) {
   if (!partes.length) partes.push(...escolherSecoes(pergunta).map(formataSecao));
 
   if (!partes.length) {
-    return `Não encontrei essa informação na base do evento. ${SUGESTAO}\n\nPara outras dúvidas, fale com a organização pelo menu **Mais › Suporte da Agência**.`;
+    return `Essa informação ainda não está comigo. Acompanhe o Feed e as Notificações do app, ou fale com a agência em **Mais › Suporte da Agência**. ${SUGESTAO}`;
   }
   return partes.join('\n\n');
 }

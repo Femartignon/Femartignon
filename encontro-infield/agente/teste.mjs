@@ -81,13 +81,20 @@ const casosBase = [
   ['Qual a franquia de bagagem?', '23 kg'],
   ['Como pego o transfer no aeroporto?', 'receptivo'],
   ['Qual a dose do remédio X?', 'não é tratado por este assistente'],
-  ['Qual a cor do céu em Marte?', 'Não encontrei essa informação'],
+  ['Qual a cor do céu em Marte?', 'ainda não está comigo'],
+  ['Quais as salas da BU Onco Hemato no dia 18?', 'Rio Ballroom 2'],
+  ['Onde fica a Lagoa 4?', 'Agenda'],
 ];
 for (const [pergunta, esperado] of casosBase) {
   const r = await responderPelaBase(pergunta);
   assert(r.includes(esperado), `base: "${pergunta}" → contém "${esperado}"`);
 }
+for (const [frase, resposta] of [['oi', 'Olá! Como posso ajudar?'], ['Oi!', 'Olá! Como posso ajudar?'], ['bom dia', 'Bom dia! Como posso ajudar?'], ['obrigado', 'Imagina!'], ['tchau', 'Até mais!']]) {
+  assert((await responderPelaBase(frase)).startsWith(resposta), `conversa: "${frase}" responde no tom da base`);
+}
+assert(!(await responderPelaBase('oi')).includes('Não encontrei') && !(await responderPelaBase('oi')).includes('ainda não está comigo'), 'conversa: saudação nunca cai em "não encontrei"');
 const agenda = await responderPelaBase('Qual a agenda?');
+assert(!agenda.includes('### ') && agenda.includes('**Visão geral**'), 'base: subtítulos aparecem como rótulo em negrito, sem ###');
 assert(agenda.includes('- 16/11 (segunda):') && !agenda.includes('|'), 'base: tabela da Agenda vira lista, sem "|"');
 assert(!(await responderPelaBase('Quais as regras para o assistente?')).includes('Nunca deduza'), 'base: seção "Regras para o assistente" não aparece ao participante');
 const rBase = await responderSemModelo([{ role: 'user', content: 'Qual o dress code?' }]);

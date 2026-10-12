@@ -1,14 +1,14 @@
 // Núcleo do Assistente Infield: instruções, validação da conversa e chamada ao Claude.
 // A rota (api/agente.mjs) só repassa a requisição; o modelo é injetável para testes.
 
-import { readFileSync } from 'node:fs';
 import { streamText, stepCountIs } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { ferramentas } from './ferramentas.mjs';
+import { lerConhecimento } from './base.mjs';
 
 export const MODELO = 'claude-opus-5-5';
 
-const CONHECIMENTO = readFileSync(new URL('./conhecimento.md', import.meta.url), 'utf8')
+const CONHECIMENTO = lerConhecimento()
   .replace(/<!--[\s\S]*?-->/g, '')
   .trim();
 
