@@ -17,5 +17,11 @@ export async function atender(request) {
   }
   const { erro, conversa } = validarConversa(corpo);
   if (erro) return Response.json({ erro }, { status: 400 });
-  return process.env.ANTHROPIC_API_KEY ? responder(conversa) : responderSemModelo(conversa);
+  try {
+    return process.env.ANTHROPIC_API_KEY ? await responder(conversa) : await responderSemModelo(conversa);
+  } catch (err) {
+    // Erro explícito nos logs da plataforma, em vez de falha silenciosa
+    console.error('[agente] falha ao responder:', err);
+    return Response.json({ erro: 'Falha interna ao responder.' }, { status: 500 });
+  }
 }

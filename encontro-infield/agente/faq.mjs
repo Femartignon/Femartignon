@@ -64,7 +64,8 @@ export function lerBase(texto) {
 
 const normaliza = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-const BASE = lerBase(lerConhecimento());
+let baseCache;
+const base = () => (baseCache ??= lerBase(lerConhecimento()));
 
 // Palavras-chave por seção (sem acento), ligadas pelo início do título da seção
 // ("Agenda" vale para "Agenda (previsto)"). O título também conta, então uma seção
@@ -107,7 +108,7 @@ function formataSecao(secao) {
 
 export function escolherSecoes(pergunta) {
   const q = ` ${normaliza(pergunta)} `;
-  return BASE.map((s) => {
+  return base().map((s) => {
     const doTitulo = normaliza(s.titulo).split(/[^a-z]+/).filter((p) => p.length > 3 && !GENERICAS.includes(p));
     const chave = Object.keys(PALAVRAS).find((k) => normaliza(s.titulo).startsWith(normaliza(k)));
     const termos = [...(PALAVRAS[chave] ?? []), ...doTitulo];
