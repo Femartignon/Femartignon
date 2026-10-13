@@ -43,7 +43,10 @@
   /* Azul: clima (base esquerda) */
   .weather{
     grid-column:1;grid-row:2;color:#FFFFFF;
-    background:linear-gradient(170deg,#2A8FD6 0%,var(--blue-deep) 100%);
+    background:
+      linear-gradient(170deg,rgba(42,143,214,.78) 0%,rgba(27,111,184,.86) 100%),
+      url(img/rio-entardecer.jpg) center 40%/cover no-repeat,
+      linear-gradient(170deg,#2A8FD6 0%,var(--blue-deep) 100%);
   }
   .wx-top{display:flex;align-items:center;gap:8px;}
   .wx-top svg{width:34px;height:34px;flex:none;}
