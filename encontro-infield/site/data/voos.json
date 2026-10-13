@@ -1,0 +1,7 @@
+{
+  "modo_teste": true,
+  "voos": [
+    { "voo": "LA3456", "cia": "LATAM", "origem": "GRU", "destino": "GIG", "data": "15/11", "horario_chegada": "08:40", "passageiros": 32 },
+    { "voo": "G31234", "cia": "GOL",   "origem": "CNF", "destino": "SDU", "data": "15/11", "horario_chegada": "10:15", "passageiros": 18 }
+  ]
+}
