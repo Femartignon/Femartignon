@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposta 5 — Guia rápido do hotel</title>
+<style>
+  @font-face{font-family:'Gotham';font-weight:400;font-style:normal;src:url(../fonts/gotham-book.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:500;font-style:normal;src:url(../fonts/gotham-medium.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:700;font-style:normal;src:url(../fonts/gotham-bold.otf) format('opentype');font-display:swap;}
+  :root{
+    --red:#E1242A;
+    --ink:#111111;
+    --body:#1A1A1A;
+    --muted:#5C636E;
+    --card:#EEF1F4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Gotham',Montserrat,'Helvetica Neue',Arial,sans-serif;
+    background:#FFFFFF;color:var(--body);overflow:hidden;
+    border-top:4px solid var(--red);
+    display:flex;flex-direction:column;padding:9px 12px 8px;gap:7px;
+  }
+  .head{display:flex;align-items:center;gap:7px;}
+  .head svg{height:20px;width:auto;flex:none;}
+  .head .t{font-weight:700;font-size:12.5px;color:var(--ink);line-height:1.1;}
+  .head .s{font-size:9px;color:var(--muted);line-height:1.2;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;flex:1;min-height:0;}
+  .tile{background:var(--card);border-radius:8px;padding:7px 9px;display:flex;flex-direction:column;min-width:0;}
+  .tile.red{background:var(--red);color:#FFFFFF;}
+  .k{font-weight:500;font-size:9.5px;color:var(--muted);line-height:1.1;}
+  .tile.red .k{color:#FFFFFF;opacity:.92;}
+  .v{font-weight:700;font-size:21px;line-height:1;color:var(--ink);margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .tile.red .v{color:#FFFFFF;}
+  .d{font-size:8.8px;line-height:1.25;color:var(--body);margin-top:auto;}
+  .tile.red .d{color:#FFFFFF;}
+</style>
+</head>
+<body>
+  <div class="head">
+    <svg viewBox="0 0 40 120" aria-hidden="true"><path d="M4,2 C30,18 38,48 38,60 C38,72 30,102 4,118 L4,2 Z" fill="#E1242A"/></svg>
+    <div>
+      <div class="t">Guia rápido do hotel</div>
+      <div class="s">Grand Hyatt Rio · Encontro Infield 2026</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="tile">
+      <div class="k">Check-in</div>
+      <div class="v">15h</div>
+      <div class="d">A partir das 15h. Antes disso, a bagagem fica guardada.</div>
+    </div>
+    <div class="tile">
+      <div class="k">Check-out</div>
+      <div class="v">12h</div>
+      <div class="d">Até as 12h. Late check-out não é garantido.</div>
+    </div>
+    <div class="tile">
+      <div class="k">Credenciamento</div>
+      <div class="v">Chegada</div>
+      <div class="d">Área de check-in de grupos, no hotel.</div>
+    </div>
+    <div class="tile red">
+      <div class="k">Vacina de dengue · 2ª dose</div>
+      <div class="v">17 e 18/11</div>
+      <div class="d">Sala Lagoa 4 · horários pelo Feed do app</div>
+    </div>
+  </div>
+</body>
+</html>

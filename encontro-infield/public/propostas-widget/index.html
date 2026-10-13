@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Propostas de widget — Encontro Infield 2026</title>
+<style>
+  @font-face{font-family:'Gotham';font-weight:400;src:url(../fonts/gotham-book.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:500;src:url(../fonts/gotham-medium.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:700;src:url(../fonts/gotham-bold.otf) format('opentype');font-display:swap;}
+  :root{--red:#E1242A;--ink:#111111;--muted:#5C636E;--line:#E4E7EB;--card:#EEF1F4;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Gotham',Montserrat,'Helvetica Neue',Arial,sans-serif;background:#FFFFFF;color:var(--ink);padding:24px 16px 48px;}
+  .wrap{max-width:1040px;margin:0 auto;}
+  header{border-top:4px solid var(--red);padding-top:14px;margin-bottom:22px;}
+  h1{font-weight:700;font-size:24px;line-height:1.15;}
+  header p{color:var(--muted);font-size:14px;margin-top:6px;line-height:1.4;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(403px,1fr));gap:24px;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px;}
+  .item h2{font-weight:700;font-size:16px;}
+  .item .n{color:var(--red);font-weight:700;margin-right:6px;}
+  .card{width:403px;max-width:100%;height:214px;border:0;display:block;border-radius:6px;background:#fff;box-shadow:0 0 0 1px var(--line);}
+  .item p{font-size:13px;line-height:1.45;color:var(--ink);}
+  .item dl{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12.5px;line-height:1.4;}
+  .item dt{color:var(--muted);}
+  .item dd{color:var(--ink);}
+  .tag{display:inline-block;font-size:11px;font-weight:500;border-radius:999px;padding:2px 9px;background:var(--card);color:var(--ink);}
+  .tag.api{background:var(--red);color:#fff;}
+  .note{margin-top:24px;font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .note a{color:var(--ink);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Propostas de widget · Encontro Infield 2026</h1>
+    <p>Cinco alternativas no formato atual do card (403 × 214 px). Cada uma mostra de 3 a 4 informações úteis ao participante. Prévias com dados de exemplo (<code>?demo=1</code>); no app, os dados reais entram pelas fontes indicadas.</p>
+  </header>
+
+  <div class="grid">
+
+    <article class="item">
+      <h2><span class="n">1</span>Contagem e próximo compromisso</h2>
+      <iframe class="card" src="proposta-1-contagem.html?demo=1" title="Proposta 1" loading="lazy"></iframe>
+      <p>Contagem regressiva em destaque, o próximo compromisso e a linha do tempo dos 4 dias. Inspirada no widget de voo e de "Golden Hour" do Watch.</p>
+      <dl>
+        <dt>Informações</dt><dd>dias para o evento · próximo compromisso · progresso do encontro</dd>
+        <dt>Fonte</dt><dd>data fixa + agenda prevista (conhecimento.md)</dd>
+        <dt>Hospedagem</dt><dd><span class="tag">Só HTML</span></dd>
+      </dl>
+    </article>
+
+    <article class="item">
+      <h2><span class="n">2</span>Agenda do dia</h2>
+      <iframe class="card" src="proposta-2-agenda.html?demo=1" title="Proposta 2" loading="lazy"></iframe>
+      <p>Seletor dos 4 dias e a programação do dia atual, com linha do tempo em vermelho. Inspirada no widget "Today Events" do iPhone.</p>
+      <dl>
+        <dt>Informações</dt><dd>dia atual · até 4 compromissos · contagem regressiva</dd>
+        <dt>Fonte</dt><dd>agenda prevista (conhecimento.md); atualizar quando a agenda final sair</dd>
+        <dt>Hospedagem</dt><dd><span class="tag">Só HTML</span></dd>
+      </dl>
+    </article>
+
+    <article class="item">
+      <h2><span class="n">3</span>Trânsito ao hotel</h2>
+      <iframe class="card" src="proposta-3-transito.html?demo=1" title="Proposta 3" loading="lazy"></iframe>
+      <p>Tempo de trajeto GIG e SDU com barra por trechos, nível do trânsito e atraso. Inspirada nos widgets de "Arrives" e "21 min left" dos mostradores de voo e Watch.</p>
+      <dl>
+        <dt>Informações</dt><dd>minutos GIG e SDU · nível · atraso · receptivo</dd>
+        <dt>Fonte</dt><dd><code>/api/transito</code> (TomTom, cache de 10 min)</dd>
+        <dt>Hospedagem</dt><dd><span class="tag api">Netlify · API</span> projeto existente <code>infield2026-widgets</code></dd>
+      </dl>
+    </article>
+
+    <article class="item">
+      <h2><span class="n">4</span>Clima e agasalho</h2>
+      <iframe class="card" src="proposta-4-clima.html?demo=1" title="Proposta 4" loading="lazy"></iframe>
+      <p>Temperatura atual com sensação e chuva, e uma dica prática: as salas são fortemente refrigeradas. Inspirada nos cartões de clima do iPhone.</p>
+      <dl>
+        <dt>Informações</dt><dd>temperatura · sensação térmica · chuva · dica de agasalho</dd>
+        <dt>Fonte</dt><dd>Open-Meteo (sem chave), coordenadas do Grand Hyatt</dd>
+        <dt>Hospedagem</dt><dd><span class="tag api">Netlify · API</span> projeto existente <code>infield2026-widgets</code></dd>
+      </dl>
+    </article>
+
+    <article class="item">
+      <h2><span class="n">5</span>Guia rápido do hotel</h2>
+      <iframe class="card" src="proposta-5-guia.html?demo=1" title="Proposta 5" loading="lazy"></iframe>
+      <p>Grade com check-in, check-out, credenciamento e a vacinação (17 e 18/11). Inspirada nos mostradores de Watch em grade, com informações de consulta rápida.</p>
+      <dl>
+        <dt>Informações</dt><dd>check-in 15h · check-out 12h · credenciamento · vacina e local</dd>
+        <dt>Fonte</dt><dd>conhecimento.md (informações confirmadas no texto)</dd>
+        <dt>Hospedagem</dt><dd><span class="tag">Só HTML</span></dd>
+      </dl>
+    </article>
+
+  </div>
+
+  <p class="note">
+    Validação: cada proposta foi renderizada com Chromium headless no tamanho 403 × 214 px. Nenhuma usa logo institucional nem fundo escuro. Gotham de <code>public/fonts/</code>, com fallback para Montserrat.
+  </p>
+</div>
+</body>
+</html>
