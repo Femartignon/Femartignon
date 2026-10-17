@@ -15,7 +15,7 @@ Widget HTML embutido no app do Encontro Infield 2026 (Takeda): clima ao vivo do 
 | App | **Pendente:** trocar o endereço do widget para https://infield2026-widgets.netlify.app |
 | Projeto Vercel | **`encontro-Infield-2026`** · Root Directory = `encontro-infield` · hospeda o **Assistente Infield** (`/agente.html` + `/api/agente`) · **Pendente:** criar o projeto e cadastrar `ANTHROPIC_API_KEY` (Sensitive) |
 | App — menu Mais | **Pendente:** item "Assistente Infield" → `https://<domínio-vercel>/agente.html`, ícone `public/img/agente-icone.png` |
-| Projeto antigo `polite-stroopwafel-cfdd45` | Versão anterior (clima + relógio D/H/M). Desativar depois que o novo estiver no app |
+| Projeto `polite-stroopwafel-cfdd45` | **Widget que está no app hoje** (clima · dias · faixa de voos AviationStack). Ver **`HANDOFF-WIDGET.md`** e pasta `site/` |
 
 ## 3. Estrutura
 ```
