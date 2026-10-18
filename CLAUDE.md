@@ -4,6 +4,7 @@ Cada projeto tem sua pasta. Os que têm `CLAUDE.md` próprio guardam ali o conte
 
 | Pasta | Projeto | Contexto |
 |---|---|---|
+| `banners-sessao-infield-2026/` | Banners de sessão da agenda do app SpotMe | `banners-sessao-infield-2026/CLAUDE.md` |
 | `cartao-embarque-infield-2026/` | Cartão de embarque do app SpotMe (Encontro Infield 2026) | `cartao-embarque-infield-2026/CLAUDE.md` |
 | `encontro-infield/` | Site / assistente do Encontro Infield (Vercel) | — |
 | `gastro-academy-leadership-deck/` | Deck HyperFrames | `gastro-academy-leadership-deck/CLAUDE.md` |
