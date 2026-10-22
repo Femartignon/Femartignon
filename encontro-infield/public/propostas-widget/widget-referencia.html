@@ -1,0 +1,447 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Encontro Infield 2026 — Widget</title>
+<style>
+  @font-face{font-family:'Gotham';font-weight:400;font-style:normal;src:url(../fonts/gotham-book.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:500;font-style:normal;src:url(../fonts/gotham-medium.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:700;font-style:normal;src:url(../fonts/gotham-bold.otf) format('opentype');font-display:swap;}
+  :root{
+    --red:#E1242A;
+    --blue-deep:#1B6FB8;
+    --blue-mid:#2A8FD6;
+    --ink:#0B2545;
+    --body:#1A1A1A;
+    --muted:#4F5761;
+    --line:#DDE3EA;
+    --paper:#F4F6F8;
+    --ok:#1F7A4A;
+    --mid:#9A6400;
+    --bad:#C11D23;
+    --bar-ok:#2F8F5B;
+    --bar-mid:#D08A12;
+    --bar-bad:#E1242A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Gotham',Montserrat,'Helvetica Neue',Arial,sans-serif;
+    background:#FFFFFF;color:var(--body);overflow:hidden;
+    display:grid;grid-template-columns:41% 1fr;grid-template-rows:1fr 1fr;
+  }
+  .cell{min-width:0;min-height:0;display:flex;flex-direction:column;padding:9px 12px;overflow:hidden;}
+
+  /* Contagem (topo esquerda, azul) */
+  .count{grid-column:1;grid-row:1;color:#FFFFFF;background:linear-gradient(160deg,var(--blue-deep) 0%,var(--blue-mid) 100%);}
+  .kick-row{display:flex;align-items:center;gap:5px;font-size:7px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;}
+  .kick-row i{display:block;width:16px;height:1.5px;background:var(--red);flex:none;}
+  .kick-row span:last-child{letter-spacing:.08em;}
+  .num{font-weight:700;font-size:58px;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-top:6px;}
+  .lbl{font-weight:500;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;margin-top:4px;}
+
+  /* Clima (base esquerda, foto com véu azul) */
+  .weather{
+    grid-column:1;grid-row:2;color:#FFFFFF;justify-content:center;
+    background:
+      linear-gradient(170deg,rgba(42,143,214,.78) 0%,rgba(27,111,184,.86) 100%),
+      url(img/rio-entardecer.jpg) center 40%/cover no-repeat,
+      linear-gradient(170deg,var(--blue-mid) 0%,var(--blue-deep) 100%);
+  }
+  .wx-top{display:flex;align-items:center;gap:8px;}
+  .wx-top svg{width:34px;height:34px;flex:none;}
+  .wx-place{font-size:8.5px;opacity:.95;white-space:nowrap;}
+  .temp{font-weight:700;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;margin-top:2px;}
+  .temp sup{font-size:13px;vertical-align:top;}
+  .cond{font-weight:500;font-size:10px;margin-top:3px;}
+  .wx-foot{margin-top:6px;padding-top:5px;border-top:1px solid rgba(255,255,255,.45);font-size:8.5px;}
+
+  /* Trânsito (topo direita, papel) */
+  .transit{grid-column:2;grid-row:1;background:var(--paper);border-bottom:1px solid var(--line);}
+  .panel-head{display:flex;align-items:center;gap:7px;padding-bottom:5px;border-bottom:1px solid var(--line);min-width:0;}
+  .panel-head svg{width:16px;height:16px;flex:none;color:var(--ink);}
+  .panel-title{font-weight:700;font-size:10px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .status{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:8.5px;font-weight:500;white-space:nowrap;color:var(--muted);}
+  .status i{width:6px;height:6px;border-radius:50%;background:var(--muted);display:block;}
+  .status.ok{color:var(--ok);} .status.ok i{background:var(--bar-ok);}
+  .status.mid{color:var(--mid);} .status.mid i{background:var(--bar-mid);}
+  .status.bad{color:var(--bad);} .status.bad i{background:var(--bar-bad);}
+  .route{display:grid;grid-template-columns:auto 1fr auto;align-items:center;column-gap:7px;padding:3px 0;border-bottom:1px solid var(--line);}
+  .route:last-child{border-bottom:0;}
+  .code{font-weight:700;font-size:9.5px;letter-spacing:.04em;line-height:1;background:var(--ink);color:#FFFFFF;border-radius:4px;padding:4px 6px 3px;}
+  .route-info{min-width:0;}
+  .bar{display:flex;height:4px;border-radius:2px;overflow:hidden;background:#E1E6EC;}
+  .bar i{display:block;height:100%;}
+  .lv-ok{background:var(--bar-ok);} .lv-mid{background:var(--bar-mid);} .lv-bad{background:var(--bar-bad);}
+  .route-txt{font-size:8px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mins{font-weight:700;font-size:14px;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap;text-align:right;}
+  .mins small{font-size:8.5px;font-weight:500;margin-left:1px;}
+  .mins-lv{display:block;font-size:7.5px;font-weight:500;margin-top:3px;color:var(--muted);}
+  .msg{font-size:9px;color:var(--muted);padding-top:8px;}
+  .updated{margin-top:auto;padding-top:3px;font-size:7.5px;color:var(--muted);white-space:nowrap;}
+
+  /* Guia (base direita, papel) */
+  .guide{grid-column:2;grid-row:2;background:var(--paper);}
+  .g-head{display:flex;align-items:center;gap:7px;padding-bottom:5px;border-bottom:1px solid var(--line);}
+  .g-head svg{width:16px;height:16px;flex:none;color:var(--ink);}
+  .g-title{font-weight:700;font-size:10px;color:var(--ink);}
+  .g-item{display:grid;grid-template-columns:58px 1px 1fr;column-gap:7px;align-items:center;padding:2px 0;}
+  .g-sep{width:1px;align-self:stretch;background:var(--line);}
+  .g-k{font-weight:700;font-size:11px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .g-v{font-size:9.5px;line-height:1.25;color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .g-item.red .g-k{color:var(--red);}
+  .g-rule{border-top:1px solid var(--line);margin:3px 0 0;}
+</style>
+</head>
+<body>
+
+  <section class="cell count" aria-labelledby="countLbl">
+    <div class="kick-row"><span>Encontro</span><i></i><span>16 a 19 nov</span></div>
+    <div class="num" id="num" aria-live="polite">--</div>
+    <div class="lbl" id="countLbl">dias para o encontro</div>
+  </section>
+
+  <section class="cell transit" aria-labelledby="trTitle">
+    <div class="panel-head">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5M3 16h18v2H3zM7 16v2M17 16v2M6 11h12" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/><circle cx="7.5" cy="13.5" r="1" fill="currentColor"/><circle cx="16.5" cy="13.5" r="1" fill="currentColor"/></svg>
+      <span class="panel-title" id="trTitle">Trânsito até o hotel</span>
+      <span class="status" id="trStatus"><i></i><span id="trLevel">Carregando</span></span>
+    </div>
+    <div id="routes"></div>
+    <div class="msg" id="trMsg" hidden></div>
+    <div class="updated" id="trUpd"></div>
+  </section>
+
+  <section class="cell weather" aria-labelledby="wxPlace">
+    <div class="wx-top">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true" id="icon"></svg>
+      <div>
+        <div class="wx-place" id="wxPlace">Barra da Tijuca · agora</div>
+        <div class="temp"><span id="temp">--</span><sup>°</sup></div>
+      </div>
+    </div>
+    <div class="cond" id="cond">Carregando</div>
+    <div class="wx-foot" id="wxFoot">&nbsp;</div>
+  </section>
+
+  <section class="cell guide" aria-label="Guia rápido do hotel">
+    <div class="g-head">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5M3 11h6" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span class="g-title">Guia rápido do hotel</span>
+    </div>
+    <div class="g-item"><span class="g-k">15h</span><span class="g-sep"></span><span class="g-v">Check-in no hotel</span></div>
+    <div class="g-item"><span class="g-k">12h</span><span class="g-sep"></span><span class="g-v">Check-out</span></div>
+    <div class="g-item"><span class="g-k">Chegada</span><span class="g-sep"></span><span class="g-v">Credenciamento no hotel</span></div>
+    <div class="g-rule"></div>
+    <div class="g-item red"><span class="g-k">17–18/11</span><span class="g-sep"></span><span class="g-v">Vacina de dengue · Lagoa 4</span></div>
+  </section>
+
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- Configuração ---------- */
+  var DEMO = /[?&]demo=1/.test(location.search);
+  var TRANSIT_URL = '/api/transito'; // depende da função Netlify netlify/functions/transito.mjs
+  var WEATHER_URL = 'https://api.open-meteo.com/v1/forecast';
+  var HOTEL = { lat: -23.0045, lon: -43.3187 };
+  var TZ = 'America/Sao_Paulo';
+  var TIMEOUT_MS = 8000;
+  var TRANSIT_EVERY_MS = 5 * 60 * 1000;
+  var WEATHER_EVERY_MS = 15 * 60 * 1000;
+  var STALE_MS = 15 * 60 * 1000;          // dado com mais de 15 min é sinalizado como antigo
+  var EVENT = Date.UTC(2026, 10, 16);
+  var END = Date.UTC(2026, 10, 19);
+  var DAY = 864e5;
+  var LEVELS = { ok: 'Livre', mid: 'Moderado', bad: 'Intenso' };
+  var SEG_LEVELS = { ok: 1, mid: 1, bad: 1 };
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Utilidades ---------- */
+  // Data civil de hoje em Brasília, como instante UTC (sem efeito de fuso)
+  function todayBR(){
+    var parts = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+    var get = function(type){ return +parts.find(function(p){ return p.type === type; }).value; };
+    return Date.UTC(get('year'), get('month') - 1, get('day'));
+  }
+  function hhmm(iso){
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return null;
+    return { date: d, text: d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: TZ }) };
+  }
+  function isNum(v){ return typeof v === 'number' && isFinite(v); }
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+
+  // fetch com timeout e cancelamento. Retorna JSON ou lança erro.
+  function getJSON(url, controller){
+    var timer = setTimeout(function(){ controller.abort(); }, TIMEOUT_MS);
+    return fetch(url, { cache: 'no-store', signal: controller.signal })
+      .then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .finally(function(){ clearTimeout(timer); });
+  }
+
+  /* ---------- Contagem regressiva ---------- */
+  function renderCountdown(){
+    var today = todayBR();
+    var num = $('num'), lbl = $('countLbl');
+    if (today < EVENT){
+      num.textContent = Math.round((EVENT - today) / DAY);
+      lbl.textContent = 'dias para o encontro';
+    } else if (today <= END){
+      num.textContent = Math.round((today - EVENT) / DAY) + 1;
+      lbl.textContent = 'dia de 4 do encontro';
+    } else {
+      num.textContent = '—';
+      lbl.textContent = 'encontro realizado';
+    }
+  }
+
+  /* ---------- Trânsito ---------- */
+  // Valida a resposta de /api/transito. Não normaliza proporções: dado inválido é descartado.
+  function parseTransit(json){
+    if (!json || typeof json !== 'object' || !Array.isArray(json.routes) || json.routes.length === 0) {
+      throw new Error('resposta de trânsito sem rotas');
+    }
+    var when = hhmm(json.updated);
+    if (!when) throw new Error('horário de trânsito inválido');
+    var routes = json.routes.map(function(r){
+      if (!r || typeof r.code !== 'string' || !LEVELS[r.level] || !isNum(r.minutes)) {
+        throw new Error('rota de trânsito inválida');
+      }
+      var segments = Array.isArray(r.segments) ? r.segments : [];
+      var valid = segments.length > 0 && segments.every(function(s){
+        return s && SEG_LEVELS[s.level] && isNum(s.share) && s.share >= 0 && s.share <= 1;
+      });
+      var sum = valid ? segments.reduce(function(a, s){ return a + s.share; }, 0) : 0;
+      // Soma entre 0,9 e 1,05: a API descarta trechos abaixo de 1%, então a soma pode ficar um pouco abaixo de 1
+      var barOk = valid && sum >= 0.9 && sum <= 1.05;
+      return {
+        code: r.code,
+        minutes: Math.round(r.minutes),
+        normalMin: isNum(r.normalMin) ? Math.round(r.normalMin) : null,
+        delayMin: isNum(r.delayMin) ? Math.max(0, Math.round(r.delayMin)) : null,
+        level: r.level,
+        segments: barOk ? segments : null
+      };
+    });
+    return { when: when, routes: routes };
+  }
+
+  function worstLevel(routes){
+    var rank = { ok: 0, mid: 1, bad: 2 };
+    return routes.reduce(function(a, r){ return rank[r.level] > rank[a] ? r.level : a; }, 'ok');
+  }
+
+  function renderTransit(data){
+    var box = $('routes');
+    box.textContent = '';
+    data.routes.forEach(function(r){
+      var row = el('div', 'route');
+      row.appendChild(el('span', 'code', r.code));
+
+      var info = el('div', 'route-info');
+      if (r.segments){
+        var bar = el('div', 'bar');
+        r.segments.forEach(function(s){
+          var seg = el('i', 'lv-' + s.level);
+          seg.style.width = (s.share * 100) + '%';
+          bar.appendChild(seg);
+        });
+        info.appendChild(bar);
+      }
+      var detail = [];
+      if (r.normalMin !== null) detail.push('normal ' + r.normalMin + ' min');
+      if (r.delayMin !== null && r.delayMin > 0) detail.push('+' + r.delayMin + ' min de atraso');
+      info.appendChild(el('div', 'route-txt', detail.join(' · ')));
+      row.appendChild(info);
+
+      var mins = el('div', 'mins');
+      mins.appendChild(document.createTextNode(r.minutes));
+      mins.appendChild(el('small', null, 'min'));
+      mins.appendChild(el('span', 'mins-lv', LEVELS[r.level]));
+      row.appendChild(mins);
+
+      box.appendChild(row);
+    });
+
+    var worst = worstLevel(data.routes);
+    var status = $('trStatus');
+    status.className = 'status ' + worst;
+    $('trLevel').textContent = LEVELS[worst];
+
+    var age = Date.now() - data.when.date.getTime();
+    var upd = $('trUpd');
+    upd.textContent = (DEMO ? 'Demonstração · ' : '') + 'Atualizado às ' + data.when.text + (age > STALE_MS ? ' · dado antigo' : '');
+    upd.style.color = age > STALE_MS ? 'var(--bad)' : '';
+    $('trMsg').hidden = true;
+  }
+
+  function showTransitMessage(text){
+    $('routes').textContent = '';
+    $('trLevel').textContent = text;
+    $('trStatus').className = 'status';
+    var msg = $('trMsg');
+    msg.textContent = text === 'Indisponível' ? 'Trânsito indisponível agora.' : 'Sem dados de trânsito.';
+    msg.hidden = false;
+    $('trUpd').textContent = '';
+  }
+
+  var transitCtl = null;
+  function loadTransit(){
+    if (transitCtl) return; // evita requisição simultânea
+    if (DEMO){ renderTransit(parseTransit(demoTransit())); return; }
+    transitCtl = new AbortController();
+    getJSON(TRANSIT_URL, transitCtl)
+      .then(parseTransit)
+      .then(renderTransit)
+      .catch(function(err){
+        if (err && err.name === 'AbortError' && !running) return;
+        showTransitMessage(err && err.message && /sem|inválid/.test(err.message) ? 'Sem dados' : 'Indisponível');
+      })
+      .finally(function(){ transitCtl = null; });
+  }
+
+  /* ---------- Clima (Open-Meteo, sem chave) ---------- */
+  // Códigos WMO conforme a documentação oficial do Open-Meteo (weather_code).
+  var WMO = {
+    0:  ['Céu limpo', 'clear'],
+    1:  ['Predomínio de sol', 'clear'],
+    2:  ['Parcialmente nublado', 'partly'],
+    3:  ['Nublado', 'cloudy'],
+    45: ['Neblina', 'fog'], 48: ['Neblina com geada', 'fog'],
+    51: ['Garoa fraca', 'rain'], 53: ['Garoa', 'rain'], 55: ['Garoa forte', 'rain'],
+    56: ['Garoa congelante', 'rain'], 57: ['Garoa congelante forte', 'rain'],
+    61: ['Chuva fraca', 'rain'], 63: ['Chuva', 'rain'], 65: ['Chuva forte', 'rain'],
+    66: ['Chuva congelante', 'rain'], 67: ['Chuva congelante forte', 'rain'],
+    71: ['Neve fraca', 'snow'], 73: ['Neve', 'snow'], 75: ['Neve forte', 'snow'], 77: ['Grãos de neve', 'snow'],
+    80: ['Pancadas fracas', 'rain'], 81: ['Pancadas de chuva', 'rain'], 82: ['Pancadas fortes', 'storm'],
+    85: ['Pancadas de neve', 'snow'], 86: ['Pancadas de neve fortes', 'snow'],
+    95: ['Trovoada', 'storm'], 96: ['Trovoada com granizo', 'storm'], 99: ['Trovoada com granizo forte', 'storm']
+  };
+
+  var ICON = {
+    sun:   '<circle cx="18" cy="18" r="8" fill="#FFC94A"/><path d="M18 2v5M18 29v5M2 18h5M29 18h5M6.1 6.1l3.5 3.5M26.4 26.4l3.5 3.5M6.1 29.9l3.5-3.5M26.4 9.6l3.5-3.5" stroke="#FFC94A" stroke-width="2" stroke-linecap="round"/>',
+    moon:  '<path d="M26 8a13 13 0 1 0 0 20 10 10 0 0 1 0-20Z" fill="#E8EEF6"/>',
+    cloud: '<path d="M16 40h22a8 8 0 0 0 0-16 11 11 0 0 0-21-2 7 7 0 0 0-1 18Z" fill="#FFFFFF"/>',
+    rain:  '<path d="M16 32h22a8 8 0 0 0 0-16 11 11 0 0 0-21-2 7 7 0 0 0-1 18Z" fill="#D6DEE8"/><path d="M18 36l-2 6M26 36l-2 6M34 36l-2 6" stroke="#9CCFE6" stroke-width="2" stroke-linecap="round"/>',
+    snow:  '<path d="M16 32h22a8 8 0 0 0 0-16 11 11 0 0 0-21-2 7 7 0 0 0-1 18Z" fill="#FFFFFF"/><path d="M18 40v6M15 43h6M26 40v6M23 43h6" stroke="#CFE8F7" stroke-width="2" stroke-linecap="round"/>',
+    storm: '<path d="M16 30h22a8 8 0 0 0 0-16 11 11 0 0 0-21-2 7 7 0 0 0-1 18Z" fill="#8A95A3"/><path d="M26 32l-4 7h4l-3 6" stroke="#FFC94A" stroke-width="2.4" fill="none" stroke-linejoin="round"/>',
+    fog:   '<path d="M8 22h32M6 28h36M10 34h28" stroke="#E8EEF6" stroke-width="3" stroke-linecap="round"/>'
+  };
+
+  // Ícone conforme condição, com dia/noite (is_day da Open-Meteo)
+  function iconFor(kind, isDay){
+    if (kind === 'clear') return isDay ? ICON.sun : ICON.moon;
+    if (kind === 'partly') return (isDay ? ICON.sun : ICON.moon) + ICON.cloud;
+    return ICON[kind] || ICON.cloud;
+  }
+
+  function parseWeather(json){
+    var c = json && json.current;
+    if (!c || !isNum(c.temperature_2m) || !isNum(c.apparent_temperature) ||
+        !isNum(c.precipitation) || !isNum(c.weather_code) || !(c.is_day === 0 || c.is_day === 1)) {
+      throw new Error('resposta de clima incompleta');
+    }
+    var cond = WMO[c.weather_code];
+    if (!cond) throw new Error('código de clima desconhecido');
+    return {
+      temp: Math.round(c.temperature_2m),
+      feels: Math.round(c.apparent_temperature),
+      rain: c.precipitation,
+      label: cond[0],
+      kind: cond[1],
+      isDay: c.is_day === 1
+    };
+  }
+
+  function renderWeather(w){
+    $('temp').textContent = w.temp;
+    $('cond').textContent = w.label;
+    $('icon').innerHTML = iconFor(w.kind, w.isDay);
+    $('icon').setAttribute('aria-label', w.label);
+    $('wxFoot').textContent = 'Sensação ' + w.feels + '° · chuva ' + w.rain.toFixed(1).replace('.', ',') + ' mm';
+  }
+
+  function showWeatherMessage(text){
+    $('temp').textContent = '--';
+    $('cond').textContent = text;
+    $('icon').innerHTML = '';
+    $('wxFoot').textContent = ' ';
+  }
+
+  var weatherCtl = null;
+  function loadWeather(){
+    if (weatherCtl) return;
+    if (DEMO){ renderWeather(parseWeather(demoWeather())); return; }
+    var url = WEATHER_URL + '?latitude=' + HOTEL.lat + '&longitude=' + HOTEL.lon +
+      '&current=temperature_2m,apparent_temperature,precipitation,weather_code,is_day' +
+      '&timezone=' + encodeURIComponent(TZ);
+    weatherCtl = new AbortController();
+    getJSON(url, weatherCtl)
+      .then(parseWeather)
+      .then(renderWeather)
+      .catch(function(){ showWeatherMessage('Clima indisponível'); })
+      .finally(function(){ weatherCtl = null; });
+  }
+
+  /* ---------- Dados de demonstração (somente com ?demo=1) ---------- */
+  function demoTransit(){
+    return {
+      updated: new Date().toISOString(),
+      routes: [
+        { code: 'GIG', minutes: 52, normalMin: 41, delayMin: 11, level: 'mid',
+          segments: [{ level: 'ok', share: .35 }, { level: 'mid', share: .30 }, { level: 'bad', share: .12 }, { level: 'ok', share: .23 }] },
+        { code: 'SDU', minutes: 44, normalMin: 38, delayMin: 6, level: 'ok',
+          segments: [{ level: 'ok', share: .7 }, { level: 'mid', share: .2 }, { level: 'ok', share: .1 }] }
+      ]
+    };
+  }
+  function demoWeather(){
+    return { current: { time: '2026-10-13T12:00', temperature_2m: 23.4, apparent_temperature: 23.1, precipitation: 0, weather_code: 2, is_day: 1 } };
+  }
+
+  /* ---------- Ciclo de atualização ---------- */
+  var running = true;
+  var timers = [];
+  function refreshAll(){
+    if (!running) return;
+    loadTransit();
+    loadWeather();
+  }
+  function start(){
+    running = true;
+    renderCountdown();
+    refreshAll();
+    timers.push(setInterval(function(){ if (!document.hidden) loadTransit(); }, TRANSIT_EVERY_MS));
+    timers.push(setInterval(function(){ if (!document.hidden) loadWeather(); }, WEATHER_EVERY_MS));
+    timers.push(setInterval(renderCountdown, 60 * 1000));
+  }
+  function stop(){
+    running = false;
+    timers.forEach(clearInterval);
+    timers = [];
+    if (transitCtl) transitCtl.abort();
+    if (weatherCtl) weatherCtl.abort();
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (!document.hidden && running) refreshAll();
+  });
+  window.addEventListener('pagehide', stop);
+  window.infieldWidget = { stop: stop, refresh: refreshAll };
+
+  start();
+})();
+</script>
+</body>
+</html>

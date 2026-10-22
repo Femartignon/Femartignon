@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposta 3 — Trânsito ao hotel</title>
+<style>
+  @font-face{font-family:'Gotham';font-weight:400;font-style:normal;src:url(../fonts/gotham-book.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:500;font-style:normal;src:url(../fonts/gotham-medium.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:700;font-style:normal;src:url(../fonts/gotham-bold.otf) format('opentype');font-display:swap;}
+  :root{
+    --red:#E1242A;
+    --ink:#111111;
+    --body:#1A1A1A;
+    --muted:#5C636E;
+    --line:#E4E7EB;
+    --ok:#2F8F5B;
+    --mid:#D08A12;
+    --bad:#E1242A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Gotham',Montserrat,'Helvetica Neue',Arial,sans-serif;
+    background:#FFFFFF;color:var(--body);overflow:hidden;
+    border-top:4px solid var(--red);
+    display:flex;flex-direction:column;padding:10px 14px 9px;gap:6px;
+  }
+  .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .kick{font-weight:500;font-size:10px;color:var(--muted);}
+  .upd{font-size:8.5px;color:var(--muted);white-space:nowrap;}
+
+  .route{display:grid;grid-template-columns:1fr auto;column-gap:10px;align-items:end;padding-top:6px;border-top:1px solid var(--line);}
+  .route:first-of-type{border-top:0;padding-top:0;}
+  .who{display:flex;align-items:center;gap:6px;min-width:0;}
+  .code{
+    font-weight:700;font-size:12px;letter-spacing:.04em;line-height:1;
+    background:var(--ink);color:#FFFFFF;border-radius:4px;padding:4px 6px 3px;
+  }
+  .name{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bar{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--line);margin-top:6px;}
+  .bar i{display:block;height:100%;}
+  .lv-ok{background:var(--ok);} .lv-mid{background:var(--mid);} .lv-bad{background:var(--bad);}
+  .sub{font-size:9.5px;color:var(--muted);margin-top:4px;}
+  .val{text-align:right;line-height:1;white-space:nowrap;}
+  .min{font-weight:700;font-size:26px;font-variant-numeric:tabular-nums;color:var(--ink);}
+  .min small{font-size:11px;font-weight:500;margin-left:2px;}
+  .lvl{font-size:9px;font-weight:500;margin-top:3px;}
+  .lvl.ok{color:var(--ok);} .lvl.mid{color:var(--mid);} .lvl.bad{color:var(--bad);}
+  .foot{font-size:8.5px;color:var(--muted);margin-top:auto;}
+  .foot b{font-weight:500;color:var(--body);}
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="kick">Aeroporto → Grand Hyatt · ao vivo</div>
+    <div class="upd" id="upd">--</div>
+  </div>
+
+  <div id="routes"></div>
+
+  <div class="foot"><b>Receptivo do evento:</b> siga a sinalização Encontro Infield</div>
+
+<script>
+(function(){
+  var DEMO = /[?&]demo=1/.test(location.search);
+  var ENDPOINT = '/api/transito';
+  var LV = { ok:'Livre', mid:'Moderado', bad:'Intenso' };
+
+  // Dados de exemplo para visualizar sem a API (?demo=1)
+  var SAMPLE = {
+    updated: new Date().toISOString(),
+    routes: [
+      { code:'GIG', name:'Galeão', minutes:52, normalMin:41, delayMin:11, level:'mid',
+        segments:[{level:'ok',share:.35},{level:'mid',share:.30},{level:'bad',share:.12},{level:'ok',share:.23}] },
+      { code:'SDU', name:'Santos Dumont', minutes:44, normalMin:38, delayMin:6, level:'ok',
+        segments:[{level:'ok',share:.7},{level:'mid',share:.2},{level:'ok',share:.1}] }
+    ]
+  };
+
+  function render(data){
+    var box = document.getElementById('routes');
+    box.innerHTML = data.routes.map(function(r){
+      var bar = r.segments.map(function(s){
+        return '<i class="lv-' + s.level + '" style="width:' + (s.share * 100) + '%"></i>';
+      }).join('');
+      return '<div class="route">' +
+        '<div style="min-width:0">' +
+          '<div class="who"><span class="code">' + r.code + '</span><span class="name">' + r.name + '</span></div>' +
+          '<div class="bar">' + bar + '</div>' +
+          '<div class="sub">Normal ' + r.normalMin + ' min' + (r.delayMin > 0 ? ' · +' + r.delayMin + ' min de trânsito' : '') + '</div>' +
+        '</div>' +
+        '<div class="val"><div class="min">' + r.minutes + '<small>min</small></div>' +
+          '<div class="lvl ' + r.level + '">' + LV[r.level] + '</div></div>' +
+      '</div>';
+    }).join('');
+    var d = new Date(data.updated);
+    document.getElementById('upd').textContent = 'Atualizado ' + d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',timeZone:'America/Sao_Paulo'});
+  }
+
+  function fail(){
+    document.getElementById('routes').innerHTML = '<div class="sub">Trânsito indisponível no momento</div>';
+    document.getElementById('upd').textContent = '';
+  }
+
+  if (DEMO){ render(SAMPLE); return; }
+  fetch(ENDPOINT, { cache:'no-store' })
+    .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(render)
+    .catch(fail);
+  setInterval(function(){
+    fetch(ENDPOINT, { cache:'no-store' }).then(function(r){ return r.json(); }).then(render).catch(fail);
+  }, 5 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

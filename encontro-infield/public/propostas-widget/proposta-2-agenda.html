@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposta 2 — Agenda do dia</title>
+<style>
+  @font-face{font-family:'Gotham';font-weight:400;font-style:normal;src:url(../fonts/gotham-book.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:500;font-style:normal;src:url(../fonts/gotham-medium.otf) format('opentype');font-display:swap;}
+  @font-face{font-family:'Gotham';font-weight:700;font-style:normal;src:url(../fonts/gotham-bold.otf) format('opentype');font-display:swap;}
+  :root{
+    --red:#E1242A;
+    --ink:#111111;
+    --body:#1A1A1A;
+    --muted:#5C636E;
+    --line:#E4E7EB;
+    --card:#EEF1F4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Gotham',Montserrat,'Helvetica Neue',Arial,sans-serif;
+    background:#FFFFFF;color:var(--body);overflow:hidden;
+    border-top:4px solid var(--red);
+    display:flex;flex-direction:column;padding:10px 14px 9px;gap:8px;
+  }
+
+  /* Seletor de dias */
+  .days{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+  .day{
+    text-align:center;border-radius:6px;padding:4px 0 3px;
+    background:var(--card);color:var(--ink);
+  }
+  .day b{display:block;font-weight:700;font-size:15px;line-height:1.05;}
+  .day small{display:block;font-size:8.5px;color:var(--muted);text-transform:none;}
+  .day.on{background:var(--red);color:#FFFFFF;}
+  .day.on small{color:#FFFFFF;opacity:.9;}
+
+  .head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .kick{font-weight:500;font-size:10px;color:var(--muted);}
+  .count{font-weight:700;font-size:10px;color:var(--red);white-space:nowrap;}
+
+  /* Linha do tempo do dia */
+  .list{display:flex;flex-direction:column;gap:6px;position:relative;min-height:0;}
+  .item{display:grid;grid-template-columns:44px 1fr;column-gap:8px;align-items:start;position:relative;}
+  .item::before{
+    content:"";position:absolute;left:43px;top:6px;bottom:-6px;width:1px;background:var(--line);
+  }
+  .item:last-child::before{display:none;}
+  .time{font-weight:700;font-size:11px;color:var(--ink);line-height:1.2;font-variant-numeric:tabular-nums;padding-top:1px;}
+  .txt{position:relative;padding-left:11px;min-width:0;}
+  .txt::before{
+    content:"";position:absolute;left:0;top:4px;width:6px;height:6px;border-radius:50%;
+    background:var(--red);box-shadow:0 0 0 2px #FFFFFF;
+  }
+  .ttl{font-weight:500;font-size:11.5px;line-height:1.25;color:var(--ink);}
+  .sub{font-size:9.5px;line-height:1.3;color:var(--muted);margin-top:1px;}
+
+  .foot{font-size:8.5px;color:var(--muted);margin-top:auto;}
+</style>
+</head>
+<body>
+  <div class="days" id="days" role="tablist" aria-label="Dias do encontro"></div>
+
+  <div class="head">
+    <div class="kick" id="kick">Agenda · previsto</div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="foot">Horários e salas oficiais no menu Agenda do app</div>
+
+<script>
+(function(){
+  var DAY = 864e5;
+  var EVENT = Date.UTC(2026,10,16);
+  var END = Date.UTC(2026,10,19);
+  var WEEK = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+
+  // Programação prevista (fonte: agente/conhecimento.md)
+  var AGENDA = [
+    { data:'16/11', dow:'Seg', items:[
+      { h:'12h', t:'Reunião de Liderança Infield', s:'Gerentes diretos dos times de campo' },
+      { h:'14h30', t:'Plenária de abertura', s:'Grand Ballroom' }
+    ]},
+    { data:'17/11', dow:'Ter', items:[
+      { h:'Dia', t:'Abertura de BUs, World Café e Salas de Produtos', s:'' },
+      { h:'Noite', t:'Jantar livre no hotel', s:'Custo coberto pela Takeda' }
+    ]},
+    { data:'18/11', dow:'Qua', items:[
+      { h:'Dia', t:'Abertura de BUs, World Café e Salas de Produtos', s:'' },
+      { h:'Noite', t:'Jantar e festa de encerramento', s:'No hotel' }
+    ]},
+    { data:'19/11', dow:'Qui', items:[
+      { h:'Dia', t:'Atividades finais e saída', s:'Transfer: horários enviados na véspera' }
+    ]}
+  ];
+
+  // Data de hoje em Brasília, como dia UTC
+  function todayBR(){
+    var p = new Intl.DateTimeFormat('en-CA',{timeZone:'America/Sao_Paulo',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    var g = function(x){ return +p.find(function(y){ return y.type === x; }).value; };
+    return Date.UTC(g('year'), g('month') - 1, g('day'));
+  }
+
+  var today = todayBR();
+  // Dia exibido: o de hoje durante o encontro; antes, o primeiro; depois, o último
+  var idx = today < EVENT ? 0 : (today > END ? 3 : Math.round((today - EVENT) / DAY));
+
+  var daysEl = document.getElementById('days');
+  daysEl.innerHTML = AGENDA.map(function(d, i){
+    return '<div class="day' + (i === idx ? ' on' : '') + '"><b>' + d.data.slice(0,2) + '</b><small>' + d.dow + '</small></div>';
+  }).join('');
+
+  var cur = AGENDA[idx];
+  document.getElementById('kick').textContent = (today >= EVENT && today <= END) ? 'Hoje · previsto' : 'Programação prevista · ' + cur.data;
+  var count = document.getElementById('count');
+  if (today < EVENT){
+    count.textContent = 'Faltam ' + Math.round((EVENT - today) / DAY) + ' dias';
+  } else if (today > END){
+    count.textContent = 'Encontro realizado';
+  } else {
+    count.textContent = 'Dia ' + (idx + 1) + ' de 4';
+  }
+
+  document.getElementById('list').innerHTML = cur.items.map(function(it){
+    return '<div class="item"><div class="time">' + it.h + '</div>' +
+      '<div class="txt"><div class="ttl">' + it.t + '</div>' +
+      (it.s ? '<div class="sub">' + it.s + '</div>' : '') + '</div></div>';
+  }).join('');
+})();
+</script>
+</body>
+</html>
