@@ -1,5 +1,9 @@
 # Project Handoff — Widget Encontro Infield 2026 (clima · dias · trânsito) + Assistente Infield
 
+> **Atualização 03/11/2026:** `public/index.html` passou a ser o widget **Fio da História**, gerado por
+> `widget/build.py` (ver `widget/LEIA-ME.md`). O widget de clima, dias e trânsito descrito abaixo saiu
+> desse endereço; o código dele segue no histórico do Git.
+
 Atualizado: 05/10/2026
 
 ## 1. Objetivo

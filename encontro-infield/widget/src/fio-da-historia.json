@@ -1,0 +1,114 @@
+{
+  "versao": "1.0.0",
+  "atualizado": "2026-11-03",
+  "fuso": "Horário de Brasília (UTC-03:00, sem horário de verão). Janelas no formato [de, ate): 'de' entra, 'ate' não.",
+  "marcacao": "No título: *vermelho* (palavra de destaque, Bold vermelho) e _conectivo_ (peso regular). O resto sai em Bold grafite. Título até 45 caracteres e texto até 90.",
+  "passos": [
+    "Prólogo",
+    "Capítulo 1 · Enxergar",
+    "Capítulo 2 · Conversar",
+    "Capítulo 3 · Praticar",
+    "Capítulo 4 · Levar",
+    "Epílogo"
+  ],
+  "rotulos": [
+    "Prólogo",
+    "16/11",
+    "17/11",
+    "18/11",
+    "19/11",
+    "Epílogo"
+  ],
+  "reserva": {
+    "kicker": "Encontro Infield 2026 · 16 a 19/11",
+    "titulo": "Futuro *Infield* _em_ *Foco*",
+    "texto": "A melhor história é aquela que construímos juntos."
+  },
+  "estados": [
+    {
+      "id": "prologo",
+      "passo": 0,
+      "de": null,
+      "ate": "2026-11-16T00:00-03:00",
+      "kicker": "Prólogo",
+      "titulo": "247 autores, _uma_ *história*",
+      "texto": "Chegue com uma pergunta: o que o seu território precisa que a gente faça diferente?"
+    },
+    {
+      "id": "enxergar",
+      "passo": 1,
+      "de": "2026-11-16T00:00-03:00",
+      "ate": "2026-11-17T00:00-03:00",
+      "kicker": "Capítulo 1 · Enxergar",
+      "titulo": "Hoje _o_ futuro entra _em_ *foco*",
+      "texto": "Antes de construir junto, todo mundo precisa enxergar o mesmo cenário."
+    },
+    {
+      "id": "conversar",
+      "passo": 2,
+      "de": "2026-11-17T00:00-03:00",
+      "ate": "2026-11-18T00:00-03:00",
+      "kicker": "Capítulo 2 · Conversar",
+      "titulo": "Hoje _a_ *liderança* vem _até_ você",
+      "texto": "No World Café, faça a pergunta que você trouxe."
+    },
+    {
+      "id": "praticar",
+      "passo": 3,
+      "de": "2026-11-18T00:00-03:00",
+      "ate": "2026-11-18T18:00-03:00",
+      "kicker": "Capítulo 3 · Praticar",
+      "titulo": "Treino _é onde a_ história ganha *forma*",
+      "texto": "O que você ensaia hoje é o que o seu cliente ouve na próxima visita."
+    },
+    {
+      "id": "celebrar",
+      "passo": 3,
+      "de": "2026-11-18T18:00-03:00",
+      "ate": "2026-11-19T03:00-03:00",
+      "kicker": "Capítulo 3 · Celebrar",
+      "titulo": "Hoje _à_ noite, _a_ história ganha *trilha sonora*",
+      "texto": "Celebrar também é construir junto. O resto é surpresa."
+    },
+    {
+      "id": "levar",
+      "passo": 4,
+      "de": "2026-11-19T03:00-03:00",
+      "ate": "2026-11-20T00:00-03:00",
+      "kicker": "Capítulo 4 · Levar",
+      "titulo": "_O_ último capítulo _se_ escreve _no_ *campo*",
+      "texto": "Saia do Rio com um compromisso para o seu território."
+    },
+    {
+      "id": "epilogo",
+      "passo": 5,
+      "de": "2026-11-20T00:00-03:00",
+      "ate": null,
+      "kicker": "Epílogo",
+      "titulo": "_A_ história continua _no seu_ *território*",
+      "texto": "Obrigado por escrever o Encontro Infield 2026 com a gente."
+    }
+  ],
+  "espacos": [
+    {
+      "id": "sintese-plenaria",
+      "passo": 1,
+      "de": "2026-11-16T18:00-03:00",
+      "ate": "2026-11-17T00:00-03:00",
+      "kicker": "Capítulo 1 · Enxergar",
+      "titulo": "",
+      "texto": "",
+      "nota": "Frase-síntese da plenária aprovada pela CI, sem números de resultado. Título e texto vazios = não publica (D06); fica o estado 'enxergar'."
+    },
+    {
+      "id": "jubilandos",
+      "passo": 2,
+      "de": "2026-11-17T12:00-03:00",
+      "ate": "2026-11-18T00:00-03:00",
+      "kicker": "Capítulo 2 · Conversar",
+      "titulo": "",
+      "texto": "",
+      "nota": "Jubilandos em número agregado, aprovado por RH e CI (ex.: '30 colegas, N anos de Takeda'), sem nomes. Título e texto vazios = não publica (D06); fica o estado 'conversar'."
+    }
+  ]
+}
