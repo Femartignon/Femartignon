@@ -4,6 +4,10 @@ Embed widget do Home feed do SpotMe (Backstage › Design › Home › Home feed
 `https://myencontroinfield.vercel.app` (`public/index.html`). Cerca de 220 px de altura, só no celular,
 sem rolagem nem interação.
 
+O widget só aparece no app se a URL do Home feed no Backstage for `https://myencontroinfield.vercel.app/`.
+O merge na `main` publica só na Vercel: os sites da Netlify (`polite-stroopwafel-cfdd45`, `infield2026-widgets`)
+não estão ligados a este repositório.
+
 ## O que mostra
 
 Em que capítulo do Encontro estamos e o que ele pede de quem está lá. Muda sozinho pelo relógio.
@@ -12,7 +16,8 @@ Em que capítulo do Encontro estamos e o que ele pede de quem está lá. Muda so
 |---|---|---|
 | `prologo` | até 16/11 00h | 247 autores, uma história |
 | `enxergar` | 16/11 00h → 17/11 00h | Hoje o futuro entra em foco |
-| `conversar` | 17/11 00h → 18/11 00h | Hoje a liderança vem até você |
+| `conversar` | 17/11 00h → 12h | Hoje a liderança vem até você (texto: World Café) |
+| `conversar-tarde` | 17/11 12h → 18/11 00h | Hoje a liderança vem até você (texto: a conversa continua) |
 | `praticar` | 18/11 00h → 18h | Treino é onde a história ganha forma |
 | `celebrar` | 18/11 18h → 19/11 03h | Hoje à noite, a história ganha trilha sonora |
 | `levar` | 19/11 03h → 20/11 00h | O último capítulo se escreve no campo |
@@ -21,8 +26,9 @@ Em que capítulo do Encontro estamos e o que ele pede de quem está lá. Muda so
 Espaços opcionais, que só publicam com título e texto preenchidos (D06):
 `sintese-plenaria` (16/11, a partir das 18h) e `jubilandos` (17/11, a partir das 12h).
 
-O fio embaixo tem 6 contas (prólogo, 4 capítulos, epílogo): fio vermelho até hoje, conta vermelha no dia,
-contas grafite no que passou, anéis no que ainda vem.
+O fio embaixo segue o desenho do KV: uma onda suave que entra pela borda esquerda do cartão, passa pelo centro
+das 6 contas (prólogo, 4 capítulos, epílogo) e sai pela direita. Fio vermelho até hoje (no epílogo, segue para
+fora do cartão), conta vermelha no dia, contas grafite no que passou, anéis no que ainda vem.
 
 ## Estrutura
 
@@ -64,13 +70,20 @@ o hash da CSP e o navegador bloqueia a página.
   poderia pôr um cartão escuro num app claro.
 - **Texto ajustado à altura.** O título vai de 24 a 19 px; 19 px mantém o vermelho como texto grande
   (4,2:1 no papel). Se nem assim couber, as datas do fio saem.
-- **Movimento curto.** Tudo termina em 4,3 s (WCAG 2.2.2, porque o widget não tem pausa); com
-  "reduzir movimento" ligado, não há animação.
+- **Fio do KV (v1.1.0).** A onda é traçada pelo código conforme a largura (`ONDA` em `src/app.js`) e passa
+  exatamente pelo centro de cada conta; sem JavaScript, fica um fio reto.
+- **Tarde de 17/11 (v1.1.0).** O World Café termina às 12h; a partir daí o texto troca para um que vale até a
+  noite e para todas as áreas (as corporativas não estão na grade do World Café).
+- **Movimento curto.** O fio vermelho se desenha até a conta de hoje e tudo termina em 4,3 s (WCAG 2.2.2,
+  porque o widget não tem pausa); com "reduzir movimento" ligado, não há animação.
+- **Fonte.** Montserrat embutida, como nas páginas: a marca indica Montserrat na web; Gotham fica nas peças
+  em imagem.
 - **Sem JavaScript.** Mostra a reserva "Futuro Infield em Foco".
 
 ## Pendências
 
-- Aprovação dos textos pela CI até 11/11 (prazo de materiais do app).
+- Aprovação dos textos pela CI até 11/11 (prazo de materiais do app), incluindo o texto novo de `conversar-tarde`.
+- Conferir a URL do Home feed no Backstage (ver o início deste arquivo).
 - "247" vem do mailing de 28/10: atualizar com a lista final da Incentivare.
 - Capítulo 2: confirmar com o Treinamento que o World Café abre espaço para perguntas.
 - Espaços opcionais: frase-síntese da plenária (CI) e número agregado dos Jubilandos (RH e CI).

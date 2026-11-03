@@ -2,8 +2,8 @@
 """QA do widget Fio da História (encontro-infield/public/index.html).
 
 Confere, no Chromium:
-  - os 7 estados em 7 larguras (320 a 430 px) e 3 alturas (200, 214 e 220 px): sem estouro, texto dentro do cartão,
-    datas do fio sem encostar;
+  - todos os estados em 7 larguras (320 a 430 px) e 3 alturas (200, 214 e 220 px): sem estouro, texto dentro do cartão,
+    datas do fio sem encostar; fio de borda a borda passando pelo centro de cada conta, vermelho até a conta de hoje;
   - as fronteiras de horário (1 min antes e no minuto), com e sem os espaços opcionais preenchidos;
   - o relógio real em 3 fusos (o fuso do aparelho não muda o estado) e a troca sozinha na virada;
   - 0 erro de console e 0 violação de CSP; movimento terminando antes de 5 s (WCAG 2.2.2);
@@ -129,6 +129,36 @@ TRECHOS = """() => {
 
 OCULTAR_TEXTO = "#kicker, #titulo, #titulo span, #texto, #rotulos li { color: transparent !important; }"
 
+# fio do KV: entra e sai pelas bordas do cartão, passa pelo centro de cada conta e o vermelho para na conta de hoje
+FIO = """() => {
+  const card = document.getElementById('card').getBoundingClientRect();
+  const svg = document.getElementById('linha').getBoundingClientRect();
+  const base = document.getElementById('linha-base'), feita = document.getElementById('linha-feita');
+  if (!base.getAttribute('d') || !feita.getAttribute('d')) return { erro: 'fio sem traço' };
+  const L = base.getTotalLength(), ini = base.getPointAtLength(0), fim = base.getPointAtLength(L);
+  const fimF = feita.getPointAtLength(feita.getTotalLength());
+  const contas = [...document.querySelectorAll('#fio > li')].map((c) => {
+    const r = c.getBoundingClientRect();
+    return { x: r.left + r.width / 2 - svg.left, y: r.top + r.height / 2 - svg.top, s: c.dataset.s, top: r.top, bottom: r.bottom };
+  });
+  let longe = 0;
+  for (const c of contas) {
+    let m = Infinity;
+    for (let t = 0; t <= L; t += 0.5) { const q = base.getPointAtLength(t); m = Math.min(m, Math.hypot(q.x - c.x, q.y - c.y)); }
+    longe = Math.max(longe, m);
+  }
+  const i = contas.findIndex((c) => c.s === 'agora'), ultimo = contas.length - 1;
+  const alvo = i === ultimo ? { x: svg.width, y: fim.y } : contas[i];
+  return { bordaEsq: Math.abs(svg.left + ini.x - card.left), bordaDir: Math.abs(card.right - (svg.left + fim.x)),
+           contaLonge: longe, vermelhoErro: Math.hypot(fimF.x - alvo.x, fimF.y - alvo.y),
+           contasDentro: contas.every((c) => c.top >= card.top - .5 && c.bottom <= card.bottom + .5) };
+}"""
+
+
+def fio_ok(f):
+    return ("erro" not in f and f["bordaEsq"] < 1 and f["bordaDir"] < 1 and f["contaLonge"] < 1
+            and f["vermelhoErro"] < 1 and f["contasDentro"])
+
 
 async def carregar(pg, url):
     await pg.goto(url)
@@ -172,9 +202,10 @@ async def main():
                 for e in dados["estados"]:
                     await carregar(pg, qa_url(PUBLICO, estado=e["id"]))
                     m = await pg.evaluate(MEDIR)
+                    m["fio"] = await pg.evaluate(FIO)
                     csp += await pg.evaluate("window.__csp")
                     ok = (m["estado"] == e["id"] and m["ajuste"] != "estouro" and m["sh"] <= m["ch"] + 1
-                          and m["sw"] <= m["iw"] and not m["fora"] and not m["encostam"])
+                          and m["sw"] <= m["iw"] and not m["fora"] and not m["encostam"] and fio_ok(m["fio"]))
                     ajustes.setdefault(f"{w}x{h}", {})[e["id"]] = m["ajuste"]
                     if not ok:
                         falhas.append(f"tela {w}x{h} {e['id']}: {m}")
@@ -316,7 +347,8 @@ async def main():
         await p7.screenshot(path=str(args.saida / "_escuro.png"))
         await c7.close()
 
-        # ---- prancha de prévia: 7 estados, 2 espaços (exemplo), sem JS e tema escuro ----
+        # ---- prancha de prévia (para aprovação): estados na ordem e os 2 espaços com texto de exemplo ----
+        # (sem JS e tema escuro ficam como arquivos à parte na pasta de saída)
         c8 = await nav.new_context(reduced_motion="reduce", viewport={"width": 390, "height": 214}, device_scale_factor=2)
         p8 = await c8.new_page()
         quadros = []
@@ -326,11 +358,11 @@ async def main():
         for e in dados["estados"]:
             await carregar(p8, qa_url(PUBLICO, estado=e["id"]))
             if not e["de"]:
-                rotulo = f"{e['id']} · até {quando(e['ate'])}"
+                rotulo = f"{e['kicker']} · até {quando(e['ate'])}"
             elif not e["ate"]:
-                rotulo = f"{e['id']} · a partir de {quando(e['de'])}"
+                rotulo = f"{e['kicker']} · a partir de {quando(e['de'])}"
             else:
-                rotulo = f"{e['id']} · {quando(e['de'])} → {quando(e['ate'])}"
+                rotulo = f"{e['kicker']} · {quando(e['de'])} → {quando(e['ate'])}"
             caminho = args.saida / f"estado_{e['id']}.png"
             await p8.screenshot(path=str(caminho))
             quadros.append((rotulo, caminho))
@@ -338,9 +370,7 @@ async def main():
             await carregar(p8, qa_url(variante, estado=s["id"]))
             caminho = args.saida / f"espaco_{s['id']}.png"
             await p8.screenshot(path=str(caminho))
-            quadros.append((f"espaço {s['id']} · EXEMPLO (vazio no app)", caminho))
-        quadros.append(("sem JavaScript · texto de reserva", args.saida / "_sem-js.png"))
-        quadros.append(("tema escuro do sistema · placa em papel", args.saida / "_escuro.png"))
+            quadros.append((f"Opcional · {quando(s['de'])} → {quando(s['ate'])} · EXEMPLO, vazio no app", caminho))
         await c8.close()
         await nav.close()
 

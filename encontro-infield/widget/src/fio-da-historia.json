@@ -1,5 +1,5 @@
 {
-  "versao": "1.0.0",
+  "versao": "1.1.0",
   "atualizado": "2026-11-03",
   "fuso": "Horário de Brasília (UTC-03:00, sem horário de verão). Janelas no formato [de, ate): 'de' entra, 'ate' não.",
   "marcacao": "No título: *vermelho* (palavra de destaque, Bold vermelho) e _conectivo_ (peso regular). O resto sai em Bold grafite. Título até 45 caracteres e texto até 90.",
@@ -47,10 +47,19 @@
       "id": "conversar",
       "passo": 2,
       "de": "2026-11-17T00:00-03:00",
-      "ate": "2026-11-18T00:00-03:00",
+      "ate": "2026-11-17T12:00-03:00",
       "kicker": "Capítulo 2 · Conversar",
       "titulo": "Hoje _a_ *liderança* vem _até_ você",
       "texto": "No World Café, faça a pergunta que você trouxe."
+    },
+    {
+      "id": "conversar-tarde",
+      "passo": 2,
+      "de": "2026-11-17T12:00-03:00",
+      "ate": "2026-11-18T00:00-03:00",
+      "kicker": "Capítulo 2 · Conversar",
+      "titulo": "Hoje _a_ *liderança* vem _até_ você",
+      "texto": "Uma boa conversa não termina na sala: continua no corredor, no café e no jantar."
     },
     {
       "id": "praticar",
@@ -108,7 +117,7 @@
       "kicker": "Capítulo 2 · Conversar",
       "titulo": "",
       "texto": "",
-      "nota": "Jubilandos em número agregado, aprovado por RH e CI (ex.: '30 colegas, N anos de Takeda'), sem nomes. Título e texto vazios = não publica (D06); fica o estado 'conversar'."
+      "nota": "Jubilandos em número agregado, aprovado por RH e CI (ex.: '30 colegas, N anos de Takeda'), sem nomes. Título e texto vazios = não publica (D06); fica o estado 'conversar-tarde'."
     }
   ]
 }

@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Encontro Infield 2026 · Futuro Infield em Foco · Widget do feed da Home · Fio da História · v1.0.0
+  Encontro Infield 2026 · Futuro Infield em Foco · Widget do feed da Home · Fio da História · v1.1.0
   Arquivo gerado por encontro-infield/widget/build.py a partir de encontro-infield/widget/src.
   Não editar aqui: editar a fonte (textos em src/fio-da-historia.json) e rodar o build.
   Embed widget do Home feed (Backstage › Design › Home › Home feed): ~220 px de altura, sem rolagem nem interação.
@@ -10,7 +10,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-SGYxBfme7sV+926HMWyxV0i6YrGDgPKKLQgIeOz5Btw='; style-src 'sha256-sJyW+Zgy8D74vtop1s7h+8W4AyL7Thr6Bn/mdqRMtEc='; img-src data:; font-src data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-G4BLThv1RW08WYuhSu6GYpHeaxBRuhUXBEUDfb/bDbE='; style-src 'sha256-Fe9m85lGVDRgYIfF7s5Gic6yYU62bfu+dpuNBsESEPI='; img-src data:; font-src data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="robots" content="noindex, nofollow, noarchive">
 <meta name="format-detection" content="telephone=no">
@@ -133,43 +133,58 @@ p, h1, ol { margin: 0; }
   text-wrap: balance;
 }
 
-/* ---------- fio: prólogo, 4 capítulos e epílogo ----------
-   fio cinza = a história inteira · fio vermelho = até hoje
+/* ---------- trilha: o fio da história (prólogo, 4 capítulos e epílogo) ----------
+   Desenho do KV: fio fino em onda suave que entra pela borda esquerda, passa pelo centro de cada conta
+   e sai pela direita (o código traça a onda conforme a largura).
+   fio cinza = a história inteira · fio vermelho = até hoje (no epílogo, segue para fora do cartão)
    conta grafite = passou · conta vermelha = agora · anel = ainda vem */
-.fio {
-  --p: 0;
+.trilha {
   position: relative;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  align-items: center;
-  height: var(--s4);
+  height: var(--s6);
   margin-top: var(--s3);
-  padding: 0;
-  list-style: none;
 }
-.fio::before,
-.fio::after {
+/* reserva sem JavaScript: fio reto entre a primeira e a última conta */
+.trilha::before {
   content: "";
   position: absolute;
   top: 50%;
   left: calc(100% / 12);
-  border-radius: 2px;
-  translate: 0 -50%;
-}
-.fio::before { right: calc(100% / 12); height: 2px; background: #35373E29; }
-.fio::after {
-  width: calc((100% - 100% / 6) * var(--p));
+  right: calc(100% / 12);
   height: 2px;
-  background: var(--red-fill);
-  transform-origin: left center;
+  border-radius: 2px;
+  transform: translateY(-50%);
+  background: #35373E29;
+}
+.trilha[data-tracado]::before { display: none; }
+.linha {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--s4));
+  width: calc(100% + 2 * var(--s4));
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.linha path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.linha-base { stroke: #83858C; stroke-opacity: .6; stroke-width: 1.5px; }
+.linha-feita { stroke: var(--red-fill); stroke-width: 2px; }
+.fio {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  align-items: center;
+  height: 100%;
+  padding: 0;
+  list-style: none;
 }
 .conta {
   position: relative;
-  z-index: 1;
   justify-self: center;
   width: 10px; height: 10px; border-radius: 50%;
   background: var(--bg);
   border: 2px solid var(--control);
+  transform: translateY(var(--y, 0px));
 }
 .conta[data-s="passada"] { border: 0; background: var(--bead-grey); box-shadow: 0 1px 2px #35373E40; }
 .conta[data-s="agora"] {
@@ -198,11 +213,15 @@ p, h1, ol { margin: 0; }
 @media (prefers-reduced-motion: no-preference) {
   .card[data-anim] .title { animation: foco .9s var(--ease) both; }
   .card[data-anim] .text { animation: sobe .6s var(--ease) .2s both; }
-  .card[data-anim] .fio::after { animation: fio .9s var(--ease) .3s both; }
+  /* o fio vermelho se desenha da borda esquerda até a conta de hoje (--len = comprimento, medido pelo código) */
+  .card[data-anim] .linha-feita {
+    stroke-dasharray: var(--len, 0) var(--len, 0);
+    animation: fio 1s var(--ease) .3s both;
+  }
   .card[data-anim] .conta[data-s="agora"] { animation: pulso 1.6s ease-out 1.1s 2; }
   @keyframes foco { from { filter: blur(8px); opacity: 0; } to { filter: blur(0); opacity: 1; } }
   @keyframes sobe { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
-  @keyframes fio { from { scale: 0 1; } to { scale: 1 1; } }
+  @keyframes fio { from { stroke-dashoffset: var(--len, 0); } to { stroke-dashoffset: 0; } }
   @keyframes pulso {
     from { box-shadow: 0 0 0 3px var(--bg), 0 0 0 3px #E1242A73, 0 1px 3px #35373E59; }
     to { box-shadow: 0 0 0 3px var(--bg), 0 0 0 12px #E1242A00, 0 1px 3px #35373E59; }
@@ -210,7 +229,7 @@ p, h1, ol { margin: 0; }
 }
 
 @media (forced-colors: active) {
-  .conta, .fio::before, .fio::after, .kicker::before { forced-color-adjust: none; }
+  .conta, .linha, .trilha::before, .kicker::before { forced-color-adjust: none; }
 }
 </style>
 </head>
@@ -221,10 +240,13 @@ p, h1, ol { margin: 0; }
   <h1 class="title" id="titulo">Futuro <span class="r">Infield</span> <span class="c">em</span> <span class="r">Foco</span></h1>
   <p class="text" id="texto">A melhor história é aquela que construímos juntos.</p>
   <p class="sr-only" id="progresso"></p>
-  <ol class="fio" id="fio" aria-hidden="true"><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li></ol>
+  <div class="trilha" id="trilha" aria-hidden="true">
+    <svg class="linha" id="linha" focusable="false"><path class="linha-base" id="linha-base"/><path class="linha-feita" id="linha-feita"/></svg>
+    <ol class="fio" id="fio"><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li><li class="conta"></li></ol>
+  </div>
   <ol class="rotulos" id="rotulos" aria-hidden="true"><li>Prólogo</li><li>16/11</li><li>17/11</li><li>18/11</li><li>19/11</li><li>Epílogo</li></ol>
 </main>
-<script type="application/json" id="fio-data">{"versao":"1.0.0","atualizado":"2026-11-03","fuso":"Horário de Brasília (UTC-03:00, sem horário de verão). Janelas no formato [de, ate): 'de' entra, 'ate' não.","marcacao":"No título: *vermelho* (palavra de destaque, Bold vermelho) e _conectivo_ (peso regular). O resto sai em Bold grafite. Título até 45 caracteres e texto até 90.","passos":["Prólogo","Capítulo 1 · Enxergar","Capítulo 2 · Conversar","Capítulo 3 · Praticar","Capítulo 4 · Levar","Epílogo"],"rotulos":["Prólogo","16/11","17/11","18/11","19/11","Epílogo"],"reserva":{"kicker":"Encontro Infield 2026 · 16 a 19/11","titulo":"Futuro *Infield* _em_ *Foco*","texto":"A melhor história é aquela que construímos juntos."},"estados":[{"id":"prologo","passo":0,"de":null,"ate":"2026-11-16T00:00-03:00","kicker":"Prólogo","titulo":"247 autores, _uma_ *história*","texto":"Chegue com uma pergunta: o que o seu território precisa que a gente faça diferente?"},{"id":"enxergar","passo":1,"de":"2026-11-16T00:00-03:00","ate":"2026-11-17T00:00-03:00","kicker":"Capítulo 1 · Enxergar","titulo":"Hoje _o_ futuro entra _em_ *foco*","texto":"Antes de construir junto, todo mundo precisa enxergar o mesmo cenário."},{"id":"conversar","passo":2,"de":"2026-11-17T00:00-03:00","ate":"2026-11-18T00:00-03:00","kicker":"Capítulo 2 · Conversar","titulo":"Hoje _a_ *liderança* vem _até_ você","texto":"No World Café, faça a pergunta que você trouxe."},{"id":"praticar","passo":3,"de":"2026-11-18T00:00-03:00","ate":"2026-11-18T18:00-03:00","kicker":"Capítulo 3 · Praticar","titulo":"Treino _é onde a_ história ganha *forma*","texto":"O que você ensaia hoje é o que o seu cliente ouve na próxima visita."},{"id":"celebrar","passo":3,"de":"2026-11-18T18:00-03:00","ate":"2026-11-19T03:00-03:00","kicker":"Capítulo 3 · Celebrar","titulo":"Hoje _à_ noite, _a_ história ganha *trilha sonora*","texto":"Celebrar também é construir junto. O resto é surpresa."},{"id":"levar","passo":4,"de":"2026-11-19T03:00-03:00","ate":"2026-11-20T00:00-03:00","kicker":"Capítulo 4 · Levar","titulo":"_O_ último capítulo _se_ escreve _no_ *campo*","texto":"Saia do Rio com um compromisso para o seu território."},{"id":"epilogo","passo":5,"de":"2026-11-20T00:00-03:00","ate":null,"kicker":"Epílogo","titulo":"_A_ história continua _no seu_ *território*","texto":"Obrigado por escrever o Encontro Infield 2026 com a gente."}],"espacos":[{"id":"sintese-plenaria","passo":1,"de":"2026-11-16T18:00-03:00","ate":"2026-11-17T00:00-03:00","kicker":"Capítulo 1 · Enxergar","titulo":"","texto":"","nota":"Frase-síntese da plenária aprovada pela CI, sem números de resultado. Título e texto vazios = não publica (D06); fica o estado 'enxergar'."},{"id":"jubilandos","passo":2,"de":"2026-11-17T12:00-03:00","ate":"2026-11-18T00:00-03:00","kicker":"Capítulo 2 · Conversar","titulo":"","texto":"","nota":"Jubilandos em número agregado, aprovado por RH e CI (ex.: '30 colegas, N anos de Takeda'), sem nomes. Título e texto vazios = não publica (D06); fica o estado 'conversar'."}]}</script>
+<script type="application/json" id="fio-data">{"versao":"1.1.0","atualizado":"2026-11-03","fuso":"Horário de Brasília (UTC-03:00, sem horário de verão). Janelas no formato [de, ate): 'de' entra, 'ate' não.","marcacao":"No título: *vermelho* (palavra de destaque, Bold vermelho) e _conectivo_ (peso regular). O resto sai em Bold grafite. Título até 45 caracteres e texto até 90.","passos":["Prólogo","Capítulo 1 · Enxergar","Capítulo 2 · Conversar","Capítulo 3 · Praticar","Capítulo 4 · Levar","Epílogo"],"rotulos":["Prólogo","16/11","17/11","18/11","19/11","Epílogo"],"reserva":{"kicker":"Encontro Infield 2026 · 16 a 19/11","titulo":"Futuro *Infield* _em_ *Foco*","texto":"A melhor história é aquela que construímos juntos."},"estados":[{"id":"prologo","passo":0,"de":null,"ate":"2026-11-16T00:00-03:00","kicker":"Prólogo","titulo":"247 autores, _uma_ *história*","texto":"Chegue com uma pergunta: o que o seu território precisa que a gente faça diferente?"},{"id":"enxergar","passo":1,"de":"2026-11-16T00:00-03:00","ate":"2026-11-17T00:00-03:00","kicker":"Capítulo 1 · Enxergar","titulo":"Hoje _o_ futuro entra _em_ *foco*","texto":"Antes de construir junto, todo mundo precisa enxergar o mesmo cenário."},{"id":"conversar","passo":2,"de":"2026-11-17T00:00-03:00","ate":"2026-11-17T12:00-03:00","kicker":"Capítulo 2 · Conversar","titulo":"Hoje _a_ *liderança* vem _até_ você","texto":"No World Café, faça a pergunta que você trouxe."},{"id":"conversar-tarde","passo":2,"de":"2026-11-17T12:00-03:00","ate":"2026-11-18T00:00-03:00","kicker":"Capítulo 2 · Conversar","titulo":"Hoje _a_ *liderança* vem _até_ você","texto":"Uma boa conversa não termina na sala: continua no corredor, no café e no jantar."},{"id":"praticar","passo":3,"de":"2026-11-18T00:00-03:00","ate":"2026-11-18T18:00-03:00","kicker":"Capítulo 3 · Praticar","titulo":"Treino _é onde a_ história ganha *forma*","texto":"O que você ensaia hoje é o que o seu cliente ouve na próxima visita."},{"id":"celebrar","passo":3,"de":"2026-11-18T18:00-03:00","ate":"2026-11-19T03:00-03:00","kicker":"Capítulo 3 · Celebrar","titulo":"Hoje _à_ noite, _a_ história ganha *trilha sonora*","texto":"Celebrar também é construir junto. O resto é surpresa."},{"id":"levar","passo":4,"de":"2026-11-19T03:00-03:00","ate":"2026-11-20T00:00-03:00","kicker":"Capítulo 4 · Levar","titulo":"_O_ último capítulo _se_ escreve _no_ *campo*","texto":"Saia do Rio com um compromisso para o seu território."},{"id":"epilogo","passo":5,"de":"2026-11-20T00:00-03:00","ate":null,"kicker":"Epílogo","titulo":"_A_ história continua _no seu_ *território*","texto":"Obrigado por escrever o Encontro Infield 2026 com a gente."}],"espacos":[{"id":"sintese-plenaria","passo":1,"de":"2026-11-16T18:00-03:00","ate":"2026-11-17T00:00-03:00","kicker":"Capítulo 1 · Enxergar","titulo":"","texto":"","nota":"Frase-síntese da plenária aprovada pela CI, sem números de resultado. Título e texto vazios = não publica (D06); fica o estado 'enxergar'."},{"id":"jubilandos","passo":2,"de":"2026-11-17T12:00-03:00","ate":"2026-11-18T00:00-03:00","kicker":"Capítulo 2 · Conversar","titulo":"","texto":"","nota":"Jubilandos em número agregado, aprovado por RH e CI (ex.: '30 colegas, N anos de Takeda'), sem nomes. Título e texto vazios = não publica (D06); fica o estado 'conversar-tarde'."}]}</script>
 <script>/* Encontro Infield 2026 · widget do feed da Home · Fio da História
    O estado vem do relógio do aparelho, comparado com instantes absolutos (janelas em horário de Brasília),
    então o fuso do aparelho não muda o resultado. Sem rede, sem merge tag e sem armazenamento.
@@ -241,7 +263,10 @@ p, h1, ol { margin: 0; }
     titulo: doc.getElementById('titulo'),
     texto: doc.getElementById('texto'),
     progresso: doc.getElementById('progresso'),
-    fio: doc.getElementById('fio'),
+    trilha: doc.getElementById('trilha'),
+    linha: doc.getElementById('linha'),
+    base: doc.getElementById('linha-base'),
+    feita: doc.getElementById('linha-feita'),
     contas: Array.prototype.slice.call(doc.querySelectorAll('#fio > li')),
     rotulos: Array.prototype.slice.call(doc.querySelectorAll('#rotulos > li')),
   };
@@ -250,6 +275,9 @@ p, h1, ol { margin: 0; }
   // (abaixo disso o vermelho deixa de ser "texto grande" e perde o contraste mínimo de 3:1 no papel).
   const TAMANHOS = [[24, 14, 20], [23, 14, 20], [22, 14, 20], [21, 14, 20], [20, 14, 20], [19, 14, 20], [19, 13, 18]];
   const MAX_TIMER = 2147483647;
+  // fio do KV: onda suave pelo centro de cada conta (amplitude em px, avanço e fase em radianos por conta)
+  const ONDA = { amp: 5, avanco: 1.0, fase: 0.9 };
+  const onda = (i) => ONDA.amp * Math.sin(ONDA.fase + ONDA.avanco * i);
 
   // 'AAAA-MM-DDTHH:MM[:SS]' com fuso (Z ou ±HH:MM); sem fuso = horário de Brasília (UTC-03:00)
   function instante(iso) {
@@ -346,6 +374,41 @@ p, h1, ol { margin: 0; }
     return false;
   }
 
+  // Catmull-Rom → Bézier cúbica. Desenha do ponto 0 até o ponto 'ate' usando os vizinhos da lista inteira,
+  // para o trecho vermelho cair exatamente sobre o fio cinza.
+  function curva(p, ate) {
+    const n = (v) => v.toFixed(1);
+    let d = `M${n(p[0][0])} ${n(p[0][1])}`;
+    for (let i = 0; i < ate; i++) {
+      const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+      d += ` C${n(b[0] + (c[0] - a[0]) / 6)} ${n(b[1] + (c[1] - a[1]) / 6)}`
+        + ` ${n(c[0] - (e[0] - b[0]) / 6)} ${n(c[1] - (e[1] - b[1]) / 6)} ${n(c[0])} ${n(c[1])}`;
+    }
+    return d;
+  }
+
+  // o fio entra pela borda esquerda do cartão, passa pelo centro de cada conta e sai pela direita;
+  // vermelho até a conta de hoje (no epílogo, até a borda: a história continua)
+  let passo = 0;
+  function tracar() {
+    const caixa = el.linha.getBoundingClientRect();
+    if (!caixa.width || !caixa.height || el.contas.length < 2) return;
+    const meio = caixa.height / 2;
+    const xs = el.contas.map((c) => {
+      const r = c.getBoundingClientRect();
+      return r.left + r.width / 2 - caixa.left;
+    });
+    const vao = xs[1] - xs[0];
+    const pontos = [[0, meio + onda(-xs[0] / vao)]]
+      .concat(xs.map((x, i) => [x, meio + onda(i)]))
+      .concat([[caixa.width, meio + onda((caixa.width - xs[0]) / vao)]]);
+    el.contas.forEach((c, i) => c.style.setProperty('--y', `${onda(i).toFixed(2)}px`));
+    el.base.setAttribute('d', curva(pontos, pontos.length - 1));
+    el.feita.setAttribute('d', curva(pontos, passo >= ULTIMO ? pontos.length - 1 : passo + 1));
+    el.feita.style.setProperty('--len', el.feita.getTotalLength().toFixed(1));
+    el.trilha.dataset.tracado = '';
+  }
+
   function animar() {
     card.removeAttribute('data-anim');
     void card.offsetWidth; // reinicia as animações de entrada
@@ -356,21 +419,22 @@ p, h1, ol { margin: 0; }
   function desenhar() {
     const st = estadoAtual();
     if (!st) return;
-    if (st !== mostrado) {
+    const novo = st !== mostrado;
+    if (novo) {
       mostrado = st;
       el.kicker.textContent = st.kicker;
       el.titulo.replaceChildren(tituloEmNos(st.titulo));
       el.texto.textContent = st.texto;
-      const p = Math.max(0, Math.min(ULTIMO, Number(st.passo) || 0));
-      const marca = (no, i) => { no.dataset.s = i < p ? 'passada' : i === p ? 'agora' : 'futura'; };
+      passo = Math.max(0, Math.min(ULTIMO, Number(st.passo) || 0));
+      const marca = (no, i) => { no.dataset.s = i < passo ? 'passada' : i === passo ? 'agora' : 'futura'; };
       el.contas.forEach(marca);
       el.rotulos.forEach(marca);
-      el.fio.style.setProperty('--p', String(p / ULTIMO));
-      el.progresso.textContent = textoProgresso(p);
+      el.progresso.textContent = textoProgresso(passo);
       card.dataset.estado = st.id;
-      animar();
     }
     ajustar();
+    tracar();
+    if (novo) animar();
   }
 
   let relogio = 0;
@@ -386,7 +450,7 @@ p, h1, ol { margin: 0; }
   let quadro = 0;
   addEventListener('resize', () => {
     cancelAnimationFrame(quadro);
-    quadro = requestAnimationFrame(ajustar);
+    quadro = requestAnimationFrame(() => { ajustar(); tracar(); });
   });
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) { desenhar(); agendar(); }

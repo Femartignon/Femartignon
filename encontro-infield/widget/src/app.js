@@ -14,7 +14,10 @@
     titulo: doc.getElementById('titulo'),
     texto: doc.getElementById('texto'),
     progresso: doc.getElementById('progresso'),
-    fio: doc.getElementById('fio'),
+    trilha: doc.getElementById('trilha'),
+    linha: doc.getElementById('linha'),
+    base: doc.getElementById('linha-base'),
+    feita: doc.getElementById('linha-feita'),
     contas: Array.prototype.slice.call(doc.querySelectorAll('#fio > li')),
     rotulos: Array.prototype.slice.call(doc.querySelectorAll('#rotulos > li')),
   };
@@ -23,6 +26,9 @@
   // (abaixo disso o vermelho deixa de ser "texto grande" e perde o contraste mínimo de 3:1 no papel).
   const TAMANHOS = [[24, 14, 20], [23, 14, 20], [22, 14, 20], [21, 14, 20], [20, 14, 20], [19, 14, 20], [19, 13, 18]];
   const MAX_TIMER = 2147483647;
+  // fio do KV: onda suave pelo centro de cada conta (amplitude em px, avanço e fase em radianos por conta)
+  const ONDA = { amp: 5, avanco: 1.0, fase: 0.9 };
+  const onda = (i) => ONDA.amp * Math.sin(ONDA.fase + ONDA.avanco * i);
 
   // 'AAAA-MM-DDTHH:MM[:SS]' com fuso (Z ou ±HH:MM); sem fuso = horário de Brasília (UTC-03:00)
   function instante(iso) {
@@ -119,6 +125,41 @@
     return false;
   }
 
+  // Catmull-Rom → Bézier cúbica. Desenha do ponto 0 até o ponto 'ate' usando os vizinhos da lista inteira,
+  // para o trecho vermelho cair exatamente sobre o fio cinza.
+  function curva(p, ate) {
+    const n = (v) => v.toFixed(1);
+    let d = `M${n(p[0][0])} ${n(p[0][1])}`;
+    for (let i = 0; i < ate; i++) {
+      const a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+      d += ` C${n(b[0] + (c[0] - a[0]) / 6)} ${n(b[1] + (c[1] - a[1]) / 6)}`
+        + ` ${n(c[0] - (e[0] - b[0]) / 6)} ${n(c[1] - (e[1] - b[1]) / 6)} ${n(c[0])} ${n(c[1])}`;
+    }
+    return d;
+  }
+
+  // o fio entra pela borda esquerda do cartão, passa pelo centro de cada conta e sai pela direita;
+  // vermelho até a conta de hoje (no epílogo, até a borda: a história continua)
+  let passo = 0;
+  function tracar() {
+    const caixa = el.linha.getBoundingClientRect();
+    if (!caixa.width || !caixa.height || el.contas.length < 2) return;
+    const meio = caixa.height / 2;
+    const xs = el.contas.map((c) => {
+      const r = c.getBoundingClientRect();
+      return r.left + r.width / 2 - caixa.left;
+    });
+    const vao = xs[1] - xs[0];
+    const pontos = [[0, meio + onda(-xs[0] / vao)]]
+      .concat(xs.map((x, i) => [x, meio + onda(i)]))
+      .concat([[caixa.width, meio + onda((caixa.width - xs[0]) / vao)]]);
+    el.contas.forEach((c, i) => c.style.setProperty('--y', `${onda(i).toFixed(2)}px`));
+    el.base.setAttribute('d', curva(pontos, pontos.length - 1));
+    el.feita.setAttribute('d', curva(pontos, passo >= ULTIMO ? pontos.length - 1 : passo + 1));
+    el.feita.style.setProperty('--len', el.feita.getTotalLength().toFixed(1));
+    el.trilha.dataset.tracado = '';
+  }
+
   function animar() {
     card.removeAttribute('data-anim');
     void card.offsetWidth; // reinicia as animações de entrada
@@ -129,21 +170,22 @@
   function desenhar() {
     const st = estadoAtual();
     if (!st) return;
-    if (st !== mostrado) {
+    const novo = st !== mostrado;
+    if (novo) {
       mostrado = st;
       el.kicker.textContent = st.kicker;
       el.titulo.replaceChildren(tituloEmNos(st.titulo));
       el.texto.textContent = st.texto;
-      const p = Math.max(0, Math.min(ULTIMO, Number(st.passo) || 0));
-      const marca = (no, i) => { no.dataset.s = i < p ? 'passada' : i === p ? 'agora' : 'futura'; };
+      passo = Math.max(0, Math.min(ULTIMO, Number(st.passo) || 0));
+      const marca = (no, i) => { no.dataset.s = i < passo ? 'passada' : i === passo ? 'agora' : 'futura'; };
       el.contas.forEach(marca);
       el.rotulos.forEach(marca);
-      el.fio.style.setProperty('--p', String(p / ULTIMO));
-      el.progresso.textContent = textoProgresso(p);
+      el.progresso.textContent = textoProgresso(passo);
       card.dataset.estado = st.id;
-      animar();
     }
     ajustar();
+    tracar();
+    if (novo) animar();
   }
 
   let relogio = 0;
@@ -159,7 +201,7 @@
   let quadro = 0;
   addEventListener('resize', () => {
     cancelAnimationFrame(quadro);
-    quadro = requestAnimationFrame(ajustar);
+    quadro = requestAnimationFrame(() => { ajustar(); tracar(); });
   });
   doc.addEventListener('visibilitychange', () => {
     if (!doc.hidden) { desenhar(); agendar(); }

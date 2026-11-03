@@ -2,7 +2,8 @@
 
 > **Atualização 03/11/2026:** `public/index.html` passou a ser o widget **Fio da História**, gerado por
 > `widget/build.py` (ver `widget/LEIA-ME.md`). O widget de clima, dias e trânsito descrito abaixo saiu
-> desse endereço; o código dele segue no histórico do Git.
+> desse endereço; o código dele segue no histórico do Git. O merge na `main` publica só na Vercel
+> (`myencontroinfield.vercel.app`): a URL do Home feed no Backstage precisa apontar para lá.
 
 Atualizado: 05/10/2026
 

@@ -26,7 +26,10 @@
   <h1 class="title" id="titulo">{{TITULO}}</h1>
   <p class="text" id="texto">{{TEXTO}}</p>
   <p class="sr-only" id="progresso"></p>
-  <ol class="fio" id="fio" aria-hidden="true">{{CONTAS}}</ol>
+  <div class="trilha" id="trilha" aria-hidden="true">
+    <svg class="linha" id="linha" focusable="false"><path class="linha-base" id="linha-base"/><path class="linha-feita" id="linha-feita"/></svg>
+    <ol class="fio" id="fio">{{CONTAS}}</ol>
+  </div>
   <ol class="rotulos" id="rotulos" aria-hidden="true">{{ROTULOS}}</ol>
 </main>
 <script type="application/json" id="fio-data">{{DADOS}}</script>
