@@ -1,0 +1,38 @@
+<!doctype html>
+<!--
+  Encontro Infield 2026 · Futuro Infield em Foco · Widget do feed da Home · Fio da História · v{{VERSAO}}
+  Arquivo gerado por encontro-infield/widget/build.py a partir de encontro-infield/widget/src.
+  Não editar aqui: editar a fonte (textos em src/fio-da-historia.json) e rodar o build.
+  Embed widget do Home feed (Backstage › Design › Home › Home feed): ~220 px de altura, sem rolagem nem interação.
+  QA: #qa=1&estado=conversar · #qa=1&now=2026-11-17T10:30 (horário de Brasília)
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="{{CSP}}">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<title>Fio da História · Encontro Infield 2026</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.4' cy='.36' r='.7'%3E%3Cstop offset='0' stop-color='%23ff6a6e'/%3E%3Cstop offset='.52' stop-color='%23E1242A'/%3E%3Cstop offset='1' stop-color='%239f1519'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='14' fill='url(%23g)'/%3E%3Ccircle cx='11' cy='10' r='3.5' fill='%23fff' fill-opacity='.7'/%3E%3C/svg%3E">
+<style>{{ESTILO}}</style>
+</head>
+<body class="plate">
+<main class="card" id="card" aria-labelledby="titulo">
+  <img class="canto" src="data:image/webp;base64,{{CANTO}}" alt="" width="400" height="356" decoding="async">
+  <p class="kicker" id="kicker">{{KICKER}}</p>
+  <h1 class="title" id="titulo">{{TITULO}}</h1>
+  <p class="text" id="texto">{{TEXTO}}</p>
+  <p class="sr-only" id="progresso"></p>
+  <div class="trilha" id="trilha" aria-hidden="true">
+    <svg class="linha" id="linha" focusable="false"><path class="linha-base" id="linha-base"/><path class="linha-feita" id="linha-feita"/></svg>
+    <ol class="fio" id="fio">{{CONTAS}}</ol>
+  </div>
+  <ol class="rotulos" id="rotulos" aria-hidden="true">{{ROTULOS}}</ol>
+</main>
+<script type="application/json" id="fio-data">{{DADOS}}</script>
+<script>{{CODIGO}}</script>
+</body>
+</html>
