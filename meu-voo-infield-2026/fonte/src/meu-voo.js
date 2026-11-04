@@ -63,8 +63,10 @@ const pad2 = (n) => String(n).padStart(2, '0');
 const tplV = (s, vars) => String(s ?? '').replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? '');
 
 function vMkDay(y, m, d) {
-  if (!(m >= 1 && m <= 12 && d >= 1 && d <= 31)) return null;
-  return { y: y < 100 ? 2000 + y : y, m, d };
+  const Y = y < 100 ? 2000 + y : y;
+  // Data inexistente (31/09, 30/02) é rejeitada: o campo some e o QA aponta, em vez de virar o dia seguinte.
+  if (!(m >= 1 && m <= 12 && d >= 1 && d <= new Date(Date.UTC(Y, m, 0)).getUTCDate())) return null;
+  return { y: Y, m, d };
 }
 /** "Ter. 13 out. 2026", "16/11/2026", "16/11", "2026-11-16", "16 de novembro". Ano padrão: 2026. */
 function vParseDay(txt) {

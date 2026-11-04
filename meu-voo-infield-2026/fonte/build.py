@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Encontro Infield 2026 · Meu Voo · v0.4.1 · gera a página e o botão do SpotMe.
+"""Encontro Infield 2026 · Meu Voo · v0.4.2 · gera a página e o botão do SpotMe.
 
 Saídas: publicar/index.html (cópia de dist/meu-voo.html, o que o Vercel publica) e a pasta dist/, ao lado de fonte/:
   meu-voo.html               página autocontida (estilo, código, dados, ícones, fonte e imagens embutidos)
@@ -27,7 +27,7 @@ BASE = ROOT / "base"
 SRC = ROOT / "src"
 DIST = ROOT.parent / "dist"
 PUBLICAR = ROOT.parent / "publicar"  # Output Directory do projeto Vercel: só a página vai para a hospedagem
-VERSION = "0.4.1"
+VERSION = "0.4.2"
 
 
 def read(p: Path) -> str:

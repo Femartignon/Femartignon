@@ -1,4 +1,4 @@
-# Meu Voo · Encontro Infield 2026 · v0.4.1
+# Meu Voo · Encontro Infield 2026 · v0.4.2
 
 Página autocontida (`meu-voo.html`) no layout das páginas v0.3.1 (identidade Fio Condutor). Personalizada pelas merge tags do SpotMe: sem formulário, sem login extra e sem dado pessoal na hospedagem.
 
@@ -50,6 +50,7 @@ Projeto Vercel `meu-voo-v0.4.0` (time `felipe-0ef6`) → `https://meu-voo-v040.v
 - `python3 fonte/build.py` (sem dependências) → `dist/`. A base v0.3.1 fica em `fonte/base/` sem alteração; o Meu Voo entra por `fonte/src/` e por ajustes pontuais com assert no módulo compartilhado.
 - `python3 fonte/qa/validar.py <saída> [axe.min.js]` (Playwright): 14 estados da viagem, contraste e acessibilidade (axe), console, CSP, estouro horizontal, largura de computador e o fluxo botão nativo → página.
 - `previa/meu-voo-previa.html`: demonstração com dados fictícios e painel de QA aberto. Não publicar na hospedagem nem no app.
+- v0.4.2 (04/11/2026): data inexistente (ex.: `31 set`, `30/02`) é descartada em vez de virar o dia seguinte; o trecho aparece sem data e o painel de QA aponta o campo. Botão e link sem mudança.
 - v0.4.1 (04/11/2026): link e botão apontam para `meu-voo-v040.vercel.app` (antes, `myencontroinfield.vercel.app/meu-voo.html`, que não existe); "Trânsito ao vivo" com endereço absoluto.
 
 ## Pendências

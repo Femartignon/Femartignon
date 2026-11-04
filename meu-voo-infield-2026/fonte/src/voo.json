@@ -1,5 +1,5 @@
 {
-  "version": "0.4.1",
+  "version": "0.4.2",
   "baseUrl": "https://meu-voo-v040.vercel.app/",
   "logisticaUrl": "https://myencontroinfield.vercel.app/logistica.html#transito",
   "note": "Os campos já existem no Backstage (os mesmos do cartão de embarque nativo). O SpotMe troca as merge tags pelos dados de quem tocou no link; a página lê o fragmento (#) no aparelho e limpa o endereço. Nada chega à hospedagem: o fragmento não vai na requisição e a CSP da página não permite conexões.",
