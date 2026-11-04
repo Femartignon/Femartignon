@@ -13,3 +13,8 @@ encontro-infield/node_modules/
 # Cartão de embarque: previews locais e cache do Python
 cartao-embarque-infield-2026/preview-*.html
 __pycache__/
+
+# Meu Voo: cópias geradas pelo build (a página publicada é publicar/index.html)
+meu-voo-infield-2026/dist/meu-voo.html
+meu-voo-infield-2026/dist/previa/
+meu-voo-infield-2026/qa-saida/
