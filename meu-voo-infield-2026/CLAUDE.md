@@ -8,12 +8,12 @@ Página autocontida "Meu Voo" personalizada por participante, aberta a partir do
 
 ## Estado atual
 
-- Versão **v0.4.1** (04/11/2026), em produção em `https://meu-voo-v040.vercel.app/`.
+- Versão **v0.4.2** (04/11/2026), em produção em `https://meu-voo-v040.vercel.app/`.
 - Vercel: time `felipe-0ef6`, projeto `meu-voo-v0.4.0` (`prj_KmR7MVC2VCPkdrW8iNzJAMAgM91q`), Git neste repo, branch `main`.
   - Root Directory `meu-voo-infield-2026`, Output Directory `publicar` (override), sem build command.
   - Deployment Protection: Vercel Authentication, Standard Protection (previews protegidos; domínio de produção público).
   - "Improve models with this project's data": desligado.
-- Pendente: botão v0.4.1 colado no SpotMe e teste no app (iOS, Android e web).
+- Botão no SpotMe: colado e renderizando (print de 04/11). Pendente: teste com dados reais (16 e 19/11) no app (iOS, Android e web).
 
 ## Arquitetura
 
