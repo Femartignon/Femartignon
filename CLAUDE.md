@@ -5,6 +5,7 @@ Cada projeto tem sua pasta. Os que têm `CLAUDE.md` próprio guardam ali o conte
 | Pasta | Projeto | Contexto |
 |---|---|---|
 | `cartao-embarque-infield-2026/` | Cartão de embarque do app SpotMe (Encontro Infield 2026) | `cartao-embarque-infield-2026/CLAUDE.md` |
+| `meu-voo-infield-2026/` | Página Meu Voo personalizada do app SpotMe (Encontro Infield 2026, Vercel `meu-voo-v0.4.0`) | `meu-voo-infield-2026/CLAUDE.md` |
 | `encontro-infield/` | Site / assistente do Encontro Infield (Vercel) | — |
 | `gastro-academy-leadership-deck/` | Deck HyperFrames | `gastro-academy-leadership-deck/CLAUDE.md` |
 | `latam-777-300-mockup/` | Mockup LATAM 777-300 | — |
