@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.71",
+    "@vercel/speed-insights": "^2.0.0",
     "ai": "^7.0.127",
     "zod": "^4.6.5"
   }
