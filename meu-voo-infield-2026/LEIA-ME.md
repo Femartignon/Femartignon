@@ -1,4 +1,4 @@
-# Meu Voo · Encontro Infield 2026 · v0.4.2
+# Meu Voo · Encontro Infield 2026 · v0.5.0
 
 Página autocontida (`meu-voo.html`) no layout das páginas v0.3.1 (identidade Fio Condutor). Personalizada pelas merge tags do SpotMe: sem formulário, sem login extra e sem dado pessoal na hospedagem.
 
@@ -41,15 +41,18 @@ Projeto Vercel `meu-voo-v0.4.0` (time `felipe-0ef6`) → `https://meu-voo-v040.v
 ## O que a página faz
 
 - Capa com o que fazer agora: contagem até o voo, check-in liberado, hora de ir ao aeroporto, em voo (progresso), chegada ao Rio, evento, dia da volta e epílogo.
+- Seções: Voos · Antes de voar · Chegada.
+- Cartão do trecho com abas: os títulos "Voo de ida" e "Voo de volta" ficam lado a lado e trocam o único cartão exibido (clique ou setas do teclado). Abre na ida; depois que a ida termina, abre na volta. "Ver cartão", na capa, seleciona o trecho certo.
 - Cartão de cada trecho: o fio do KV vira a rota, com o avião na posição real do voo; conexão, `+1`, horário local, localizador oculto com revelar e copiar.
 - Check-in na cia (LATAM e GOL 48 h, Azul 72 h), acompanhar no Flightradar24, salvar na agenda com lembrete 2 h antes, modo balcão com tela acesa.
-- Jornada do embarque ao retorno, com os fatos da Agenda (credenciamento, quarto, plenária, check-out); chegada com receptivo, rota até o hotel e trânsito ao vivo; checklist salvo no aparelho; ajuda e privacidade com “apagar dados deste aparelho”.
+- Checklist salvo no aparelho; chegada com receptivo, rota até o hotel e trânsito ao vivo.
 
 ## Regenerar e testar
 
 - `python3 fonte/build.py` (sem dependências) → `dist/`. A base v0.3.1 fica em `fonte/base/` sem alteração; o Meu Voo entra por `fonte/src/` e por ajustes pontuais com assert no módulo compartilhado.
 - `python3 fonte/qa/validar.py <saída> [axe.min.js]` (Playwright): 14 estados da viagem, contraste e acessibilidade (axe), console, CSP, estouro horizontal, largura de computador e o fluxo botão nativo → página.
 - `previa/meu-voo-previa.html`: demonstração com dados fictícios e painel de QA aberto. Não publicar na hospedagem nem no app.
+- v0.5.0 (07/11/2026): um cartão por vez com abas Ida/Volta no título; seções Jornada e Ajuda retiradas (com elas, o botão “Apagar dados deste aparelho”); “Antes de voar” antes de “Chegada”. Link sem mudança; no botão nativo mudou só a linha de descrição.
 - v0.4.2 (04/11/2026): data inexistente (ex.: `31 set`, `30/02`) é descartada em vez de virar o dia seguinte; o trecho aparece sem data e o painel de QA aponta o campo. Botão e link sem mudança.
 - v0.4.1 (04/11/2026): link e botão apontam para `meu-voo-v040.vercel.app` (antes, `myencontroinfield.vercel.app/meu-voo.html`, que não existe); "Trânsito ao vivo" com endereço absoluto.
 

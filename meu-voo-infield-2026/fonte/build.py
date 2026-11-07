@@ -27,7 +27,7 @@ BASE = ROOT / "base"
 SRC = ROOT / "src"
 DIST = ROOT.parent / "dist"
 PUBLICAR = ROOT.parent / "publicar"  # Output Directory do projeto Vercel: só a página vai para a hospedagem
-VERSION = "0.4.2"
+VERSION = "0.5.0"
 
 
 def read(p: Path) -> str:
@@ -125,7 +125,7 @@ def snippet(link: str) -> str:
               f"</td></tr></table>")
     inner = (text("MEU VOO · ENCONTRO INFIELD 2026", 1, RED, bold=True) + gap(10) + flights + gap(18) + button + gap(10)
              + f'<table {TABLE}><tr><td align="center" bgcolor="{PAPER}">'
-             + text("Cartão do trecho, check-in, jornada e chegada ao Rio.", 1, MUTED) + "</td></tr></table>")
+             + text("Cartão de ida e volta, check-in e chegada ao Rio.", 1, MUTED) + "</td></tr></table>")
     body = "\n".join(f"<tr><td>{b}</td></tr>" for b in (corners("t"), band(inner, top=8, bottom=8), corners("b")))
     head = f"""<!--
 MEU VOO · BOTÃO PARA A PÁGINA COMPLETA · ENCONTRO INFIELD 2026 · v{VERSION}
@@ -155,15 +155,15 @@ def build(previa: bool = False) -> None:
     data = json.loads(read(BASE / "data.json"))
     data["meta"]["version"] = VERSION
     data["meta"]["label"] = "Meu Voo · página autocontida"
-    data["meta"]["built"] = "2026-11-04"
+    data["meta"]["built"] = "2026-11-07"
     for fid, f in voo["facts"].items():
         data["facts"][fid] = f["status"]
     data["pending"].update(voo["pending"])
     data["pages"] = [p for p in data["pages"] if p["id"] != "meu-voo"] + [{
         "id": "meu-voo", "file": "meu-voo.html", "menu": "Meu Voo", "title": [["Meu", "k"], ["Voo", "r"]],
         "lead": voo["texts"]["lead"],
-        "description": "Seus voos do Encontro Infield 2026: cartão de cada trecho, check-in, jornada e chegada ao Rio.",
-        "sections": [["ida", "Ida"], ["volta", "Volta"], ["jornada", "Jornada"], ["chegada", "Chegada"], ["antes", "Antes de voar"], ["ajuda", "Ajuda"]],
+        "description": "Seus voos do Encontro Infield 2026: cartão de ida e volta, check-in, checklist e chegada ao Rio.",
+        "sections": [["voos", "Voos"], ["antes", "Antes de voar"], ["chegada", "Chegada"]],
     }]
     data["voo"] = {**voo, "params": params, "snippet": snip}
     data_json = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
@@ -230,7 +230,7 @@ def build(previa: bool = False) -> None:
 <meta name="theme-color" content="#F5F2F0" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#17181C" media="(prefers-color-scheme: dark)">
 <title>Meu Voo · Encontro Infield 2026</title>
-<meta name="description" content="Seus voos do Encontro Infield 2026: cartão de cada trecho, check-in, jornada e chegada ao Rio.">
+<meta name="description" content="Seus voos do Encontro Infield 2026: cartão de ida e volta, check-in, checklist e chegada ao Rio.">
 <link rel="icon" type="image/svg+xml" href="{read(BASE / 'favicon.txt').strip()}">
 <script>{boot}</script>
 <style>{css}</style>

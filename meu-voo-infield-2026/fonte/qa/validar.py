@@ -41,15 +41,15 @@ def iso(s):
 
 SCENARIOS = [
     # nome, persona, horário (Rio), tema, seções para capturar
-    ("01-antes", "direto", "2026-11-06T10:00:00-03:00", "light", ["top", "ida", "volta", "jornada", "chegada", "antes", "ajuda"]),
+    ("01-antes", "direto", "2026-11-06T10:00:00-03:00", "light", ["top", "ida", "volta", "antes", "chegada"]),
     ("02-checkin", "direto", "2026-11-14T09:00:00-03:00", "light", ["top"]),
     ("03-embarque", "direto", "2026-11-16T05:40:00-03:00", "dark", ["top", "ida"]),
     ("04-em-voo", "direto", "2026-11-16T07:10:00-03:00", "light", ["top", "ida"]),
-    ("05-chegou", "direto", "2026-11-16T08:05:00-03:00", "light", ["top", "jornada"]),
+    ("05-chegou", "direto", "2026-11-16T08:05:00-03:00", "light", ["top", "chegada"]),
     ("06-evento", "direto", "2026-11-17T10:00:00-03:00", "dark", ["top", "volta"]),
-    ("07-dia-volta", "direto", "2026-11-19T09:00:00-03:00", "light", ["top", "jornada-fim"]),
+    ("07-dia-volta", "direto", "2026-11-19T09:00:00-03:00", "light", ["top", "voos"]),
     ("08-casa", "direto", "2026-11-19T19:00:00-03:00", "light", ["top"]),
-    ("09-conexao-antes", "conexao", "2026-11-12T10:00:00-03:00", "light", ["top", "ida", "jornada"]),
+    ("09-conexao-antes", "conexao", "2026-11-12T10:00:00-03:00", "light", ["top", "ida", "volta"]),
     ("10-conexao-voando", "conexao", "2026-11-16T05:00:00-03:00", "dark", ["top", "ida"]),
     ("11-sem-chegada", "sem-chegada", "2026-11-16T07:40:00-03:00", "light", ["top", "ida"]),
     ("12-sem-voo", "sem-voo", "2026-11-10T10:00:00-03:00", "light", ["top", "ida", "volta"]),
@@ -61,15 +61,33 @@ SCENARIOS = [
 def shot(page, name, sid):
     if sid == "top":
         page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
-    elif sid == "jornada-fim":
-        page.evaluate("document.querySelector('#journey .journey-day:last-child').scrollIntoView({block: 'start', behavior: 'instant'})")
-        page.evaluate("window.scrollBy({top: -72, behavior: 'instant'})")
+    elif sid in ("ida", "volta"):  # um cartão por vez: escolhe a aba e captura a seção
+        page.click(f"#tab-{sid}")
+        page.evaluate("document.getElementById('voos').scrollIntoView({block: 'start', behavior: 'instant'})")
     else:
         page.evaluate(f"document.getElementById('{sid}').scrollIntoView({{block: 'start', behavior: 'instant'}})")
     page.wait_for_timeout(1700)
     f = OUT / f"{name}-{sid}.png"
     page.screenshot(path=str(f))
     return f.name
+
+
+def abas(page):
+    """Abas Ida/Volta: um cartão visível por vez, clique e teclado (setas) trocam o trecho, ARIA coerente."""
+    st = lambda: page.evaluate("""() => ({ sel: [...document.querySelectorAll('#voo-tabs [role=tab]')].filter(t => t.getAttribute('aria-selected') === 'true').map(t => t.dataset.leg),
+      vis: [...document.querySelectorAll('#voos [role=tabpanel]')].filter(p => !p.hidden && p.offsetHeight > 0).map(p => p.id),
+      cards: [...document.querySelectorAll('#voos .bp')].filter(c => c.offsetHeight > 0).map(c => c.dataset.leg),
+      thread: (() => { const c = [...document.querySelectorAll('#voos .bp')].find(c => c.offsetHeight > 0); return c ? c.querySelector('.t-base').getAttribute('d')?.length > 0 : null; })(),
+      focus: document.activeElement?.id })""")
+    out = {"inicio": st()}
+    page.click("#tab-volta"); page.wait_for_timeout(300); out["clique_volta"] = st()
+    page.keyboard.press("ArrowLeft"); page.wait_for_timeout(300); out["seta_esquerda"] = st()
+    page.keyboard.press("ArrowRight"); page.wait_for_timeout(300); out["seta_direita"] = st()
+    page.evaluate("window.scrollTo({top: 0, behavior: 'instant'})")
+    out["ok"] = (out["clique_volta"]["sel"] == ["volta"] and out["clique_volta"]["vis"] == ["leg-volta"] and out["clique_volta"]["cards"] == ["volta"]
+                 and out["seta_esquerda"]["sel"] == ["ida"] and out["seta_esquerda"]["focus"] == "tab-ida" and out["seta_direita"]["vis"] == ["leg-volta"]
+                 and out["clique_volta"]["thread"] is True)
+    return out
 
 
 def check_page(page):
@@ -135,7 +153,7 @@ def main():
         page.on("console", lambda m: errs.append(f"{m.type}: {m.text}") if m.type in ("error", "warning") else None)
         page.goto(PAGE.as_uri() + frag(PERSONAS["direto"]) + "&qa=1")
         page.wait_for_timeout(500)
-        page.click("#ida .qbtn:has-text('Mostrar no balcão')")
+        page.click("#leg-ida .qbtn:has-text('Mostrar no balcão')")
         page.wait_for_timeout(500)
         page.screenshot(path=str(OUT / "15-balcao.png"))
         page.keyboard.press("Escape")
@@ -147,9 +165,11 @@ def main():
                         "diag": page.locator("#qa-sheet .qa-stats").first.inner_text()}
         # agenda e localizador
         page.keyboard.press("Escape")
-        page.evaluate("document.getElementById('ida').scrollIntoView({block:'start'})")
-        page.click("#ida button[aria-label='Mostrar localizador']")
-        report["qa"]["pnr_revelado"] = page.locator("#ida .pnr-code").inner_text()
+        page.evaluate("document.getElementById('voos').scrollIntoView({block:'start'})")
+        page.click("#tab-ida")
+        page.click("#leg-ida button[aria-label='Mostrar localizador']")
+        report["qa"]["pnr_revelado"] = page.locator("#leg-ida .pnr-code").inner_text()
+        report["qa"]["abas"] = abas(page)
         ctx.close()
 
         # fluxo completo: botão da página nativa (render simulado do SpotMe) → página personalizada
@@ -161,7 +181,7 @@ def main():
         page = ctx.new_page()
         page.goto(PAGE.as_uri() + frag(PERSONAS["direto"]))
         page.wait_for_timeout(600)
-        page.evaluate("document.getElementById('ida').scrollIntoView({block: 'start', behavior: 'instant'})")
+        page.evaluate("document.getElementById('voos').scrollIntoView({block: 'start', behavior: 'instant'})")
         page.wait_for_timeout(1600)
         page.screenshot(path=str(OUT / "19-desktop.png"))
         report["desktop"] = check_page(page)
@@ -223,8 +243,7 @@ def fluxo_botao(b):
     page.wait_for_load_state()
     page.wait_for_timeout(800)
     res = page.evaluate("""() => ({ hash: location.hash, lead: document.querySelector('#voo-lead').innerText,
-      voo: document.querySelector('#ida .bp-meta').innerText.replace(/\\s+/g, ' '), status: document.querySelector('#voo-status').innerText.replace(/\\s+/g, ' ').slice(0, 120),
-      tv: [...document.querySelectorAll('#journey .tl-place')].map(e => e.innerText).find(t => t.includes('lobby')) || null })""")
+      voo: document.querySelector('#leg-ida .bp-meta').innerText.replace(/\\s+/g, ' '), status: document.querySelector('#voo-status').innerText.replace(/\\s+/g, ' ').slice(0, 120) })""")
     page.screenshot(path=str(OUT / "18-spotme-destino.png"))
     ctx.close()
     host.unlink()

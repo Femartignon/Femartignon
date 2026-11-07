@@ -1,6 +1,6 @@
 
 /* ======================================================================
-   v0.4.0 · Meu Voo: status da viagem, cartão do trecho com o fio, jornada e modo balcão
+   v0.5.0 · Meu Voo: status da viagem, cartão do trecho (abas Ida/Volta) com o fio e modo balcão
    Só tokens e grade de 4 px da v0.3.x; nenhuma cor nova.
    ====================================================================== */
 
@@ -108,14 +108,22 @@
   .rule span { font: var(--t12) var(--font); color: var(--ink-2); }
   .rule b { font: 700 var(--t20) var(--font); color: var(--ink); font-variant-numeric: tabular-nums; }
 
-  /* jornada: o fio com contas da v0.2, agrupado por dia */
-  .journey-day + .journey-day { margin-top: var(--s2); }
-  .tl-time .i { width: 16px; height: 16px; }
-  .tl-time .tz { font-weight: 400; color: var(--ink-2); }
-
-  /* privacidade */
-  .privacy { display: grid; gap: var(--s3); }
-  .privacy .btn { justify-self: start; }
+  /* abas Ida / Volta: os dois títulos lado a lado, um cartão por vez */
+  .leg-tabs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--s5); }
+  .leg-tab {
+    position: relative; margin: 0; padding: 0 0 var(--s2); border: 0; background: none; cursor: pointer;
+    font: inherit; letter-spacing: inherit; color: var(--ink-3); text-align: left; transition: color .2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .leg-tab::after {
+    content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 2px; border-radius: 1px;
+    background: var(--red-fill); scale: 0 1; transform-origin: left; transition: scale .25s;
+  }
+  .leg-tab[aria-selected="true"] { color: var(--ink); cursor: default; }
+  .leg-tab[aria-selected="true"]::after { scale: 1 1; }
+  .leg-tab[aria-selected="false"] .r { color: inherit; }
+  .leg-tab[aria-selected="false"]:hover { color: var(--ink-2); }
+  @media (prefers-reduced-motion: reduce) { .leg-tab, .leg-tab::after { transition: none; } }
 
   /* ---------- modo balcão ---------- */
   .counter {

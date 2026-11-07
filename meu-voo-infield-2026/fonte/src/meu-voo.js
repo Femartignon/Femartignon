@@ -1,4 +1,4 @@
-/* ================================================================ Meu Voo (v0.4.0)
+/* ================================================================ Meu Voo (v0.5.0)
    Página pessoal. Os dados chegam só pelo fragmento do link (#), com as merge tags do SpotMe: os campos já
    cadastrados no Backstage (os mesmos do cartão de embarque nativo). Nada vai a servidor: o fragmento não
    entra na requisição e a CSP não tem connect-src. Rótulos, regras e textos: DATA.voo (fonte única).
@@ -11,7 +11,6 @@ const DAY = 864e5;
 const HOUR = 36e5;
 const MIN = 6e4;
 const TZ_RIO = parseOffset(OFFSET);
-const WD_LONG = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 const WD_SHORT = ['dom.', 'seg.', 'ter.', 'qua.', 'qui.', 'sex.', 'sáb.'];
 const MONTH_PT = { jan: 1, fev: 2, mar: 3, abr: 4, mai: 5, jun: 6, jul: 7, ago: 8, set: 9, out: 10, nov: 11, dez: 12 };
 const RAW_TAG = /\{\{|\}\}|activatedPerson/;
@@ -175,7 +174,7 @@ const apMaps = (a) => DATA.airports.find((x) => x.iata === a.code)?.mapsQuery ??
 
 /* ---------------------------------------------------------------- modelo da viagem */
 
-const V = { trip: null, cards: new Map(), tl: [], heroKey: '', count: null, cleared: false };
+const V = { trip: null, cards: new Map(), heroKey: '', count: null, leg: null, legPicked: false };
 
 function buildLeg(key, get) {
   const p = (s) => get(`${key}.${s}`);
@@ -237,7 +236,6 @@ function vooSourceMap() {
       return [map, `qa:${p.id}`];
     }
   }
-  if (V.cleared) return [{}, 'vazio'];
   if (VOO_LINK) return [VOO_LINK, 'link'];
   const saved = store.get('voo-link', 'session');
   return saved ? [saved, 'sessao'] : [{}, 'vazio'];
@@ -301,7 +299,7 @@ const legMeta = (l) => vMeta(
   l.day && ['calendar', vDayShort(l.day)],
   l.depText && ['clock', l.o.tz !== TZ_RIO ? `${l.depText} (horário de ${l.o.city})` : l.depText],
   l.flight && ['plane', l.flight]);
-const cardLink = (l) => h('a', { class: 'btn', href: `#${l.key}` }, icon('ticket'), 'Ver cartão');
+const cardLink = (l) => h('a', { class: 'btn', href: '#voos', onclick: (e) => { e.preventDefault(); showLeg(l.key, { scroll: true }); } }, icon('ticket'), 'Ver cartão');
 const checkinLink = (l, primary = true) => (l.airline?.checkinUrl
   ? h('a', { class: primary ? 'btn btn--primary' : 'btn', href: l.airline.checkinUrl, target: '_blank', rel: 'noopener noreferrer' },
     icon('ticket'), `Fazer check-in na ${l.airline.name}`, h('span', { class: 'sr-only' }, ' (site da companhia)'))
@@ -625,112 +623,47 @@ function renderLegSection(trip, key, now) {
   box.replaceChildren(emptyCard('ticket', `Voo de ${VOO.legs[key].label.toLowerCase()}`, h('p', null, tplV(T.noLegFlights, { perna: VOO.legs[key].label.toLowerCase() }))));
 }
 
-/* ---------------------------------------------------------------- jornada: o fio da viagem */
+/* ---------------------------------------------------------------- abas Ida / Volta: um cartão por vez */
 
-function parseTvAt(tv, D) {
-  const s = vClean(tv);
-  if (!s || !D) return null;
-  const t = /(\d{1,2})\s*[h:]\s*(\d{2})?/.exec(s.replace(/\d{1,2}\/\d{1,2}(\/\d{2,4})?/g, ' '));
-  if (!t) return null;
-  const dm = /(\d{1,2})\/(\d{1,2})/.exec(s);
-  const day = dm ? vMkDay(D.y, +dm[2], +dm[1]) ?? D : D;
-  const H = +t[1];
-  const M = t[2] ? +t[2] : 0;
-  return H < 24 && M < 60 ? vInstant(day, { H, M }, TZ_RIO) : null;
+const LEG_KEYS = ['ida', 'volta'];
+/** Trecho aberto por padrão: a ida até ela terminar; depois, a volta (se houver). */
+function defaultLeg(trip, now) {
+  if (trip.state !== 'ok') return 'ida';
+  const { ida, volta } = trip.legs;
+  if (!ida) return volta ? 'volta' : 'ida';
+  return volta && legPhase(ida, now) === 'concluido' ? 'volta' : 'ida';
 }
-
-function journeyItems(trip) {
-  const items = [];
-  const add = (it) => { if (Number.isFinite(it.at)) items.push(it); };
-  const T = VOO.texts;
-  const ok = trip.state === 'ok';
-  const { ida, volta } = ok ? trip.legs : {};
-  const early = VOO.arriveEarlyMin * MIN;
-  if (ida && ida.dep != null) {
-    if (ida.checkinOpen != null) add({ id: 'ida-checkin', at: ida.checkinOpen, tz: ida.o.tz, tzCity: ida.o.city, icon: 'ticket', title: 'Check-in online liberado', place: `No app ou no site da ${ida.airline.name}`, fact: ida.airline.fact });
-    add({ id: 'ida-aeroporto', at: ida.dep - early, tz: ida.o.tz, tzCity: ida.o.city, icon: 'clock', title: 'Chegada ao aeroporto', place: apPlace(ida.o), note: '2 horas antes do voo.' });
-    add({ id: 'ida-voo', at: ida.dep, tz: ida.o.tz, tzCity: ida.o.city, icon: 'takeoff', kind: 'voo', title: ida.flight ? `Voo ${ida.flight}` : 'Voo de ida', place: `${ida.o.code} → ${ida.d.code}${ida.arrText ? ` · chegada às ${ida.arrText}` : ''}`, note: ida.cx ? `Conexão em ${ida.cx.city} (${ida.cx.code})${ida.cxFlight ? `, voo ${ida.cxFlight}` : ''}.` : null });
-    if (ida.arr != null) {
-      const rio = DATA.airports.some((a) => a.iata === ida.d.code);
-      add({ id: 'ida-chegada', at: ida.arr, tz: ida.d.tz, tzCity: ida.d.city, icon: 'landing', kind: 'voo', title: rio ? 'Chegada ao Rio' : `Chegada em ${ida.d.city}`, place: apPlace(ida.d),
-        note: trip.transfer === false ? T.noTransfer : `${T.arrival} ${DATA.traffic.typical}`, fact: trip.transfer === false ? DATA.traffic.typicalFact : `${T.arrivalFact} ${DATA.traffic.typicalFact}` });
-    }
+function showLeg(key, { scroll = false, focus = false } = {}) {
+  if (!LEG_KEYS.includes(key)) return;
+  V.leg = key;
+  for (const k of LEG_KEYS) {
+    const on = k === key;
+    const tab = $(`#tab-${k}`);
+    tab.setAttribute('aria-selected', String(on));
+    tab.tabIndex = on ? 0 : -1;
+    $(`#leg-${k}`).hidden = !on;
   }
-  // o Encontro (fatos da Agenda, fonte única)
-  const cred = ITEM.get('d1-chegada');
-  const room = ITEM.get('d1-checkin');
-  const plen = ITEM.get('d1-plenaria');
-  const landed = ida?.arr ?? null;
-  const late = landed != null && landed + HOUR > cred.s;
-  add({ id: 'credenciamento', at: late ? landed + HOUR : cred.s, tz: TZ_RIO, icon: 'id', title: 'Credenciamento', timeLabel: late ? 'ao chegar ao hotel' : null, place: cred.place, note: cred.note, fact: cred.fact });
-  if (landed != null) {
-    const D = vDayOf(landed, TZ_RIO);
-    const at15 = vInstant(D, { H: 15, M: 0 }, TZ_RIO);
-    add({ id: 'quarto', at: Math.max(at15, landed + 70 * MIN), tz: TZ_RIO, icon: 'building', title: room.title, timeLabel: landed + 70 * MIN > at15 ? 'ao chegar' : room.label.toLowerCase(), place: room.place, note: room.note, fact: room.fact });
-  } else add({ id: 'quarto', at: room.s + MIN, tz: TZ_RIO, icon: 'building', title: room.title, timeLabel: room.label.toLowerCase(), place: room.place, note: `No dia da sua chegada. ${room.note}`, fact: room.fact });
-  add({ id: 'plenaria', at: plen.s, tz: TZ_RIO, icon: 'flag', kind: 'evento', title: `${plen.title} · ${DATA.event.name}`, place: plen.place, note: 'A sua programação completa está na Agenda do app.', fact: plen.fact });
-  // volta
-  const out = ITEM.get('d4-checkout');
-  if (volta && volta.dep != null) {
-    const D = volta.day ?? vDayOf(volta.dep, TZ_RIO);
-    const goAirport = volta.dep - early;
-    const noon = vInstant(D, { H: 12, M: 0 }, TZ_RIO);
-    const tvAt = parseTvAt(trip.tv, D);
-    const is19 = vDayKey(D) === '2026-11-19';
-    add({ id: 'checkout', at: Math.min(vInstant(D, { H: 7, M: 0 }, TZ_RIO), goAirport - HOUR), tz: TZ_RIO, icon: 'luggage', title: 'Check-out', timeLabel: noon <= goAirport - HOUR ? 'até 12h' : 'antes de sair para o aeroporto', place: out.place, note: is19 ? out.note : DATA.departure.items[1], fact: out.fact });
-    if (volta.checkinOpen != null) add({ id: 'volta-checkin', at: volta.checkinOpen, tz: volta.o.tz, tzCity: volta.o.city, icon: 'ticket', title: 'Check-in da volta liberado', place: `No app ou no site da ${volta.airline.name}`, fact: volta.airline.fact });
-    if (trip.transfer !== false) {
-      add(tvAt != null
-        ? { id: 'transfer-volta', at: tvAt, tz: TZ_RIO, icon: 'van', title: 'Transfer para o aeroporto', place: trip.tv, fact: '' }
-        : { id: 'transfer-volta', at: goAirport - 75 * MIN, tz: TZ_RIO, icon: 'van', title: 'Transfer para o aeroporto', timeLabel: 'horário em Minha Logística', place: trip.tv ?? DATA.departure.items[2], fact: 'F18', pending: trip.tv ? null : 'P09' });
-    }
-    add({ id: 'volta-aeroporto', at: goAirport, tz: volta.o.tz, tzCity: volta.o.city, icon: 'clock', title: 'Chegada ao aeroporto', place: apPlace(volta.o), note: '2 horas antes do voo.' });
-    add({ id: 'volta-voo', at: volta.dep, tz: volta.o.tz, tzCity: volta.o.city, icon: 'takeoff', kind: 'voo', title: volta.flight ? `Voo ${volta.flight}` : 'Voo de volta', place: `${volta.o.code} → ${volta.d.code}${volta.arrText ? ` · chegada às ${volta.arrText}` : ''}`, note: volta.cx ? `Conexão em ${volta.cx.city} (${volta.cx.code})${volta.cxFlight ? `, voo ${volta.cxFlight}` : ''}.` : null });
-    if (volta.arr != null) add({ id: 'volta-chegada', at: volta.arr, tz: volta.d.tz, tzCity: volta.d.city, icon: 'landing', kind: 'voo', title: `Chegada em ${volta.d.city}`, place: apPlace(volta.d), note: `Boa volta para casa. ${T.epilogueTitle}.` });
-  } else add({ id: 'checkout', at: out.s, tz: TZ_RIO, icon: 'luggage', title: out.title, timeLabel: out.label.toLowerCase(), place: out.place, note: DATA.departure.items[0], fact: out.fact });
-  return items.sort((a, b) => a.at - b.at);
+  if (focus) $(`#tab-${key}`).focus();
+  if (scroll) $('#voos').scrollIntoView({ block: 'start', behavior: reducedMotion() ? 'auto' : 'smooth' });
 }
-
-function renderJourney(trip, now) {
-  const box = $('#journey');
-  V.tl = [];
-  const groups = [];
-  for (const it of journeyItems(trip)) {
-    const D = vDayOf(it.at, it.tz);
-    const k = vDayKey(D);
-    if (groups.at(-1)?.k !== k) groups.push({ k, D, items: [] });
-    groups.at(-1).items.push(it);
-  }
-  box.replaceChildren(...groups.map((g) => h('div', { class: 'journey-day' },
-    h('div', { class: 'day-head reveal' }, h('h3', { class: 'day-title' }, WD_LONG[vWd(g.D)], ' ', h('span', { class: 'c' }, `${pad2(g.D.d)}/${pad2(g.D.m)}`))),
-    h('ol', { class: 'tl', role: 'list' }, g.items.map((it) => {
-      const li = h('li', { class: 'tl-item', 'data-kind': it.kind ?? 'etapa', ...factProps(it.fact) },
-        h('div', { class: 'tl-card' },
-          h('p', { class: 'tl-time' }, icon(it.icon, 'i--sm'), it.timeLabel ?? vClockTz(it.at, it.tz),
-            !it.timeLabel && it.tz !== TZ_RIO ? h('span', { class: 'tz' }, ` · horário de ${it.tzCity}`) : null,
-            h('span', { class: 'badge-now' }, 'Agora')),
-          h('p', { class: 'tl-title' }, it.title),
-          it.place && h('p', { class: 'tl-place' }, icon('pin', 'i--sm'), it.place),
-          it.note && h('p', { class: 'tl-note' }, rich(it.note)),
-          pendingSlot(it.pending, it.title)));
-      V.tl.push({ it, li });
-      return li;
-    })))));
-  updateJourney(now);
-}
-
-function updateJourney(now) {
-  let cur = -1;
-  V.tl.forEach((x, i) => { if (x.it.at <= now) cur = i; });
-  const last = V.tl.at(-1);
-  if (last && cur === V.tl.length - 1 && now > last.it.at + 12 * HOUR) cur = V.tl.length; // depois do fim: tudo passado
-  V.tl.forEach((x, i) => {
-    const st = i < cur ? 'past' : i === cur ? 'now' : i === cur + 1 ? 'next' : 'future';
-    if (x.li.dataset.state !== st) x.li.dataset.state = st;
+function initLegTabs() {
+  const list = $('#voo-tabs');
+  if (!list) return;
+  list.addEventListener('click', (e) => {
+    const tab = e.target.closest('[role="tab"]');
+    if (tab) { V.legPicked = true; showLeg(tab.dataset.leg); }
+  });
+  list.addEventListener('keydown', (e) => {
+    const i = LEG_KEYS.indexOf(V.leg);
+    const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: LEG_KEYS.length - 1 }[e.key];
+    if (next === undefined) return;
+    e.preventDefault();
+    V.legPicked = true;
+    showLeg(LEG_KEYS[(next + LEG_KEYS.length) % LEG_KEYS.length], { focus: true });
   });
 }
 
-/* ---------------------------------------------------------------- chegada, checklist, ajuda e privacidade */
+/* ---------------------------------------------------------------- chegada e checklist */
 
 function renderVooArrival(trip) {
   const box = $('#voo-arrival');
@@ -782,23 +715,6 @@ function renderVooChecklist(trip) {
   sync();
 }
 
-function renderVooHelp(trip) {
-  const T = VOO.texts;
-  const own = trip.source === 'link' || trip.source === 'sessao';
-  fill($('#voo-help'),
-    h('article', { class: 'card reveal', ...factProps(T.helpFact) }, cardHead('message', 'Mudou alguma coisa?'), bullets(T.help)),
-    pendingSlot(DATA.help.helpdesk.pending, DATA.help.helpdesk.title),
-    pendingSlot(DATA.help.agency.pending, DATA.help.agency.title),
-    h('article', { class: 'card privacy reveal' }, cardHead('lock', 'Seus dados'), h('p', null, T.privacy),
-      own ? h('button', { class: 'btn', type: 'button', onclick: () => {
-        store.set('voo-link', null, 'session');
-        store.set('voo-check', null);
-        V.cleared = true;
-        renderVoo();
-        toast('Dados apagados deste aparelho.');
-      } }, icon('x'), 'Apagar dados deste aparelho') : null));
-}
-
 /* ---------------------------------------------------------------- modo balcão (tela acesa) */
 
 let vooWake = null;
@@ -837,10 +753,9 @@ function renderVoo() {
   V.cards.clear();
   renderLegSection(trip, 'ida', now);
   renderLegSection(trip, 'volta', now);
-  renderJourney(trip, now);
-  renderVooArrival(trip);
+  showLeg(V.legPicked && V.leg ? V.leg : defaultLeg(trip, now));
   renderVooChecklist(trip);
-  renderVooHelp(trip);
+  renderVooArrival(trip);
 }
 
 function refreshVoo(now) {
@@ -852,10 +767,11 @@ function refreshVoo(now) {
   if (key !== before || ['checkin', 'embarque', 'voando', 'chegou', 'diaVolta'].includes(m.kind)) renderVooHero(trip, now);
   if (key !== before && before) $('#live-announcer').textContent = $('#voo-status .now-top')?.textContent ?? '';
   for (const c of V.cards.values()) updateLegCard(c, now);
-  updateJourney(now);
+  if (!V.legPicked) { const k = defaultLeg(trip, now); if (k !== V.leg) showLeg(k); }
 }
 
 function initVoo() {
+  initLegTabs();
   $('#counter')?.addEventListener('close', releaseWake);
   doc.addEventListener('visibilitychange', () => { if (doc.hidden) releaseWake(); });
 }

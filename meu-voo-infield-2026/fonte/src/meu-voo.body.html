@@ -14,44 +14,24 @@
 </header>
 <nav class="nav" aria-label="Seções da página">
   <div class="nav-inner">
-    <ul class="nav-chips" role="list"><li><a href="#ida">Ida</a></li><li><a href="#volta">Volta</a></li><li><a href="#jornada">Jornada</a></li><li><a href="#chegada">Chegada</a></li><li><a href="#antes">Antes de voar</a></li><li><a href="#ajuda">Ajuda</a></li></ul>
+    <ul class="nav-chips" role="list"><li><a href="#voos">Voos</a></li><li><a href="#antes">Antes de voar</a></li><li><a href="#chegada">Chegada</a></li></ul>
     <button class="icon-btn" id="theme-btn" type="button" aria-label="Tema automático"><svg class="i" aria-hidden="true"><use href="#i-contrast"/></svg></button>
     <button class="icon-btn icon-btn--sos" id="sos-btn" type="button" aria-haspopup="dialog" aria-label="Emergência"><svg class="i" aria-hidden="true"><use href="#i-siren"/></svg></button>
   </div>
   <div class="nav-progress" aria-hidden="true"></div>
 </nav>
 <main id="conteudo">
-  <section class="section" id="ida" aria-labelledby="h-ida">
+  <section class="section" id="voos" aria-labelledby="h-voos">
     <header class="sec-head reveal">
       <p class="kicker">Cartão do trecho</p>
-      <h2 class="sec-title" id="h-ida">Voo <span class="c">de</span> <span class="r">ida</span></h2>
+      <h2 class="sr-only" id="h-voos">Seus voos</h2>
+      <div class="sec-title leg-tabs" id="voo-tabs" role="tablist" aria-labelledby="h-voos">
+        <button class="leg-tab" id="tab-ida" type="button" role="tab" data-leg="ida" aria-selected="true" aria-controls="leg-ida">Voo <span class="c">de</span> <span class="r">ida</span></button>
+        <button class="leg-tab" id="tab-volta" type="button" role="tab" data-leg="volta" aria-selected="false" aria-controls="leg-volta" tabindex="-1">Voo <span class="c">de</span> <span class="r">volta</span></button>
+      </div>
     </header>
-    <div class="stack" id="leg-ida"></div>
-  </section>
-
-  <section class="section" id="volta" aria-labelledby="h-volta">
-    <header class="sec-head reveal">
-      <p class="kicker">Cartão do trecho</p>
-      <h2 class="sec-title" id="h-volta">Voo <span class="c">de</span> <span class="r">volta</span></h2>
-    </header>
-    <div class="stack" id="leg-volta"></div>
-  </section>
-
-  <section class="section" id="jornada" aria-labelledby="h-jornada">
-    <header class="sec-head reveal">
-      <p class="kicker">Do embarque ao retorno</p>
-      <h2 class="sec-title" id="h-jornada">Sua <span class="r">jornada</span></h2>
-      <p class="sec-lead">O fio da sua viagem: o que fazer em cada etapa, no horário local.</p>
-    </header>
-    <div id="journey"></div>
-  </section>
-
-  <section class="section" id="chegada" aria-labelledby="h-chegada">
-    <header class="sec-head reveal">
-      <p class="kicker">Ao desembarcar</p>
-      <h2 class="sec-title" id="h-chegada">Chegada <span class="c">ao</span> <span class="r">Rio</span></h2>
-    </header>
-    <div class="stack" id="voo-arrival"></div>
+    <div class="stack" id="leg-ida" role="tabpanel" aria-labelledby="tab-ida"></div>
+    <div class="stack" id="leg-volta" role="tabpanel" aria-labelledby="tab-volta" hidden></div>
   </section>
 
   <section class="section" id="antes" aria-labelledby="h-antes">
@@ -62,12 +42,12 @@
     <div id="voo-check"></div>
   </section>
 
-  <section class="section" id="ajuda" aria-labelledby="h-ajuda">
+  <section class="section" id="chegada" aria-labelledby="h-chegada">
     <header class="sec-head reveal">
-      <p class="kicker">Suporte</p>
-      <h2 class="sec-title" id="h-ajuda">Precisa <span class="c">de</span> <span class="r">ajuda?</span></h2>
+      <p class="kicker">Ao desembarcar</p>
+      <h2 class="sec-title" id="h-chegada">Chegada <span class="c">ao</span> <span class="r">Rio</span></h2>
     </header>
-    <div class="stack" id="voo-help"></div>
+    <div class="stack" id="voo-arrival"></div>
   </section>
 </main>
 <footer class="footer plate">

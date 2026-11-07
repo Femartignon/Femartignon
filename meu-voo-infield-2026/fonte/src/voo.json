@@ -666,15 +666,6 @@
     "noAir": "O seu pacote logístico não inclui passagem aérea emitida pela agência.",
     "noData": "Quando você abre esta página pelo menu Meu Voo, o app do evento envia os seus dados de voo direto para o seu aparelho.",
     "rawTags": "O link chegou sem os seus dados. Abra pelo menu Meu Voo do app; se continuar assim, avise o Help Desk.",
-    "privacy": "Seus dados de voo vêm do seu cadastro no app do evento, com acesso por SSO. Eles chegam a esta página pelo próprio link, ficam só neste aparelho e não passam por nenhum servidor. Ao fechar a aba, somem.",
-    "help": [
-      "Alterações de voo e remarcações: fale com o Help Desk da agência. Ela cuida das passagens emitidas para o evento.",
-      "Algum dado diferente do seu bilhete? Vale o bilhete da companhia aérea. Avise o Help Desk para corrigirmos o app.",
-      "Dúvidas gerais sobre o encontro: Agente Infield, no menu do app."
-    ],
-    "helpFact": "F30",
-    "arrival": "Ao desembarcar, procure o receptivo da agência com a placa do Encontro Infield 2026, na saída da área de desembarque.",
-    "arrivalFact": "F24",
     "noTransfer": "O seu pacote logístico não inclui transfer. Do aeroporto ao hotel, siga por conta própria.",
     "counterNote": "Tela acesa enquanto esta janela estiver aberta.",
     "counterNoWake": "Este aparelho não permite manter a tela acesa por aqui.",
