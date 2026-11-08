@@ -1,0 +1,833 @@
+{
+  "version": "0.4.2",
+  "baseUrl": "https://meu-voo-v040.vercel.app/",
+  "logisticaUrl": "https://myencontroinfield.vercel.app/logistica.html#transito",
+  "note": "Os campos já existem no Backstage (os mesmos do cartão de embarque nativo). O SpotMe troca as merge tags pelos dados de quem tocou no link; a página lê o fragmento (#) no aparelho e limpa o endereço. Nada chega à hospedagem: o fragmento não vai na requisição e a CSP da página não permite conexões.",
+  "fields": [
+    [
+      "n",
+      "fname",
+      "Nome"
+    ],
+    [
+      "sn",
+      "lname",
+      "Sobrenome"
+    ],
+    [
+      "ida.o",
+      "voo_ida_origem",
+      "Ida · origem (IATA)"
+    ],
+    [
+      "ida.oc",
+      "voo_ida_origem_cidade",
+      "Ida · cidade de origem"
+    ],
+    [
+      "ida.d",
+      "voo_ida_destino",
+      "Ida · destino (IATA)"
+    ],
+    [
+      "ida.dc",
+      "voo_ida_destino_cidade",
+      "Ida · cidade de destino"
+    ],
+    [
+      "ida.dt",
+      "Data_ida",
+      "Ida · data"
+    ],
+    [
+      "ida.h",
+      "horario_ida",
+      "Ida · partida"
+    ],
+    [
+      "ida.c",
+      "horario_ida_chegada",
+      "Ida · chegada"
+    ],
+    [
+      "ida.v",
+      "voo_ida_partida",
+      "Ida · voo"
+    ],
+    [
+      "ida.l",
+      "voo_ida_localizador",
+      "Ida · localizador"
+    ],
+    [
+      "ida.x",
+      "voo_ida_conexao_aeroporto",
+      "Ida · conexão"
+    ],
+    [
+      "ida.xv",
+      "voo_ida_conexao_voo",
+      "Ida · voo da conexão"
+    ],
+    [
+      "ida.op",
+      "voo_ida_operadora",
+      "Ida · operadora"
+    ],
+    [
+      "ida.du",
+      "voo_ida_duracao",
+      "Ida · duração"
+    ],
+    [
+      "volta.o",
+      "voo_volta_origem",
+      "Volta · origem (IATA)"
+    ],
+    [
+      "volta.oc",
+      "voo_volta_origem_cidade",
+      "Volta · cidade de origem"
+    ],
+    [
+      "volta.d",
+      "voo_volta_destino",
+      "Volta · destino (IATA)"
+    ],
+    [
+      "volta.dc",
+      "voo_volta_destino_cidade",
+      "Volta · cidade de destino"
+    ],
+    [
+      "volta.dt",
+      "Data_volta_",
+      "Volta · data"
+    ],
+    [
+      "volta.h",
+      "horario_volta",
+      "Volta · partida"
+    ],
+    [
+      "volta.c",
+      "horario_volta_chegada",
+      "Volta · chegada"
+    ],
+    [
+      "volta.v",
+      "voo_volta_partida",
+      "Volta · voo"
+    ],
+    [
+      "volta.l",
+      "voo_volta_localizador",
+      "Volta · localizador"
+    ],
+    [
+      "volta.x",
+      "voo_volta_conexao_aeroporto",
+      "Volta · conexão"
+    ],
+    [
+      "volta.xv",
+      "voo_volta_conexao_voo",
+      "Volta · voo da conexão"
+    ],
+    [
+      "volta.op",
+      "voo_volta_operadora",
+      "Volta · operadora"
+    ],
+    [
+      "volta.du",
+      "voo_volta_duracao",
+      "Volta · duração"
+    ],
+    [
+      "pac",
+      "pacote_logistico",
+      "Pacote logístico (opcional)"
+    ],
+    [
+      "tv",
+      "transfer_volta",
+      "Transfer de volta (opcional)"
+    ]
+  ],
+  "optionalFields": [
+    "pacote_logistico",
+    "transfer_volta"
+  ],
+  "legs": {
+    "ida": {
+      "label": "Ida",
+      "title": [
+        [
+          "Voo",
+          "k"
+        ],
+        [
+          "de",
+          "c"
+        ],
+        [
+          "ida",
+          "r"
+        ]
+      ]
+    },
+    "volta": {
+      "label": "Volta",
+      "title": [
+        [
+          "Voo",
+          "k"
+        ],
+        [
+          "de",
+          "c"
+        ],
+        [
+          "volta",
+          "r"
+        ]
+      ]
+    }
+  },
+  "arriveEarlyMin": 120,
+  "arriveEarlyFact": "",
+  "airlines": {
+    "LA": {
+      "name": "LATAM",
+      "checkinHours": 48,
+      "checkinUrl": "https://www.latamairlines.com/br/pt/check-in",
+      "fact": "F43"
+    },
+    "JJ": {
+      "alias": "LA"
+    },
+    "G3": {
+      "name": "GOL",
+      "checkinHours": 48,
+      "checkinUrl": "https://b2c.voegol.com.br/check-in/",
+      "fact": "F44"
+    },
+    "AD": {
+      "name": "Azul",
+      "checkinHours": 72,
+      "checkinUrl": "https://www.voeazul.com.br/br/pt/home/azulwebcheckin",
+      "fact": "F45"
+    }
+  },
+  "airlineNames": {
+    "LATAM": "LA",
+    "TAM": "LA",
+    "GOL": "G3",
+    "AZUL": "AD"
+  },
+  "airports": {
+    "GRU": [
+      "São Paulo",
+      "Guarulhos",
+      -180
+    ],
+    "CGH": [
+      "São Paulo",
+      "Congonhas",
+      -180
+    ],
+    "VCP": [
+      "Campinas",
+      "Viracopos",
+      -180
+    ],
+    "GIG": [
+      "Rio de Janeiro",
+      "Galeão",
+      -180
+    ],
+    "SDU": [
+      "Rio de Janeiro",
+      "Santos Dumont",
+      -180
+    ],
+    "BSB": [
+      "Brasília",
+      "",
+      -180
+    ],
+    "CNF": [
+      "Belo Horizonte",
+      "Confins",
+      -180
+    ],
+    "PLU": [
+      "Belo Horizonte",
+      "Pampulha",
+      -180
+    ],
+    "SSA": [
+      "Salvador",
+      "",
+      -180
+    ],
+    "REC": [
+      "Recife",
+      "Guararapes",
+      -180
+    ],
+    "FOR": [
+      "Fortaleza",
+      "Pinto Martins",
+      -180
+    ],
+    "POA": [
+      "Porto Alegre",
+      "Salgado Filho",
+      -180
+    ],
+    "CWB": [
+      "Curitiba",
+      "Afonso Pena",
+      -180
+    ],
+    "FLN": [
+      "Florianópolis",
+      "Hercílio Luz",
+      -180
+    ],
+    "BEL": [
+      "Belém",
+      "Val-de-Cans",
+      -180
+    ],
+    "MAO": [
+      "Manaus",
+      "Eduardo Gomes",
+      -240
+    ],
+    "GYN": [
+      "Goiânia",
+      "Santa Genoveva",
+      -180
+    ],
+    "VIX": [
+      "Vitória",
+      "",
+      -180
+    ],
+    "NAT": [
+      "Natal",
+      "",
+      -180
+    ],
+    "MCZ": [
+      "Maceió",
+      "",
+      -180
+    ],
+    "AJU": [
+      "Aracaju",
+      "",
+      -180
+    ],
+    "JPA": [
+      "João Pessoa",
+      "",
+      -180
+    ],
+    "THE": [
+      "Teresina",
+      "",
+      -180
+    ],
+    "SLZ": [
+      "São Luís",
+      "",
+      -180
+    ],
+    "CGB": [
+      "Cuiabá",
+      "",
+      -240
+    ],
+    "CGR": [
+      "Campo Grande",
+      "",
+      -240
+    ],
+    "PVH": [
+      "Porto Velho",
+      "",
+      -240
+    ],
+    "RBR": [
+      "Rio Branco",
+      "",
+      -300
+    ],
+    "BVB": [
+      "Boa Vista",
+      "",
+      -240
+    ],
+    "MCP": [
+      "Macapá",
+      "",
+      -180
+    ],
+    "PMW": [
+      "Palmas",
+      "",
+      -180
+    ],
+    "IGU": [
+      "Foz do Iguaçu",
+      "",
+      -180
+    ],
+    "LDB": [
+      "Londrina",
+      "",
+      -180
+    ],
+    "MGF": [
+      "Maringá",
+      "",
+      -180
+    ],
+    "NVT": [
+      "Navegantes",
+      "",
+      -180
+    ],
+    "JOI": [
+      "Joinville",
+      "",
+      -180
+    ],
+    "XAP": [
+      "Chapecó",
+      "",
+      -180
+    ],
+    "CXJ": [
+      "Caxias do Sul",
+      "",
+      -180
+    ],
+    "UDI": [
+      "Uberlândia",
+      "",
+      -180
+    ],
+    "UBA": [
+      "Uberaba",
+      "",
+      -180
+    ],
+    "RAO": [
+      "Ribeirão Preto",
+      "",
+      -180
+    ],
+    "SJP": [
+      "São José do Rio Preto",
+      "",
+      -180
+    ],
+    "SJK": [
+      "São José dos Campos",
+      "",
+      -180
+    ],
+    "PPB": [
+      "Presidente Prudente",
+      "",
+      -180
+    ],
+    "JTC": [
+      "Bauru",
+      "",
+      -180
+    ],
+    "AQA": [
+      "Araraquara",
+      "",
+      -180
+    ],
+    "IOS": [
+      "Ilhéus",
+      "",
+      -180
+    ],
+    "BPS": [
+      "Porto Seguro",
+      "",
+      -180
+    ],
+    "VDC": [
+      "Vitória da Conquista",
+      "",
+      -180
+    ],
+    "LEC": [
+      "Lençóis",
+      "",
+      -180
+    ],
+    "BRA": [
+      "Barreiras",
+      "",
+      -180
+    ],
+    "JDO": [
+      "Juazeiro do Norte",
+      "",
+      -180
+    ],
+    "PNZ": [
+      "Petrolina",
+      "",
+      -180
+    ],
+    "CPV": [
+      "Campina Grande",
+      "",
+      -180
+    ],
+    "PHB": [
+      "Parnaíba",
+      "",
+      -180
+    ],
+    "IMP": [
+      "Imperatriz",
+      "",
+      -180
+    ],
+    "MAB": [
+      "Marabá",
+      "",
+      -180
+    ],
+    "CKS": [
+      "Parauapebas",
+      "Carajás",
+      -180
+    ],
+    "STM": [
+      "Santarém",
+      "",
+      -180
+    ],
+    "ATM": [
+      "Altamira",
+      "",
+      -180
+    ],
+    "MOC": [
+      "Montes Claros",
+      "",
+      -180
+    ],
+    "GVR": [
+      "Governador Valadares",
+      "",
+      -180
+    ],
+    "IPN": [
+      "Ipatinga",
+      "",
+      -180
+    ],
+    "IZA": [
+      "Juiz de Fora",
+      "Zona da Mata",
+      -180
+    ],
+    "VAG": [
+      "Varginha",
+      "",
+      -180
+    ],
+    "CFB": [
+      "Cabo Frio",
+      "",
+      -180
+    ],
+    "MEA": [
+      "Macaé",
+      "",
+      -180
+    ],
+    "CAW": [
+      "Campos dos Goytacazes",
+      "",
+      -180
+    ],
+    "CAC": [
+      "Cascavel",
+      "",
+      -180
+    ],
+    "PFB": [
+      "Passo Fundo",
+      "",
+      -180
+    ],
+    "PET": [
+      "Pelotas",
+      "",
+      -180
+    ],
+    "RIA": [
+      "Santa Maria",
+      "",
+      -180
+    ],
+    "URG": [
+      "Uruguaiana",
+      "",
+      -180
+    ],
+    "ROO": [
+      "Rondonópolis",
+      "",
+      -240
+    ],
+    "OPS": [
+      "Sinop",
+      "",
+      -240
+    ],
+    "JPR": [
+      "Ji-Paraná",
+      "",
+      -240
+    ],
+    "DOU": [
+      "Dourados",
+      "",
+      -240
+    ],
+    "TJL": [
+      "Três Lagoas",
+      "",
+      -240
+    ],
+    "CMG": [
+      "Corumbá",
+      "",
+      -240
+    ],
+    "BYO": [
+      "Bonito",
+      "",
+      -240
+    ],
+    "PMG": [
+      "Ponta Porã",
+      "",
+      -240
+    ],
+    "TBT": [
+      "Tabatinga",
+      "",
+      -240
+    ],
+    "TFF": [
+      "Tefé",
+      "",
+      -240
+    ],
+    "CZS": [
+      "Cruzeiro do Sul",
+      "",
+      -300
+    ],
+    "FEN": [
+      "Fernando de Noronha",
+      "",
+      -120
+    ],
+    "JJD": [
+      "Jericoacoara",
+      "",
+      -180
+    ]
+  },
+  "texts": {
+    "lead": "Seus voos para o Encontro, conforme a emissão da agência.",
+    "leadNoData": "Abra esta página pelo menu Meu Voo, no app do evento, para ver os seus voos.",
+    "support": "Documento de apoio · no embarque, use o cartão da cia aérea.",
+    "noLegFlights": "Seu voo de {perna} ainda não aparece aqui. Se a agência emitiu a sua passagem, fale com o Help Desk.",
+    "noAir": "O seu pacote logístico não inclui passagem aérea emitida pela agência.",
+    "noData": "Quando você abre esta página pelo menu Meu Voo, o app do evento envia os seus dados de voo direto para o seu aparelho.",
+    "rawTags": "O link chegou sem os seus dados. Abra pelo menu Meu Voo do app; se continuar assim, avise o Help Desk.",
+    "noTransfer": "O seu pacote logístico não inclui transfer. Do aeroporto ao hotel, siga por conta própria.",
+    "counterNote": "Tela acesa enquanto esta janela estiver aberta.",
+    "counterNoWake": "Este aparelho não permite manter a tela acesa por aqui.",
+    "epilogueTitle": "A história continua no seu território",
+    "epilogueText": "Obrigado por escrever o Encontro Infield 2026 com a gente."
+  },
+  "checklist": [
+    {
+      "id": "checkin",
+      "text": "Check-in online feito",
+      "note": "{checkin}",
+      "fact": "{checkinFact}"
+    },
+    {
+      "id": "doc",
+      "text": "Documento oficial com foto à mão",
+      "note": "Vale para o embarque e para retirar o crachá no credenciamento.",
+      "fact": "F07"
+    },
+    {
+      "id": "bagagem",
+      "text": "Franquia de bagagem conferida no bilhete",
+      "note": "A franquia depende da tarifa emitida.",
+      "fact": ""
+    },
+    {
+      "id": "aeroporto",
+      "text": "Chegada ao aeroporto 2 horas antes do voo",
+      "note": "Recomendação do Encontro para os voos do grupo.",
+      "fact": ""
+    }
+  ],
+  "facts": {
+    "F43": {
+      "status": "confirmado",
+      "text": "LATAM: check-in online abre 48 h antes do voo",
+      "source": "latamairlines.com · central de ajuda (04/11/2026)"
+    },
+    "F44": {
+      "status": "validar",
+      "text": "GOL: check-in online abre 48 h antes do voo",
+      "source": "Cartões e Viagens (21/10/2026), a confirmar em voegol.com.br"
+    },
+    "F45": {
+      "status": "validar",
+      "text": "Azul: check-in online abre 72 h antes do voo",
+      "source": "Cartões e Viagens (20/10/2026) e Correio Braziliense (25/06/2025), a confirmar em voeazul.com.br"
+    }
+  },
+  "pending": {
+    "P05": {
+      "item": "Campos de voo importados no Backstage para todos os participantes",
+      "owner": "Eventos + Incentivare"
+    },
+    "P09": {
+      "item": "Horário do transfer de volta por participante (campo transfer_volta)",
+      "owner": "Incentivare"
+    }
+  },
+  "qa": {
+    "personas": [
+      {
+        "id": "direto",
+        "label": "Voo direto · LATAM · GRU ⇄ GIG",
+        "values": {
+          "n": "Mariana",
+          "sn": "Costa",
+          "ida.o": "GRU",
+          "ida.oc": "São Paulo",
+          "ida.d": "GIG",
+          "ida.dc": "Rio de Janeiro",
+          "ida.dt": "Seg. 16 nov. 2026",
+          "ida.h": "06:40",
+          "ida.c": "07:45",
+          "ida.v": "LA 3910",
+          "ida.l": "QXWPTA",
+          "ida.op": "LATAM Airlines Brasil",
+          "ida.du": "1h 05m",
+          "volta.o": "GIG",
+          "volta.oc": "Rio de Janeiro",
+          "volta.d": "GRU",
+          "volta.dc": "São Paulo",
+          "volta.dt": "Qui. 19 nov. 2026",
+          "volta.h": "17:05",
+          "volta.c": "18:10",
+          "volta.v": "LA 3911",
+          "volta.l": "QXWPTA",
+          "volta.op": "LATAM Airlines Brasil",
+          "volta.du": "1h 05m",
+          "pac": "Aéreo + transfer + hospedagem",
+          "tv": "19/11 · 14h · saída pelo lobby"
+        }
+      },
+      {
+        "id": "conexao",
+        "label": "Conexão e outro fuso · GOL · MAO › BSB › GIG",
+        "values": {
+          "n": "Rafael",
+          "sn": "Lima",
+          "ida.o": "MAO",
+          "ida.d": "GIG",
+          "ida.dt": "15/11/2026",
+          "ida.h": "23:55",
+          "ida.c": "08:40",
+          "ida.v": "G3 1695",
+          "ida.l": "GHRZKM",
+          "ida.x": "BSB",
+          "ida.xv": "G3 1430",
+          "ida.op": "GOL Linhas Aéreas",
+          "volta.o": "SDU",
+          "volta.d": "MAO",
+          "volta.dt": "19/11/2026",
+          "volta.h": "15:20",
+          "volta.c": "19:55",
+          "volta.v": "G3 1068",
+          "volta.l": "GHRZKM",
+          "volta.x": "BSB",
+          "volta.xv": "G3 1694",
+          "volta.op": "GOL Linhas Aéreas",
+          "pac": "Aéreo + transfer + hospedagem"
+        }
+      },
+      {
+        "id": "sem-chegada",
+        "label": "Azul · SDU · sem horário de chegada",
+        "values": {
+          "n": "Camila",
+          "sn": "Rocha",
+          "ida.o": "VCP",
+          "ida.d": "SDU",
+          "ida.dt": "Seg. 16 nov. 2026",
+          "ida.h": "07:10",
+          "ida.v": "AD 4502",
+          "ida.l": "MNBVZT",
+          "volta.o": "SDU",
+          "volta.d": "VCP",
+          "volta.dt": "Qui. 19 nov. 2026",
+          "volta.h": "18:30",
+          "volta.c": "19:35",
+          "volta.v": "AD 4507",
+          "volta.l": "MNBVZT"
+        }
+      },
+      {
+        "id": "sem-voo",
+        "label": "Somente hospedagem · sem voo",
+        "values": {
+          "n": "Bruno",
+          "sn": "Alves",
+          "pac": "Somente hospedagem"
+        }
+      },
+      {
+        "id": "cru",
+        "label": "Merge tags sem resolver (fora do app)",
+        "values": "raw"
+      },
+      {
+        "id": "vazio",
+        "label": "Sem dados (link sem fragmento)",
+        "values": {}
+      }
+    ]
+  }
+}

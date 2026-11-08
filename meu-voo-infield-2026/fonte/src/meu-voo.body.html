@@ -1,0 +1,72 @@
+<body data-page="meu-voo">
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
+{{SPRITE}}
+<header class="hero hero--compact plate" id="inicio">
+  <img class="hero-corner" src="{{ASSET:hero-corner}}" alt="" width="400" height="356" decoding="async">
+  <div class="hero-inner">
+    <img class="hero-logo" src="{{ASSET:hero-logo}}" alt="Takeda" width="249" height="94">
+    <p class="kicker page-kicker">Encontro Infield 2026 · 16 a 19/11</p>
+    <h1 class="page-title"><span class="k">Meu</span> <span class="r">Voo</span></h1>
+    <p class="page-lead" id="voo-lead">Seus voos para o Encontro, conforme a emissão da agência.</p>
+    <span class="page-thread" aria-hidden="true"></span>
+    <div class="hero-status" id="voo-status"></div>
+  </div>
+</header>
+<nav class="nav" aria-label="Seções da página">
+  <div class="nav-inner">
+    <ul class="nav-chips" role="list"><li><a href="#voos">Voos</a></li><li><a href="#antes">Antes de voar</a></li><li><a href="#chegada">Chegada</a></li></ul>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Tema automático"><svg class="i" aria-hidden="true"><use href="#i-contrast"/></svg></button>
+    <button class="icon-btn icon-btn--sos" id="sos-btn" type="button" aria-haspopup="dialog" aria-label="Emergência"><svg class="i" aria-hidden="true"><use href="#i-siren"/></svg></button>
+  </div>
+  <div class="nav-progress" aria-hidden="true"></div>
+</nav>
+<main id="conteudo">
+  <section class="section" id="voos" aria-labelledby="h-voos">
+    <header class="sec-head reveal">
+      <p class="kicker">Cartão do trecho</p>
+      <h2 class="sr-only" id="h-voos">Seus voos</h2>
+      <div class="sec-title leg-tabs" id="voo-tabs" role="tablist" aria-labelledby="h-voos">
+        <button class="leg-tab" id="tab-ida" type="button" role="tab" data-leg="ida" aria-selected="true" aria-controls="leg-ida">Voo <span class="c">de</span> <span class="r">ida</span></button>
+        <button class="leg-tab" id="tab-volta" type="button" role="tab" data-leg="volta" aria-selected="false" aria-controls="leg-volta" tabindex="-1">Voo <span class="c">de</span> <span class="r">volta</span></button>
+      </div>
+    </header>
+    <div class="stack" id="leg-ida" role="tabpanel" aria-labelledby="tab-ida"></div>
+    <div class="stack" id="leg-volta" role="tabpanel" aria-labelledby="tab-volta" hidden></div>
+  </section>
+
+  <section class="section" id="antes" aria-labelledby="h-antes">
+    <header class="sec-head reveal">
+      <p class="kicker">Checklist</p>
+      <h2 class="sec-title" id="h-antes">Antes <span class="c">de</span> <span class="r">voar</span></h2>
+    </header>
+    <div id="voo-check"></div>
+  </section>
+
+  <section class="section" id="chegada" aria-labelledby="h-chegada">
+    <header class="sec-head reveal">
+      <p class="kicker">Ao desembarcar</p>
+      <h2 class="sec-title" id="h-chegada">Chegada <span class="c">ao</span> <span class="r">Rio</span></h2>
+    </header>
+    <div class="stack" id="voo-arrival"></div>
+  </section>
+</main>
+<footer class="footer plate">
+  <div class="footer-inner">
+    <img class="footer-lockup" src="{{ASSET:footer-lockup}}" alt="Encontro Infield 2026" width="301" height="101" loading="lazy" decoding="async">
+    <p>16 a 19 de novembro de 2026 · Grand Hyatt Rio de Janeiro</p>
+    <p class="fine" id="footer-meta"></p>
+  </div>
+  <img class="footer-band" src="{{ASSET:footer-band}}" alt="" width="640" height="520" loading="lazy" decoding="async">
+</footer>
+<dialog class="sheet" id="sos" aria-labelledby="sos-title" closedby="any"></dialog>
+<div class="sheet" id="cal-sheet" popover aria-labelledby="cal-title"></div>
+<div class="sheet" id="route-sheet" popover aria-labelledby="route-title"></div>
+<dialog class="counter plate" id="counter" aria-labelledby="counter-title" closedby="any"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<p class="sr-only" id="live-announcer" aria-live="polite"></p>
+<div id="qa-root"></div>
+<noscript><p class="section">Ative o JavaScript para ver os seus voos nesta página.</p></noscript>
+<script type="application/json" id="infield-data">{{DATA}}</script>
+<script type="module">{{APP_JS}}</script>
+</body>
+</html>
