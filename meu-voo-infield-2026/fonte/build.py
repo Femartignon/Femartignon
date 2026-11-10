@@ -246,9 +246,7 @@ def build(previa: bool = False) -> None:
         return
     out = DIST / "meu-voo.html"
     out.write_text(page, encoding="utf-8", newline="\n")
-    pub = PUBLICAR / "index.html"
-    pub.parent.mkdir(exist_ok=True)
-    pub.write_text(page, encoding="utf-8", newline="\n")
+    # publicar/index.html passou a ser gerado por build_b.py (versão B, v0.6.0); aqui saem só dist/ (botão, link, prévia).
     (DIST / "meu-voo-spotme-botao.html").write_text(snip, encoding="utf-8", newline="\n")
     (DIST / "link-spotme.txt").write_text(link + "\n", encoding="utf-8", newline="\n")
     print(f"meu-voo.html               {out.stat().st_size / 1024:8.1f} kB")

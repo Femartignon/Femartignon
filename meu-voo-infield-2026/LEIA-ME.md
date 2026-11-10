@@ -2,6 +2,15 @@
 
 Página autocontida (`meu-voo.html`) no layout das páginas v0.3.1 (identidade Fio Condutor). Personalizada pelas merge tags do SpotMe: sem formulário, sem login extra e sem dado pessoal na hospedagem.
 
+## Versão B (v0.6.0, 10/11/2026) · é a página publicada
+
+- `publicar/index.html` sai de **`python3 fonte/build_b.py`** (fontes em `fonte/b/`: `pagina.html`, `pagina.css`, `app.js`, `dados.js`, `icones.json`, `fontes.css`). `fonte/build.py` segue gerando só `dist/` (botão, link, prévia da v0.5.0) e não escreve mais em `publicar/`.
+- Layout: bilhete em grafite como capa, ida e volta em carrossel, barra fixa (Bilhete · Antes de voar · Chegada/Transfer · Ao vivo), checklist no fio (fica verde ao completar os 4), e na volta o bloco "Transfer de retorno" com o horário de `transfer_volta` (chave `tv` do link).
+- `fonte/b/dados.js` é a leitura do link e o modelo da viagem da v0.5.0, sem alteração de regra. Link e botão do SpotMe não mudaram.
+- Só tema claro. `&qa=1` no fim do link abre o diagnóstico campo a campo. "Apagar dados deste aparelho" fica no rodapé.
+- QA: `node fonte/qa/validar_b.js <pasta>` (personas de `voo.json`, 360/390/1280 px, estados no tempo, CSP, rede, fluxos).
+- Voltar para a v0.5.0: `git revert` do commit da v0.6.0 (ou `python3 fonte/build.py` e copiar `dist/meu-voo.html` para `publicar/index.html`).
+
 ## Como a personalização funciona
 
 1. Os dados de voo ficam nos campos do participante no Backstage, os mesmos do cartão de embarque nativo (`voo_<trecho>_*`, `horario_<trecho>`, `Data_ida`, `Data_volta_`).
