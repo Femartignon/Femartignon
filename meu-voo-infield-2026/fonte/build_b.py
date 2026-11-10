@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 B, BASE = ROOT / "b", ROOT / "base"
 OUT = ROOT.parent / "publicar" / "index.html"
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 def uri(name): return "data:image/webp;base64," + base64.b64encode((BASE / "assets" / name).read_bytes()).decode()
 def sha(txt): return "'sha256-" + base64.b64encode(hashlib.sha256(txt.encode()).digest()).decode() + "'"
