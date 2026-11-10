@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light">
+<meta name="referrer" content="no-referrer">
+__CSP__
+<link rel="icon" href="__FAVICON__">
+<title>Meu Voo · Encontro Infield 2026</title>
+<style>__CSS__</style>
+</head>
+<body>
+<div class="app">
+  <noscript><p class="pad nojs">Ative o JavaScript para ver os seus voos.</p></noscript>
+  <img class="corner" src="__CORNER__" alt="">
+  <img class="logo" src="__LOGO__" alt="Takeda">
+  <header class="pad hd" id="topo">
+    <span class="eb"><i class="bead"></i>Encontro Infield 2026 · 16 a 19/11</span>
+    <h1>Meu <em>Voo</em></h1>
+    <p id="lead"></p>
+  </header>
+
+  <main>
+    <section id="bilhete" aria-label="Seus voos">
+      <div class="car" id="car" tabindex="0" aria-label="Bilhetes de ida e volta. Deslize ou use as setas."></div>
+      <div class="pager" id="pager">
+      </div>
+      <p class="support pad">Documento de apoio · no embarque, use o cartão da cia aérea.</p>
+    </section>
+
+    <section class="pad sec" id="antes">
+      <span class="eb"><i class="bead"></i>Checklist</span>
+      <h2>Antes <i>de</i> <em>voar</em></h2>
+      <div class="prog" id="prog" aria-hidden="true"></div>
+      <div class="prog-l"><b id="progL" aria-live="polite"></b><span>salvo neste aparelho</span></div>
+      <div class="card list" id="list"></div>
+    </section>
+
+    <section class="pad sec" id="chegada">
+      <span class="eb"><i class="bead"></i><span id="arrE"></span></span>
+      <h2 id="arrH"></h2>
+      <div class="card arr" id="arr"></div>
+    </section>
+  </main>
+
+  <section class="pad sec" id="vazio" hidden><div class="card arr"><p id="vazioT"></p></div></section>
+  <section class="pad qa" id="qa" hidden></section>
+
+  <footer>
+    <img class="lock" src="__LOCKUP__" alt="Encontro Infield 2026">
+    <p>16 a 19 de novembro de 2026 · Grand Hyatt Rio de Janeiro</p>
+    <p>Conteúdo de uso interno · página v__VERSION__ · <button type="button" id="wipe">Apagar dados deste aparelho</button></p>
+    <img class="band" src="__BAND__" alt="">
+  </footer>
+</div>
+
+<button type="button" class="mini" id="mini" aria-label="Voltar ao bilhete" tabindex="-1"></button>
+
+<nav class="dock" aria-label="Atalhos">
+  <a class="dk" href="#topo" data-s="bilhete" aria-current="true">__I_TICKET__<b>Bilhete</b></a>
+  <a class="dk" href="#antes" data-s="antes">__I_CHECK__<b>Antes de voar</b></a>
+  <a class="dk" href="#chegada" data-s="chegada" id="dkArr"></a>
+  <button type="button" class="dk" id="liveBtn" aria-haspopup="dialog">__I_RADAR__<b>Ao vivo</b></button>
+</nav>
+
+<dialog class="sheet" id="sheet" aria-labelledby="sheetT">
+  <h2 id="sheetT">Ao vivo e atalhos</h2>
+  <div id="sheetC"></div>
+  <button type="button" class="cta out" data-close>Fechar</button>
+</dialog>
+
+<dialog class="counter" id="counter" aria-label="Dados do voo para o balcão"></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>__JS__</script>
+
+</body>
+</html>
