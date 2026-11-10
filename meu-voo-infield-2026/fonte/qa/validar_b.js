@@ -54,6 +54,12 @@ const hashOf = (p) => (p.values === 'raw' ? VOO.fields.map(([k, f]) => `${k}={{a
   await p.click('#liveBtn'); res.folha = await p.evaluate(() => document.querySelectorAll('#sheet .opt').length);
   const dl = p.waitForEvent('download'); await p.click('#sheet [data-act=ics]'); res.ics = (await dl).suggestedFilename();
   await p.click('#liveBtn'); await p.click('#sheet [data-act=counter]'); res.balcao = (await p.innerText('#counter')).replace(/\s+/g, ' '); await p.click('#counter [data-close]');
+  const swipe = (dx, dy) => p.evaluate(([dx, dy]) => { const c = document.querySelector('#car'); const mk = (x, y) => new Touch({ identifier: 1, target: c, clientX: x, clientY: y });
+    c.dispatchEvent(new TouchEvent('touchstart', { touches: [mk(300, 400)], changedTouches: [mk(300, 400)], bubbles: true }));
+    c.dispatchEvent(new TouchEvent('touchend', { touches: [], changedTouches: [mk(300 + dx, 400 + dy)], bubbles: true }));
+    return new Promise((r) => setTimeout(() => r(document.querySelector('#pager [aria-current=true]').textContent), 700)); }, [dx, dy]);
+  res.deslize = [await swipe(-30, -200), await swipe(-120, 10), await swipe(120, -10)];
+  if (res.deslize.join() !== 'Ida,Volta,Ida') errs.push('deslize: ' + res.deslize);
   await p.click('#wipe'); await p.waitForTimeout(400); res.apagar = (await snap(p)).vazio;
   if (process.argv[3] === '-v') console.log(JSON.stringify(res, null, 1));
   else console.log(JSON.stringify({ tempo: res.tempo, recarga: res.recarga, copia: res.copia, check: res.check, folha: res.folha, ics: res.ics, apagar: !!res.apagar }));

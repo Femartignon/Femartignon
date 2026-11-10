@@ -286,6 +286,14 @@ function init() {
   const start = LEGS.findIndex((l) => phase(l, t) !== 'fim');
   buildCheck(); paintCheck(); paintArrival(); paintMini(); paintAll(); paintDock();
   car.addEventListener('scroll', () => requestAnimationFrame(onCarScroll), { passive: true });
+  // Toque: o carrossel só troca de bilhete em deslize claramente horizontal (a rolagem vertical não o move de lado).
+  let sw = null;
+  car.addEventListener('touchstart', (e) => { const t = e.touches[0]; sw = e.touches.length === 1 ? [t.clientX, t.clientY] : null; }, { passive: true });
+  car.addEventListener('touchend', (e) => {
+    if (!sw) return;
+    const t = e.changedTouches[0], dx = t.clientX - sw[0], dy = t.clientY - sw[1]; sw = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > 1.5 * Math.abs(dy)) goTo(active + (dx < 0 ? 1 : -1));
+  }, { passive: true });
   car.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') goTo(active + 1); if (e.key === 'ArrowLeft') goTo(active - 1); });
   $('#pager').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) goTo(+b.dataset.i); });
   car.addEventListener('click', async (e) => {
