@@ -1,16 +1,17 @@
 // Ferramentas do Assistente Infield: dados ao vivo que a base de conhecimento não tem.
-// Reaproveita as mesmas fontes do widget (Open-Meteo e a função de trânsito do Netlify),
-// para que app, widget e agente mostrem sempre o mesmo número.
+// Reaproveita as mesmas fontes das páginas (Open-Meteo e o trânsito de api/_lib/live.mjs, o mesmo
+// de /api/transito), para que página e agente mostrem sempre o mesmo número.
 
 import { tool } from 'ai';
 import { z } from 'zod';
+import { trafficResponse } from '../api/_lib/live.mjs';
 
 export const HOTEL = { lat: -23.0045, lon: -43.3187, nome: 'Grand Hyatt Rio de Janeiro' };
 export const EVENT_START = '2026-11-16T08:00:00-03:00';
 const TZ = 'America/Sao_Paulo';
 
-// Função de trânsito já publicada (netlify/functions/transito.mjs). A chave TomTom fica só lá.
-const TRANSITO_URL = process.env.TRANSITO_URL || 'https://infield2026-widgets.netlify.app/api/transito';
+// Trânsito: mesma função de /api/transito, chamada direto (sem HTTP). Só responde com TOMTOM_KEY no projeto.
+const AEROPORTO = { GIG: 'Galeão (GIG)', SDU: 'Santos Dumont (SDU)' };
 
 // Códigos WMO do Open-Meteo → descrição em português
 const WMO = [
@@ -97,17 +98,17 @@ export const ferramentas = {
       'até o hotel do evento. Use para perguntas sobre trajeto, transfer ou quanto tempo leva até o hotel.',
     inputSchema: z.object({}),
     execute: async () => {
-      const NIVEL = { ok: 'livre', mid: 'moderado', bad: 'intenso' };
-      const d = await getJson(TRANSITO_URL);
+      const d = await (await trafficResponse(process.env)).json();
+      const rotas = (d.routes ?? []).filter((r) => r.available);
+      if (!d.configured || !rotas.length) throw new Error('trânsito ao vivo indisponível');
       return {
         destino: HOTEL.nome,
-        consultado_em: d.updated,
-        trajetos: d.routes.map((r) => ({
-          aeroporto: r.code === 'GIG' ? 'Galeão (GIG)' : r.code === 'SDU' ? 'Santos Dumont (SDU)' : r.code,
+        consultado_em: d.fetched,
+        trajetos: rotas.map((r) => ({
+          aeroporto: AEROPORTO[r.iata] ?? r.name,
           minutos_agora: r.minutes,
-          sem_transito_min: r.normalMin,
-          atraso_por_transito_min: r.delayMin,
-          transito: NIVEL[r.level] ?? r.level,
+          atraso_por_transito_min: r.delayMinutes,
+          transito: r.level,
         })),
       };
     },
