@@ -1,0 +1,44 @@
+<!-- ============================================================
+     TAKEDA CURVE — elemento de destaque
+     Baseado no PDF oficial "Takeda Curve 2026 — How to use it".
+     Derivado do logo Dakiyama. Realça o elemento mais importante
+     do layout (geralmente a headline).
+
+     REGRAS (do guia oficial):
+     • Usar apenas UMA Takeda Curve por layout/página.
+     • Sempre em Takeda Red (#E1242A) e branco.
+     • Altura = estende-se igualmente acima/abaixo do bloco de texto,
+       centralizada verticalmente nele.
+     • Proporção do recorte: ¾x (ver PDF).
+     • PPT: aceitável centralizar com bloco de 2 linhas; em 3+ linhas,
+       alinhar a Curve à PRIMEIRA linha.
+
+     Dois formatos abaixo:
+       (A) tkd-curve-accent — o "parêntese/meia-lua" sólido vermelho
+           que precede a headline (ver templates "240+ years" / "R&D News").
+       (B) tkd-curve-bracket — versão fina/outline.
+     ============================================================ -->
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute">
+<defs>
+  <!-- (A) Acento sólido: meia-lua vertical, lado reto à esquerda.
+       Colocar imediatamente à esquerda da primeira linha da headline. -->
+  <symbol id="tkd-curve-accent" viewBox="0 0 40 120" preserveAspectRatio="xMidYMid meet">
+    <path d="M 4,2
+             C 30,18 38,48 38,60
+             C 38,72 30,102 4,118
+             L 4,2 Z"
+          fill="#E1242A"/>
+  </symbol>
+
+  <!-- (B) Bracket outline (para destacar bloco de texto entre curva e borda) -->
+  <symbol id="tkd-curve-bracket" viewBox="0 0 40 120" preserveAspectRatio="xMidYMid meet">
+    <path d="M 30,4 C 8,24 6,52 6,60 C 6,68 8,96 30,116"
+          fill="none" stroke="#E1242A" stroke-width="6" stroke-linecap="round"/>
+  </symbol>
+</defs>
+
+<!-- Exemplo de uso inline (remover em produção) -->
+<!--
+  <svg width="40" height="120"><use href="#tkd-curve-accent"/></svg>
+-->
+</svg>

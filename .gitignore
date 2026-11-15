@@ -18,3 +18,8 @@ __pycache__/
 meu-voo-infield-2026/dist/meu-voo.html
 meu-voo-infield-2026/dist/previa/
 meu-voo-infield-2026/qa-saida/
+
+# SBAD 2026: dependências e snapshots de QA do build do deck
+sbad-2026/deck/build/node_modules/
+sbad-2026/deck/build/snapshots/
+sbad-2026/deck/build/bg/

@@ -1,6 +1,6 @@
 # Takeda | SBAD 2026 — Diagnóstico documental e storyboard (v1, 15/11/2026)
 
-Status: aguardando aprovação do storyboard antes da produção visual.
+Status: storyboard aprovado em 15/11/2026; deck produzido (ver `deck/`). Este arquivo registra o diagnóstico e o racional.
 
 ## 1. Documentos analisados
 
@@ -50,7 +50,7 @@ Duas frentes terapêuticas: DII/RCU (materiais ENTY) e doenças ácido-pépticas
 | Confirmados | 352 (88%) |
 | Recusados / declinados | 24 / 22 |
 | Aguardando aprovação do cliente | 1 |
-| Confirmados com inscrição no pacote | 318 (nº de inscrição preenchido: 319) de 350 contratadas |
+| Confirmados com inscrição no pacote | 318 de 350 contratadas (nº de inscrição preenchido em 319 registros) |
 | Confirmados com hospedagem | 238 (Oásis 107, Comfort 71, Vila Galé 60); 214 single, 24 duplo |
 | Confirmados com aéreo | 174 "necessita aéreo"; 185 bilhetes com tarifa emitida |
 | Pacote completo (aéreo+hotel+inscrição) | 151 |
@@ -96,7 +96,7 @@ Duas frentes terapêuticas: DII/RCU (materiais ENTY) e doenças ácido-pépticas
 | Hospedagem staff Oásis (D3) | 25.110,00 | Faturado, PO 8002125108 (venc. 11/05/2026) |
 | Aéreo emitido, 185 bilhetes com fee (P1) | 646.335,24 | Emitido (soma da planilha; tarifa 571.259 + taxas 19.001 + fee 56.075) |
 | A&B estande (D4) | 133.278,00 | Proposta |
-| Lunch box 3 simpósios (D4) | 262.000 a 583.000 (faixa) | Cotação, decisão pendente |
+| Lunch box 3 simpósios (D4) | 314.092 a 532.969 (faixa, 500/750/750 un.) | Cotação, decisão pendente |
 
 ## 3. Conflitos e lacunas
 
@@ -106,7 +106,7 @@ Duas frentes terapêuticas: DII/RCU (materiais ENTY) e doenças ácido-pépticas
 | C1 | Capacidade do simpósio 21/11 | D1: Sala 08, 250 pessoas | D4: cotação para 750 pessoas | D1 avisa que capacidades podem mudar. Apresentar 250 como contratado e 750 como premissa da cotação; confirmar com CCM |
 | C2 | Sala do simpósio 20/11 | D1 e I3: Salas 08 e 09 | D4: Sala 08 | Prevalece D1/I3 |
 | C3 | Validade da proposta A&B | D4: válida até 25/09/2026 | Sem aprovação documentada | Tratar como proposta até confirmação |
-| C4 | Inscrições | D1: 350 contratadas | P1: 318 confirmados com inscrição | 31 saldo ou alocação não registrada; confirmar |
+| C4 | Inscrições | D1: 350 contratadas | P1: 318 confirmados com inscrição | 32 de saldo ou alocação não registrada; confirmar |
 | C5 | Aéreo | P1: 174 "necessita aéreo" | P1: 185 bilhetes emitidos | Diferença por acompanhantes e alterações; não é erro |
 
 ### Lacunas (não há documento)
@@ -136,7 +136,7 @@ Sequência (Minto: resposta primeiro, cronologia só para explicar execução):
 
 Justificativa: o público interno precisa saber primeiro o que vai acontecer e qual é o status; a cronologia dos últimos 7 meses só interessa para mostrar maturidade de execução. Documentação operacional (cardápios, cotações, condições) vai ao apêndice.
 
-## 5. Storyboard (14 slides + apêndice)
+## 5. Storyboard (15 slides + apêndice, v1.1 após aprovação)
 
 | # | Título conclusivo | Mensagem | Evidência | Visual | Layout Takeda |
 |---|---|---|---|---|---|
@@ -145,6 +145,7 @@ Justificativa: o público interno precisa saber primeiro o que vai acontecer e q
 | 3 | A SBAD é o maior palco da gastroenterologia latino-americana | 6.000+ participantes, SOBED+FBG+CBCD, cota Platina não exclusiva | D1 | Número gigante + três sociedades; foto/skyline Fortaleza se fornecida | T8 |
 | 4 | A cota Platina compra palco, presença e visibilidade | Contrapartidas em 3 blocos: palco (3 simpósios), presença (espaço 04, 350 inscrições), visibilidade (vídeos, news, pushs, logos) | D1 | Diagrama de 3 colunas com chips de status (confirmado / pendente de produção) | T5 |
 | 5 | Três meios-dias científicos cobrem RCU e doença ácido-péptica | Agenda dos simpósios, salas, capacidades, palestrantes | D1, I1, I3, I2 | Timeline horizontal 19/20/21 com cards; nota de conflito C1 | T5 |
+| 5b | Os convites aprovados já circulam com data, sala e palestrantes | Galeria das 4 artes oficiais (incluída após aprovação, com as imagens reenviadas) | I1–I4 | Quatro cards com as artes, legenda com código C-APROM | T5 |
 | 6 | O estande funciona como sala de aula e ponto de hospitalidade | 80 m², 2 aulas silenciosas, café 500/dia, food carts | I4, D4, D1 | Composição editorial: grade por dia (manhã/meio-dia/tarde); placeholder de render marcado como "não disponível" | T2 |
 | 7 | 1.500 atendimentos em três dias, com cardápio que muda a cada dia | Programa A&B por período | D4 | Matriz 3 dias × 4 períodos; status "proposta" | T8 |
 | 8 | 352 confirmados de 398 convidados, 151 em pacote completo | Funil de confirmação e composição por pacote | P1 | Gráfico de barras horizontais (pacotes) + funil; paleta vermelho monocromática | T5 |

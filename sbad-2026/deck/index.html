@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Takeda | SBAD 2026 — Apresentação executiva</title>
+<meta name="viewport" content="width=1920">
+<link rel="stylesheet" href="assets/gradients.css">
+<style>
+/* ============================================================
+   DECK — renderizador 1920×1080. Conteúdo vem de data.js.
+   Sistema: Takeda Brand 2026 (Gotham, Red #E1242A, patterns, Curve).
+   ============================================================ */
+@font-face{font-family:"Gotham";src:url("assets/fonts/Gotham-Light.otf") format("opentype");font-weight:300}
+@font-face{font-family:"Gotham";src:url("assets/fonts/Gotham-Book.otf") format("opentype");font-weight:400}
+@font-face{font-family:"Gotham";src:url("assets/fonts/Gotham-Medium.otf") format("opentype");font-weight:500}
+@font-face{font-family:"Gotham";src:url("assets/fonts/Gotham-Bold.otf") format("opentype");font-weight:700}
+
+:root{
+  --red:#E1242A; --red-dark:#8B0000; --ink:#111111; --body:#1A1A1A; --muted:#6B6F76; --line:#D9DDE2;
+  --card:#EEF1F4; --card-2:#F6F7F9; --white:#FFFFFF; --blue:#9CCFE6;
+  --m:96px; /* margem */
+  --W:1920px; --H:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#2A2A2A;font-family:"Gotham","Montserrat","Helvetica Neue",Arial,sans-serif;color:var(--body);-webkit-font-smoothing:antialiased}
+@page{size:1920px 1080px;margin:0}
+@media print{html,body{background:#fff}.slide{margin:0!important;box-shadow:none!important}}
+
+.slide{position:relative;width:var(--W);height:var(--H);overflow:hidden;margin:32px auto;box-shadow:0 8px 40px rgba(0,0,0,.35);break-after:page;page-break-after:always}
+.slide:not([class*="tkd-grad"]){background:#fff}
+.slide:last-child{break-after:auto;page-break-after:auto}
+
+/* ---- cromo comum ---- */
+.kicker{font-size:20px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.title{font-size:54px;line-height:1.1;font-weight:700;color:var(--ink);letter-spacing:-.005em;max-width:1480px;margin-top:14px}
+.title.light{font-weight:300;color:#fff}
+.head{position:absolute;left:var(--m);right:var(--m);top:84px}
+.body{position:absolute;left:var(--m);right:var(--m);top:300px;bottom:120px}
+.foot{position:absolute;left:var(--m);right:var(--m);bottom:40px;height:40px;display:flex;align-items:center;justify-content:space-between;font-size:14px;color:var(--muted)}
+.foot .n{font-weight:500;letter-spacing:.08em}
+.logo{position:absolute;right:var(--m);bottom:64px;width:148px;height:auto}
+.src{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.on-red .kicker{color:#fff;opacity:.85}
+.on-red .foot{color:rgba(255,255,255,.75)}
+.on-red .src{color:rgba(255,255,255,.7)}
+
+/* ---- chips de status ---- */
+.chip{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 12px;border-radius:13px;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;vertical-align:middle}
+.chip.confirmado{background:var(--red);color:#fff}
+.chip.proposta{border:1.5px solid var(--red);color:var(--red)}
+.chip.pendente{border:1.5px dashed #8A8F98;color:#5C616A}
+.on-red .chip.confirmado{background:#fff;color:var(--red)}
+.on-red .chip.proposta{border-color:#fff;color:#fff}
+.on-red .chip.pendente{border-color:rgba(255,255,255,.7);color:#fff}
+
+/* ---- Takeda Curve (uma por slide) ---- */
+.curve-title{display:flex;align-items:flex-start;gap:22px}
+.curve-title svg{flex:0 0 auto;width:26px;height:74px;margin-top:2px}
+
+/* ---- utilitários ---- */
+.row{display:flex;gap:32px}
+.col{flex:1;min-width:0}
+.card{background:var(--card);border-radius:14px;padding:28px 32px}
+.card.white{background:#fff;border:1px solid var(--line)}
+.muted{color:var(--muted)}
+.big{font-weight:300;line-height:1;color:var(--ink);letter-spacing:-.02em}
+.lbl{font-size:18px;font-weight:500;color:var(--ink);margin-top:14px}
+.sub{font-size:15px;color:var(--muted);margin-top:6px}
+p.txt{font-size:20px;line-height:1.45}
+ul.plain{list-style:none}
+ul.plain li{position:relative;padding-left:22px;font-size:18px;line-height:1.4;margin-bottom:10px}
+ul.plain li::before{content:"";position:absolute;left:0;top:11px;width:10px;height:3px;background:var(--red)}
+.on-red ul.plain li::before{background:#fff}
+table.t{width:100%;border-collapse:collapse}
+table.t th{font-size:13px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 16px 12px 0;border-bottom:1.5px solid var(--ink)}
+table.t td{font-size:17px;line-height:1.35;padding:14px 16px 14px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.t td:first-child{font-weight:500;color:var(--ink)}
+table.t.compact td{font-size:15px;padding:10px 14px 10px 0}
+table.t td.dim{color:var(--muted)}
+
+/* ---- capa / fechamento ---- */
+.cover .pattern{position:absolute;inset:0}
+.cover .block{position:absolute;left:var(--m);top:200px;right:var(--m)}
+.cover .eyebrow{font-size:22px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#fff;opacity:.9}
+.cover h1{font-size:112px;line-height:1.02;font-weight:300;color:#fff;letter-spacing:-.015em;margin-top:28px;max-width:1500px}
+.cover .meta{position:absolute;left:var(--m);bottom:140px;color:#fff;font-size:22px;line-height:1.6;font-weight:400}
+.cover .meta b{font-weight:500}
+.cover .tag{display:inline-block;margin-top:18px;border:1.5px solid rgba(255,255,255,.8);border-radius:20px;padding:6px 16px;font-size:14px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+
+/* ---- slide 2 ---- */
+.nums{display:grid;grid-template-columns:repeat(5,1fr);gap:28px}
+.nums .n .big{font-size:104px;white-space:nowrap}
+.nums .n{padding-top:26px;border-top:2px solid var(--ink)}
+.nums .n .lbl{font-size:20px;margin-top:18px}
+.nums .n .sub{font-size:16px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;margin-top:170px}
+.pillars .p{border-left:3px solid var(--red);padding:6px 0 6px 28px}
+.pillars .p h4{font-size:26px;font-weight:700;color:var(--ink);margin-bottom:12px}
+.pillars .p p{font-size:20px;line-height:1.45}
+
+/* ---- slide 3 ---- */
+.why .left{position:absolute;left:var(--m);top:300px;width:880px}
+.why .left .big{font-size:260px;letter-spacing:-.04em}
+.why .left .lbl{font-size:24px;font-weight:400;color:var(--body);margin-top:0;max-width:600px}
+.why .panel{position:absolute;right:0;top:0;bottom:0;width:720px;padding:120px 96px 140px 72px;color:#fff}
+.why .panel .soc{padding:26px 0;border-bottom:1px solid rgba(255,255,255,.35)}
+.why .panel .soc:last-of-type{border-bottom:none}
+.why .panel .soc b{display:block;font-size:40px;font-weight:700;letter-spacing:.02em}
+.why .panel .soc span{display:block;font-size:17px;opacity:.9;margin-top:6px;line-height:1.35}
+.why .points{position:absolute;left:var(--m);bottom:150px;width:880px}
+.why .points li{font-size:18px}
+
+/* ---- slide 4 ---- */
+.cota .value{position:absolute;left:var(--m);top:300px;width:440px}
+.cota .value .big{font-size:64px;font-weight:700;color:var(--red);letter-spacing:-.01em}
+.cota .cols{position:absolute;left:600px;right:var(--m);top:300px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.cota .cols h4{font-size:28px;font-weight:700;color:var(--ink);padding-bottom:14px;border-bottom:2px solid var(--ink);margin-bottom:8px}
+.cota .it{padding:18px 0;border-bottom:1px solid var(--line)}
+.cota .it .t{font-size:17px;line-height:1.35;color:var(--ink)}
+.cota .it .nota{font-size:14px;color:var(--muted);margin-top:6px;line-height:1.35}
+.cota .it .chip{margin-top:10px}
+
+/* ---- slide 5 ---- */
+.agenda .days{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;height:100%}
+.agenda .day .dh{display:flex;align-items:baseline;gap:14px;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.agenda .day .dh .d{font-size:52px;font-weight:300;color:var(--ink);letter-spacing:-.02em}
+.agenda .day .dh .w{font-size:16px;color:var(--muted)}
+.agenda .day .dh .f{margin-left:auto;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.agenda .s{margin-top:18px;border-radius:12px;padding:22px 24px;background:var(--card)}
+.agenda .s.simp{background:#fff;border:1.5px solid var(--red)}
+.agenda .s .tipo{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+.agenda .s .hora{font-size:15px;color:var(--muted);margin-top:4px}
+.agenda .s .hora b{color:var(--ink);font-weight:500}
+.agenda .s .tema{font-size:20px;line-height:1.3;font-weight:700;color:var(--ink);margin:12px 0 12px}
+.agenda .s .pp{font-size:15px;line-height:1.45;color:var(--body)}
+.agenda .notes{position:absolute;left:var(--m);right:var(--m);bottom:104px;font-size:13px;color:var(--muted);line-height:1.4;max-width:1500px}
+
+/* ---- slide 6: galeria de materiais ---- */
+.gal .grid{position:absolute;left:var(--m);right:var(--m);top:280px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px}
+.gal .card-img{height:560px;border-radius:14px;overflow:hidden;background:#111;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+.gal .card-img img{width:100%;height:100%;object-fit:cover;object-position:top}
+.gal .cap{margin-top:18px;display:flex;gap:14px;align-items:baseline}
+.gal .cap .d{font-size:30px;font-weight:300;color:var(--ink);letter-spacing:-.02em;white-space:nowrap}
+.gal .cap .t{font-size:15px;line-height:1.35}
+.gal .cap .t b{display:block;font-weight:700;color:var(--ink)}
+.gal .cap .t span{color:var(--muted);font-size:13px}
+.gal .nota{position:absolute;left:var(--m);right:var(--m);bottom:104px;font-size:13px;color:var(--muted)}
+
+/* ---- slide 7 ---- */
+.stand .specs{position:absolute;left:var(--m);top:300px;width:420px}
+.stand .spec{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line);font-size:17px}
+.stand .spec b{font-weight:700;color:var(--ink);font-size:20px}
+.stand .infra{margin-top:28px}
+.stand .infra h5,.stand h5{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.stand .infra li{font-size:15px;margin-bottom:7px}
+.stand .grid{position:absolute;left:600px;right:var(--m);top:300px}
+.stand table{width:100%;border-collapse:separate;border-spacing:6px}
+.stand th{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 0 6px 14px}
+.stand th:first-child{padding-left:0}
+.stand td{height:112px;vertical-align:top;padding:16px 14px;border-radius:10px;background:var(--card);font-size:16px;line-height:1.35}
+.stand td.dia{background:none;padding-left:0;font-size:40px;font-weight:300;color:var(--ink);letter-spacing:-.02em}
+.stand td.aula{background:var(--red);color:#fff;font-weight:500}
+.stand td.off{background:var(--card-2);color:var(--muted)}
+.stand .fixo{margin-top:22px;font-size:15px;color:var(--body);line-height:1.45}
+.stand .gap{display:inline-flex;align-items:center;gap:10px;margin-top:26px;padding:10px 14px;border:1.5px dashed #8A8F98;border-radius:10px;font-size:13px;color:#5C616A}
+
+/* ---- slide 7 ---- */
+.aeb .vols{display:grid;grid-template-columns:repeat(5,1fr);gap:24px;margin-bottom:40px}
+.aeb .vols .v{padding-top:16px;border-top:2px solid var(--ink)}
+.aeb .vols .big{font-size:48px}
+.aeb .vols .sub{font-size:14px}
+.aeb td.off{color:var(--muted)}
+.aeb table.t td{padding-right:32px}
+.quem table.t td{padding-top:22px;padding-bottom:22px}
+.aeb .cond{position:absolute;left:var(--m);right:var(--m);bottom:104px;font-size:13px;color:var(--muted);max-width:1500px;line-height:1.4}
+.statusline{display:flex;align-items:center;gap:14px;margin-top:18px;font-size:15px;color:var(--muted)}
+
+/* ---- gráficos ---- */
+.chart-h{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+svg text{font-family:"Gotham","Montserrat",Arial,sans-serif}
+
+/* ---- slide 8 ---- */
+.deleg .notes{position:absolute;left:var(--m);right:var(--m);bottom:104px;display:flex;gap:48px;font-size:14px;color:var(--muted)}
+
+/* ---- slide 9 ---- */
+.uf-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.uf{border-radius:10px;padding:14px 14px 12px;color:#fff;min-height:84px;display:flex;flex-direction:column;justify-content:space-between}
+.uf b{font-size:16px;font-weight:500;letter-spacing:.06em}
+.uf span{font-size:30px;font-weight:300;line-height:1}
+.uf.light{color:var(--ink)}
+.orig li{display:flex;justify-content:space-between;font-size:16px;padding:9px 0;border-bottom:1px solid var(--line)}
+.orig li b{font-weight:500;color:var(--ink)}
+
+/* ---- slide 10 ---- */
+.log .hotels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.log .h{background:var(--card);border-radius:14px;padding:22px 24px}
+.log .h .name{font-size:17px;font-weight:700;color:var(--ink)}
+.log .h .big{font-size:60px;margin-top:8px}
+.log .h .l{font-size:14px;color:var(--muted);margin-top:4px}
+.log .h .f{margin-top:14px;padding-top:12px;border-top:1px solid #D4D9DF;font-size:15px;color:var(--ink);font-weight:500}
+.log .h .f span{display:block;font-size:13px;color:var(--muted);font-weight:400;margin-top:2px}
+.log .kpis{display:flex;flex-wrap:wrap;gap:24px 36px;margin-top:28px;padding-top:20px;border-top:1.5px solid var(--ink);width:1000px}
+.log .kpis div{flex:0 0 auto}
+.log .kpis div b{display:block;font-size:28px;font-weight:300;color:var(--ink);white-space:nowrap}
+.log .kpis div span{font-size:13px;color:var(--muted);white-space:nowrap}
+.log .marcos{margin-top:30px}
+.log .marcos li{font-size:15px;color:var(--body);margin-bottom:9px}
+
+/* ---- slide 11 ---- */
+.timeline{position:absolute;left:var(--m);top:290px;width:1000px;bottom:120px}
+.tl{position:relative;padding-left:170px}
+.tl::before{content:"";position:absolute;left:150px;top:10px;bottom:10px;width:2px;background:rgba(255,255,255,.45)}
+.tl .e{position:relative;display:flex;align-items:baseline;gap:22px;height:56px}
+.tl .e .d{position:absolute;left:-170px;width:130px;text-align:right;font-size:18px;font-weight:500;color:#fff}
+.tl .e::before{content:"";position:absolute;left:-26px;top:8px;width:12px;height:12px;border-radius:50%;background:#fff}
+.tl .e .t{font-size:18px;color:#fff;font-weight:300}
+.tl .e .s{font-size:12px;color:rgba(255,255,255,.65);letter-spacing:.08em}
+.tl .today{position:relative;height:44px;display:flex;align-items:center}
+.tl .today::before{content:"";position:absolute;left:-150px;right:0;top:50%;border-top:1.5px dashed rgba(255,255,255,.8)}
+.tl .today span{position:relative;background:#fff;color:var(--red);font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:14px;margin-left:-26px}
+.daygrid{position:absolute;left:1180px;right:var(--m);top:300px}
+.daygrid h5{font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:18px}
+.daygrid .r{display:flex;gap:22px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.3)}
+.daygrid .r b{flex:0 0 90px;font-size:20px;font-weight:500;color:#fff}
+.daygrid .r span{font-size:17px;line-height:1.4;color:#fff;font-weight:300}
+.daygrid .pend{margin-top:26px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.4}
+
+/* ---- slide 12 ---- */
+.quem td.r{font-weight:700;color:var(--ink)}
+.quem td.d{color:var(--muted);font-size:15px}
+
+/* ---- slide 13 ---- */
+.inv .bars{position:absolute;left:var(--m);top:300px;width:1180px}
+.inv .b{display:grid;grid-template-columns:420px 1fr 230px;align-items:center;gap:18px;height:74px;border-bottom:1px solid var(--line)}
+.inv .b .l{font-size:17px;line-height:1.3;color:var(--ink)}
+.inv .b .l small{display:block;font-size:12px;color:var(--muted);margin-top:3px}
+.inv .b .bar{height:26px;border-radius:4px;background:var(--red)}
+.inv .b.proposta .bar{background:#fff;border:1.5px solid var(--red)}
+.inv .b.lunch .bar{background:repeating-linear-gradient(45deg,#C9CED5 0 6px,#fff 6px 12px);border:1.5px dashed #8A8F98}
+.inv .b .v{font-size:20px;font-weight:500;color:var(--ink);text-align:right}
+.inv .b .v small{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.inv .total{display:flex;justify-content:space-between;align-items:baseline;padding-top:18px}
+.inv .total b{font-size:44px;font-weight:300;color:var(--ink)}
+.inv .total span{font-size:14px;color:var(--muted)}
+.inv .side{position:absolute;left:1370px;right:var(--m);top:300px}
+.inv .side h5{font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.inv .side li{font-size:16px}
+.inv .legend{display:flex;gap:22px;margin-top:40px}
+
+/* ---- slide 14 ---- */
+.dec .items{position:absolute;left:var(--m);right:var(--m);top:300px;display:grid;grid-template-columns:repeat(3,1fr);gap:44px 40px}
+.dec .i{color:#fff;border-top:1.5px solid rgba(255,255,255,.55);padding-top:18px}
+.dec .i .n{font-size:14px;font-weight:500;letter-spacing:.14em;opacity:.8}
+.dec .i h4{font-size:24px;line-height:1.25;font-weight:700;margin:10px 0 10px}
+.dec .i p{font-size:16px;line-height:1.45;font-weight:300}
+.dec .i .who{margin-top:14px;font-size:14px;display:flex;gap:18px;flex-wrap:wrap}
+.dec .i .who b{font-weight:500}
+.dec .sec{position:absolute;left:var(--m);right:var(--m);bottom:104px;color:rgba(255,255,255,.8);font-size:14px}
+.dec .sec span{margin-right:32px}
+
+/* ---- apêndice ---- */
+.apx .title{font-size:40px}
+.apx .blocks{display:grid;grid-template-columns:repeat(var(--cols,4),1fr);gap:32px}
+.apx .blocks h5{font-size:16px;font-weight:700;color:var(--ink);padding-bottom:10px;border-bottom:2px solid var(--ink);margin-bottom:12px}
+.apx .blocks li{font-size:15px;margin-bottom:8px}
+.apx .nota{position:absolute;left:var(--m);right:var(--m);bottom:104px;font-size:13px;color:var(--muted);max-width:1500px;line-height:1.4}
+.apx .crit{margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.apx .crit div{font-size:14px;line-height:1.45;padding-top:12px;border-top:1.5px solid var(--ink)}
+</style>
+</head>
+<body>
+<div id="deck"></div>
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.DECK;
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const fmt = n => n.toLocaleString("pt-BR");
+  const chip = s => `<span class="chip ${s}">${s}</span>`;
+  const slides = [];
+  let n = 0;
+
+  /* --- pattern 4 (flow lines) como SVG inline, parametrizável --- */
+  function flow(opts){
+    const o = Object.assign({id:"p"+Math.random().toString(36).slice(2,7), stroke:"#fff", tick:"#E1242A", op:1, sw:1.3, y:0, h:1080, x:0, w:1920}, opts||{});
+    return `<svg class="pattern" style="position:absolute;left:${o.x}px;top:${o.y}px;width:${o.w}px;height:${o.h}px;opacity:${o.op};pointer-events:none" viewBox="0 0 ${o.w} ${o.h}" preserveAspectRatio="none">
+      <defs><pattern id="${o.id}" patternUnits="userSpaceOnUse" width="600" height="140">
+        <g fill="none" stroke="${o.stroke}" stroke-width="${o.sw}">
+          <path d="M -50,40 C 150,0 450,80 650,30"/><path d="M -50,110 C 150,70 450,150 650,100"/>
+        </g>
+        <g fill="${o.tick}">
+          <ellipse cx="120" cy="22" rx="2.2" ry="6" transform="rotate(18 120 22)"/>
+          <ellipse cx="430" cy="58" rx="2.2" ry="6" transform="rotate(18 430 58)"/>
+          <ellipse cx="260" cy="96" rx="2.2" ry="6" transform="rotate(18 260 96)"/>
+        </g></pattern>
+        <linearGradient id="${o.id}-fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".35" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></linearGradient>
+        <mask id="${o.id}-m"><rect width="${o.w}" height="${o.h}" fill="url(#${o.id}-fade)"/></mask>
+      </defs>
+      <rect width="${o.w}" height="${o.h}" fill="url(#${o.id})" mask="url(#${o.id}-m)"/></svg>`;
+  }
+  const curve = (c="#E1242A") => `<svg viewBox="0 0 40 120" aria-hidden="true"><path d="M 4,2 C 30,18 38,48 38,60 C 38,72 30,102 4,118 L 4,2 Z" fill="${c}"/></svg>`;
+
+  function chrome(red, logoWhite){
+    n++;
+    const logo = (red || logoWhite) ? "assets/logo-takeda-branco.png" : "assets/logo-takeda.png";
+    return `<div class="foot"><span>${esc(D.meta.rodape)}</span><span class="n">${String(n).padStart(2,"0")}</span></div><img class="logo" src="${logo}" alt="Takeda">`;
+  }
+  function head(kicker, title, withCurve){
+    const t = withCurve ? `<div class="curve-title">${curve()}<h2 class="title" style="margin-top:0">${esc(title)}</h2></div>` : `<h2 class="title">${esc(title)}</h2>`;
+    return `<div class="head"><div class="kicker">${esc(kicker)}</div>${t}</div>`;
+  }
+  function slide(cls, inner, red, logoWhite){
+    slides.push(`<section class="slide ${cls}${red?" on-red":""}">${inner}${chrome(red, logoWhite)}</section>`);
+  }
+
+  /* --- gráficos SVG --- */
+  function hbars(data, o){
+    o = Object.assign({w:760, lw:300, rh:38, gap:10, max:null, color:"#E1242A", light:false, labelColor:"#111", valueColor:"#111", fs:16}, o||{});
+    const max = o.max || Math.max(...data.map(d=>d.valor));
+    const bw = o.w - o.lw - 70;
+    const h = data.length*(o.rh+o.gap);
+    let s = `<svg width="${o.w}" height="${h}" viewBox="0 0 ${o.w} ${h}">`;
+    data.forEach((d,i)=>{
+      const y = i*(o.rh+o.gap), w = Math.max(3, Math.round(bw*d.valor/max));
+      const c = d.color || (o.light && i>0 ? "#C9CED5" : o.color);
+      s += `<text x="${o.lw-16}" y="${y+o.rh/2+6}" text-anchor="end" font-size="${o.fs}" fill="${o.labelColor}">${esc(d.rotulo)}</text>`;
+      s += `<rect x="${o.lw}" y="${y+6}" width="${w}" height="${o.rh-12}" rx="3" fill="${c}"/>`;
+      s += `<text x="${o.lw+w+12}" y="${y+o.rh/2+6}" font-size="${o.fs}" font-weight="500" fill="${o.valueColor}">${fmt(d.valor)}</text>`;
+    });
+    return s+`</svg>`;
+  }
+  function cols(groups, o){
+    /* groups: [{nome, data:[{data, valor}]}] — colunas por data, dois grupos lado a lado */
+    o = Object.assign({w:1000, h:300, color:"#E1242A", color2:"#9CCFE6"}, o||{});
+    const all = groups.flatMap(g=>g.data.map(d=>d.valor)); const max = Math.max(...all);
+    const pad = {l:20,r:20,t:40,b:40}; const iw = o.w-pad.l-pad.r, ih = o.h-pad.t-pad.b;
+    const gw = iw/groups.length;
+    let s = `<svg width="${o.w}" height="${o.h}" viewBox="0 0 ${o.w} ${o.h}">`;
+    groups.forEach((g,gi)=>{
+      const x0 = pad.l+gi*gw; const cw = gw/(g.data.length+1); const bw = Math.min(70, cw*.6);
+      s += `<text x="${x0}" y="22" font-size="12" font-weight="500" letter-spacing="1.5" fill="#6B6F76">${esc(g.nome).toUpperCase()}</text>`;
+      s += `<line x1="${x0}" x2="${x0+gw-30}" y1="${pad.t+ih}" y2="${pad.t+ih}" stroke="#111" stroke-width="1.5"/>`;
+      g.data.forEach((d,i)=>{
+        const bh = Math.max(3, Math.round(ih*d.valor/max)); const x = x0+cw*(i+.5)+ (cw-bw)/2 - cw/2 + cw*.5 - bw/2 + bw/2;
+        const xx = x0 + cw*(i+1) - bw/2;
+        s += `<rect x="${xx}" y="${pad.t+ih-bh}" width="${bw}" height="${bh}" rx="3" fill="${gi===0?o.color:o.color2}"/>`;
+        s += `<text x="${xx+bw/2}" y="${pad.t+ih-bh-10}" text-anchor="middle" font-size="18" font-weight="500" fill="#111">${fmt(d.valor)}</text>`;
+        s += `<text x="${xx+bw/2}" y="${pad.t+ih+26}" text-anchor="middle" font-size="14" fill="#6B6F76">${esc(d.data)}</text>`;
+      });
+    });
+    return s+`</svg>`;
+  }
+
+  /* ================= SLIDES ================= */
+  // 1 Capa
+  slide("cover tkd-grad-7", `
+    ${flow({op:.38, sw:1.4, y:380, h:700})}
+    <div class="block"><div class="eyebrow">${esc(D.meta.subtitulo)} · XXV edição</div>
+      <h1>Takeda na<br>SBAD 2026</h1></div>
+    <div class="meta"><b>${esc(D.meta.local)}</b><br>${esc(D.meta.datas)}<br><span class="tag">${esc(D.meta.publico)} · ${esc(D.meta.dMenos)}</span></div>
+  `, true);
+
+  // 2 Resumo
+  { const r = D.resumo;
+    slide("resumo", head(r.kicker, r.titulo, true) + `<div class="body">
+      <div class="nums">${r.numeros.map(x=>`<div class="n"><div class="big">${esc(x.valor)}</div><div class="lbl">${esc(x.rotulo)}</div><div class="sub">${esc(x.sub)}</div></div>`).join("")}</div>
+      <div class="pillars">${r.pilares.map(p=>`<div class="p"><h4>${esc(p.nome)}</h4><p>${esc(p.texto)}</p></div>`).join("")}</div>
+    </div>`); }
+
+  // 3 Por quê
+  { const p = D.porque;
+    slide("why", `<div class="head" style="right:820px"><div class="kicker">${esc(p.kicker)}</div><h2 class="title" style="max-width:1000px">${esc(p.titulo)}</h2></div>
+      <div class="left"><div class="big">${esc(p.numero)}</div><div class="lbl">${esc(p.numeroRotulo)}</div></div>
+      <ul class="plain points">${p.pontos.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+      <div class="panel tkd-grad-3">${flow({op:.22, y:0, h:1080, w:720, x:0})}
+        <div style="position:relative"><div class="kicker" style="color:#fff;opacity:.85;margin-bottom:28px">Organizado por</div>
+        ${p.sociedades.map(s=>`<div class="soc"><b>${esc(s.sigla)}</b><span>${esc(s.nome)}</span></div>`).join("")}
+        <div class="src" style="color:rgba(255,255,255,.7);margin-top:40px">Fonte: proposta CCM Group, 17/04/2026</div></div>
+      </div>`, false, true); }
+
+  // 4 Cota Platina
+  { const c = D.cota;
+    slide("cota", head(c.kicker, c.titulo) + `
+      <div class="value"><div class="big">${esc(c.valor)}</div><p class="sub" style="font-size:16px;margin-top:12px;line-height:1.4">${esc(c.valorRotulo)}</p>
+        <p class="sub" style="font-size:16px;margin-top:40px;line-height:1.45">Proposta de patrocínio não exclusiva. Custos de palestrante, cabine de tradução e lunch box ficam com o patrocinador.</p>
+        <div class="src" style="margin-top:40px">Fonte: D1</div></div>
+      <div class="cols">${c.colunas.map(col=>`<div><h4>${esc(col.nome)}</h4>${col.itens.map(it=>`<div class="it"><div class="t">${esc(it.t)}</div>${it.nota?`<div class="nota">${esc(it.nota)}</div>`:""}${chip(it.s)}</div>`).join("")}</div>`).join("")}</div>`); }
+
+  // 5 Agenda
+  { const a = D.agenda;
+    slide("agenda", head(a.kicker, a.titulo) + `<div class="body" style="bottom:170px"><div class="days">${a.dias.map(d=>`<div class="day">
+        <div class="dh"><span class="d">${esc(d.data)}</span><span class="w">${esc(d.semana)}</span><span class="f">${esc(d.frente)}</span></div>
+        ${d.sessoes.map(s=>`<div class="s ${s.tipo.startsWith("Simp")?"simp":""}"><div class="tipo">${esc(s.tipo)}</div>
+          <div class="hora"><b>${esc(s.hora)}</b> · ${esc(s.sala)}${s.capacidade?` · ${esc(s.capacidade)}`:""}</div>
+          <div class="tema">${esc(s.tema)}</div><div class="pp">${s.pessoas.map(esc).join("<br>")}</div></div>`).join("")}
+      </div>`).join("")}</div></div>
+      <div class="notes">${esc(a.nota)}<br>${esc(a.materiais)}</div>`); }
+
+  // 6 Materiais aprovados (artes reais)
+  { const m = D.materiais;
+    slide("gal", head(m.kicker, m.titulo) + `<div class="grid">${m.itens.map(i=>`<div><div class="card-img"><img src="${i.img}" alt="${esc(i.tipo)} ${esc(i.data)}"></div>
+        <div class="cap"><span class="d">${esc(i.data)}</span><div class="t"><b>${esc(i.tipo)} · ${esc(i.tema)}</b><span>${esc(i.codigo)} · ${esc(i.src)}</span></div></div></div>`).join("")}</div>
+      <div class="nota">${esc(m.nota)}</div>`); }
+
+  // 7 Estande
+  { const e = D.estande;
+    slide("stand", head(e.kicker, e.titulo) + `
+      <div class="specs">${e.specs.map(s=>`<div class="spec"><span>${esc(s.k)}</span><b>${esc(s.v)}</b></div>`).join("")}
+        <div class="infra"><h5>Infraestrutura exigida pelo A&amp;B</h5><ul class="plain">${e.infra.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+        <div class="gap">Planta, render e montadora: não recebidos</div></div>
+      <div class="grid"><table><tr><th></th>${e.periodos.map(p=>`<th>${esc(p)}</th>`).join("")}</tr>
+        ${e.dias.map(d=>`<tr><td class="dia">${esc(d.data)}</td>${d.celulas.map((c,i)=>`<td class="${/^Aula/.test(c)?"aula":(/^Sem|^—/.test(c)?"off":"")}">${esc(c)}</td>`).join("")}</tr>`).join("")}</table>
+        <p class="fixo">${esc(e.fixo)}</p><div class="src" style="margin-top:14px">Fontes: ${esc(e.src)}</div></div>`); }
+
+  // 7 A&B
+  { const a = D.aeb;
+    slide("aeb", head(a.kicker, a.titulo) + `<div class="head" style="top:230px"><div class="statusline">${chip(a.status)}<span>${esc(a.statusTexto)}</span></div></div>
+      <div class="body" style="top:320px">
+        <div class="vols">${a.volumes.map(v=>`<div class="v"><div class="big">${esc(v.valor)}</div><div class="sub">${esc(v.rotulo)}</div></div>`).join("")}</div>
+        <table class="t"><tr><th style="width:280px">Serviço</th><th style="width:110px">Público</th><th>19/11 quinta</th><th>20/11 sexta</th><th>21/11 sábado</th></tr>
+        ${a.linhas.map(l=>`<tr><td>${esc(l.periodo)}</td><td class="dim">${esc(l.publico)}</td>${[l.d19,l.d20,l.d21].map(x=>`<td class="${/^Sem/.test(x)?"off":""}">${esc(x)}</td>`).join("")}</tr>`).join("")}</table>
+      </div><div class="cond">${esc(a.condicoes)} Fonte: D4.</div>`); }
+
+  // 8 Delegação
+  { const d = D.delegacao;
+    slide("deleg", head(d.kicker, d.titulo) + `<div class="body"><div class="row" style="gap:80px">
+      <div class="col" style="flex:0 0 760px"><div class="chart-h">Funil de confirmação (pessoas)</div>${hbars(d.funil,{w:760,lw:200,rh:52,gap:10,light:true,fs:17})}
+        <div class="chart-h" style="margin-top:36px">Fora da delegação</div>
+        <div class="row" style="gap:40px">${[["Recusados",d.recusas.recusados],["Declinados",d.recusas.declinados],["Aguardando aprovação",d.recusas.aguardando]].map(x=>`<div><div class="big" style="font-size:44px">${x[1]}</div><div class="sub">${x[0]}</div></div>`).join("")}</div></div>
+      <div class="col"><div class="chart-h">Confirmados por pacote (352)</div>${hbars(d.pacotes,{w:860,lw:330,rh:40,gap:8,fs:16})}</div>
+    </div></div><div class="notes">${d.notas.map(x=>`<span>${esc(x)}</span>`).join("")}<span class="src">Fonte: P1</span></div>`); }
+
+  // 9 Regionais e estados
+  { const o = D.origem; const max = Math.max(...o.estados.map(e=>e.valor));
+    const tone = v => { const t = Math.sqrt(v/max); if (t>.75) return "background:#8B0000"; if (t>.5) return "background:#E1242A"; if (t>.3) return "background:#EC6B6F"; return "background:#EEF1F4;color:#111"; };
+    slide("orig", head(o.kicker, o.titulo) + `<div class="body"><div class="row" style="gap:64px">
+      <div class="col" style="flex:0 0 620px"><div class="chart-h">Confirmados por regional</div>${hbars(o.regionais,{w:620,lw:160,rh:44,gap:8,fs:17})}</div>
+      <div class="col"><div class="chart-h">Confirmados por estado (22 UFs)</div>
+        <div class="uf-grid">${o.estados.map(e=>`<div class="uf ${tone(e.valor).includes('EEF1F4')?'light':''}" style="${tone(e.valor)}"><b>${e.uf}</b><span>${e.valor}</span></div>`).join("")}</div>
+        <div class="sub" style="margin-top:10px">${esc(o.estadosNota)}</div></div>
+      <div class="col" style="flex:0 0 300px"><div class="chart-h">Principais origens aéreas</div><ul class="plain orig" style="padding:0">${o.origensAereas.map(x=>`<li style="padding-left:0"><span>${esc(x.cidade)}</span><b>${x.valor}</b></li>`).join("")}</ul></div>
+    </div></div><div class="foot" style="bottom:88px;justify-content:flex-start"><span class="src">Fonte: P1</span></div>`);
+    // remove o pseudo-bullet da lista de origens
+  }
+
+  // 10 Logística
+  { const l = D.logistica;
+    slide("log", head(l.kicker, l.titulo) + `<div class="body"><div class="row" style="gap:64px">
+      <div class="col" style="flex:0 0 1000px"><div class="chart-h">Embarques por dia (pessoas, 1ª perna)</div>
+        ${cols([{nome:"Ida para Fortaleza · 185", data:l.ida},{nome:"Retorno · 182", data:l.volta}],{w:1000,h:300})}
+        <div class="kpis"><div><b>${esc(l.aereo.total)}</b><span>aéreo emitido, com fee</span></div><div><b>${esc(l.aereo.tarifa)}</b><span>tarifas</span></div><div><b>${esc(l.aereo.taxas)}</b><span>taxas</span></div><div><b>${esc(l.aereo.fee)}</b><span>fee de agência</span></div><div><b style="font-size:20px;margin-top:6px">${esc(l.aereo.cias)}</b><span>cias e classe</span></div></div></div>
+      <div class="col"><div class="chart-h">Hospedagem confirmada (238 hóspedes)</div><div class="hotels">${l.hoteis.map(h=>`<div class="h"><div class="name">${esc(h.nome)}</div><div class="big">${h.hospedes}</div><div class="l">${h.single} single${h.duplo?` · ${h.duplo} duplo`:""}</div><div class="f">${esc(h.fatura)}<span>${h.extra?esc(h.extra):"fatura de abril"}</span></div></div>`).join("")}</div>
+        <ul class="marcos plain">${l.marcos.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><div class="src" style="margin-top:10px">Fontes: ${esc(l.src)}</div></div>
+    </div></div>`); }
+
+  // 11 Cronologia (vermelho)
+  { const c = D.cronologia; let tl = "";
+    c.macro.forEach(e=>{ if (e.data==="18/11") tl += `<div class="today"><span>Hoje · ${esc(c.hoje)} · ${esc(D.meta.dMenos)}</span></div>`; tl += `<div class="e"><span class="d">${esc(e.data)}</span><span class="t">${esc(e.texto)}</span><span class="s">${esc(e.src)}</span></div>`; });
+    slide("crono tkd-grad-3", flow({op:.16, y:0, h:1080}) + `<div class="head"><div class="kicker">${esc(c.kicker)}</div><h2 class="title light">${esc(c.titulo)}</h2></div>
+      <div class="timeline"><div class="tl">${tl}</div></div>
+      <div class="daygrid"><h5>Dia típico de operação</h5>${c.diaTipico.map(r=>`<div class="r"><b>${esc(r.hora)}</b><span>${esc(r.texto)}</span></div>`).join("")}<div class="pend">${esc(c.pendente)}</div></div>`, true); }
+
+  // 12 Quem
+  { const q = D.quem;
+    slide("quem", head(q.kicker, q.titulo) + `<div class="body"><table class="t"><tr><th style="width:520px">Frente</th><th style="width:340px">Responsável</th><th>Detalhe documentado</th><th style="width:160px">Status</th></tr>
+      ${q.frentes.map(f=>`<tr><td>${esc(f.frente)}</td><td class="r">${esc(f.resp)}</td><td class="d">${esc(f.detalhe)}</td><td>${chip(f.s)}</td></tr>`).join("")}</table>
+      <div class="src" style="margin-top:18px">Fontes: ${esc(q.src)}. Responsáveis internos além de Eventos foram inferidos dos códigos de material e da estrutura de regionais.</div></div>`); }
+
+  // 13 Investimento
+  { const v = D.investimento; const max = v.linhas[0].valor;
+    const bar = (l, cls) => `<div class="b ${cls}"><div class="l">${esc(l.rotulo)}<small>${esc(l.nota)} · ${esc(l.src)}</small></div><div><div class="bar" style="width:${Math.max(1,Math.round(100*l.valor/max))}%"></div></div><div class="v">R$ ${fmt(l.valor)}<small>${l.s}</small></div></div>`;
+    slide("inv", head(v.kicker, v.titulo, true) + `<div class="bars">${v.linhas.map(l=>bar(l,l.s)).join("")}
+        <div class="b lunch"><div class="l">Lunch box dos simpósios<small>${esc(v.lunchbox.nota)} · D4</small></div><div><div class="bar" style="width:${Math.round(100*v.lunchbox.max/max)}%"></div></div><div class="v">${esc(v.lunchbox.texto)}<small>cotação</small></div></div>
+        <div class="total"><span>Total documentado, sem lunch box</span><b>${esc(v.totalTexto)}</b></div></div>
+      <div class="side"><h5>Não documentado nos arquivos recebidos</h5><ul class="plain">${v.naoDocumentado.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+        <div class="legend">${chip("confirmado")}${chip("proposta")}</div><p class="sub" style="margin-top:14px;line-height:1.45;font-size:14px">Confirmado: faturado ou emitido. Proposta: valor comercial sem aprovação registrada nos documentos.</p></div>`); }
+
+  // 14 Decisões (vermelho, fechamento)
+  { const d = D.decisoes;
+    slide("dec tkd-grad-0", flow({op:.18, y:520, h:560}) + `<div class="head"><div class="kicker">${esc(d.kicker)}</div><h2 class="title light">${esc(d.titulo)}</h2></div>
+      <div class="items">${d.itens.map(i=>`<div class="i"><div class="n">${i.n}</div><h4>${esc(i.titulo)}</h4><p>${esc(i.texto)}</p><div class="who"><span><b>Dono:</b> ${esc(i.dono)}</span><span><b>Prazo:</b> ${esc(i.prazo)}</span></div></div>`).join("")}
+        <div class="i" style="border-top-color:transparent"><div class="n">Também no radar</div><p style="margin-top:10px">${d.secundarios.map(esc).join("<br>")}</p></div></div>`, true); }
+
+  /* ---- Apêndice ---- */
+  const apx = D.apendice;
+  const tableSlide = (t, widths) => slide("apx", `<div class="head"><div class="kicker">Apêndice</div><h2 class="title">${esc(t.titulo.replace(/^Apêndice A\d · /,""))}</h2></div><div class="body" style="top:230px">
+      <table class="t compact"><tr>${t.colunas.map((c,i)=>`<th${widths&&widths[i]?` style="width:${widths[i]}"`:""}>${esc(c)}</th>`).join("")}</tr>
+      ${t.linhas.map(r=>`<tr>${r.map((c,i)=>`<td class="${/^(Idem|Sem serviço)$/.test(c)?"dim":""}">${esc(c)}</td>`).join("")}</tr>`).join("")}</table>
+      ${t.criterios?`<div class="crit">${t.criterios.map(x=>`<div>${esc(x)}</div>`).join("")}</div>`:""}</div>
+      ${t.nota?`<div class="nota">${esc(t.nota)} Fonte: ${esc(t.src)}.</div>`:`<div class="nota">Fonte: ${esc(t.src||"documentos listados")}.</div>`}`);
+  const blockSlide = (t, cols) => slide("apx", `<div class="head"><div class="kicker">Apêndice</div><h2 class="title">${esc(t.titulo.replace(/^Apêndice A\d · /,""))}</h2></div><div class="body" style="top:230px">
+      <div class="blocks" style="--cols:${cols}">${t.blocos.map(b=>`<div><h5>${esc(b.t)}</h5><ul class="plain">${b.itens.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`).join("")}</div></div><div class="nota">Fonte: ${esc(t.src)}.</div>`);
+
+  tableSlide(apx.cardapio, ["230px","170px"]);
+  tableSlide(apx.lunchbox, ["260px",null,"170px","170px"]);
+  blockSlide(apx.condicoes, 5);
+  blockSlide(apx.infra, 4);
+  tableSlide(apx.fontes, ["110px","420px","220px","200px"]);
+
+  document.getElementById("deck").innerHTML = slides.join("");
+  // Corrige kicker do apêndice para incluir o código A1..A5
+  document.querySelectorAll(".apx").forEach((s,i)=>{ s.querySelector(".kicker").textContent = "Apêndice A"+(i+1); });
+})();
+</script>
+</body>
+</html>
