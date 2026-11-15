@@ -10,6 +10,7 @@ Cada projeto tem sua pasta. Os que têm `CLAUDE.md` próprio guardam ali o conte
 | `gastro-academy-leadership-deck/` | Deck HyperFrames | `gastro-academy-leadership-deck/CLAUDE.md` |
 | `latam-777-300-mockup/` | Mockup LATAM 777-300 | — |
 | `power-automate/` | Fluxos Power Automate | — |
+| `sbad-2026/` | Apresentação executiva Takeda | SBAD 2026 (HTML → PDF + PPTX, sistema Takeda 2026) | `sbad-2026/CLAUDE.md` |
 
 Preferências gerais: responder em português, direto e didático; alterar só o necessário;
 preservar arquitetura, nomes e decisões aprovadas.

@@ -1,0 +1,78 @@
+/* ============================================================
+   TAKEDA 2026 — GRADIENT SET
+   Cores amostradas diretamente dos PNGs oficiais (Gradient_0–7).
+   Eixo da paleta: Takeda Red #E1242A  ↔  branco  ↔  azul-claro #9CCFE6
+   canto profundo: dark-red #8B0000 / #8E0000.
+   Uso: fundos de card, capas, faixas. Texto branco sobre região
+   vermelha; texto preto/cinza-escuro sobre região clara.
+   ============================================================ */
+
+:root {
+  --takeda-red:        #E1242A; /* PRIMARY — Dakiyama Red, valor exato */
+  --takeda-red-dark:   #8B0000; /* sombra do gradiente */
+  --takeda-red-bright: #F4292F; /* topo quente */
+  --takeda-blue-tint:  #9CCFE6; /* azul-claro do canto frio */
+  --takeda-blue-soft:  #A3B3C6; /* azul-acinzentado intermediário */
+  --takeda-white:      #FFFFFF;
+}
+
+/* Gradient 0 — Default. Diagonal: vermelho dominante, frio no canto inf-esq.
+   TL #D74F5B · TR #F4292F · BR #9D0F0E · BL #9DBCD0 (azul) */
+.tkd-grad-0 {
+  background: linear-gradient(135deg,
+    #F4292F 0%, #D74F5B 22%, #BE272C 50%, #9D0F0E 78%, #8B0000 100%);
+  background:
+    radial-gradient(120% 120% at 8% 96%, #9DBCD0 0%, rgba(157,188,208,0) 38%),
+    linear-gradient(150deg, #F4292F 0%, #C8242A 55%, #9D0F0E 100%);
+}
+
+/* Gradient 1 — vermelho + canto frio azul mais saturado (#9CD0E6) inf-esq */
+.tkd-grad-1 {
+  background:
+    radial-gradient(130% 130% at 4% 98%, #9CD0E6 0%, rgba(156,208,230,0) 40%),
+    linear-gradient(150deg, #F72027 0%, #C92E34 55%, #A30100 100%);
+}
+
+/* Gradient 3 — institucional suave; azul-acinzentado inf-esq, red #E1242A puro */
+.tkd-grad-3 {
+  background:
+    radial-gradient(130% 130% at 6% 98%, #A0AFC2 0%, rgba(160,175,194,0) 42%),
+    linear-gradient(150deg, #E0262B 0%, #BA424B 55%, #871515 100%);
+}
+
+/* Gradient 4 — espelhado: dark-red sup-esq, azul-claro inf-dir (#96C5D9) */
+.tkd-grad-4 {
+  background:
+    radial-gradient(130% 130% at 96% 96%, #96C5D9 0%, rgba(150,197,217,0) 42%),
+    linear-gradient(135deg, #AE0000 0%, #E11A1F 50%, #C0211F 100%);
+}
+
+/* Gradient 5 — claro: branco dominante, vermelho na faixa direita.
+   Ideal para layouts "card claro" com headline preta. */
+.tkd-grad-5 {
+  background:
+    radial-gradient(120% 120% at 4% 50%, #FFFFFF 0%, rgba(255,255,255,0) 45%),
+    linear-gradient(100deg, #FFFFFF 0%, #C4CBD5 38%, #C03036 70%, #EA0A12 88%, #860000 100%);
+}
+
+/* Gradient 6 — branco→vermelho vertical-suave; canto inf-dir azulado.
+   Topo branco para logo/headline preta; base vermelha. */
+.tkd-grad-6 {
+  background:
+    radial-gradient(120% 120% at 96% 96%, #A2B1C4 0%, rgba(162,177,196,0) 40%),
+    linear-gradient(160deg, #FFFFFF 0%, #FBDCDD 30%, #E2272E 72%, #B11A1F 100%);
+}
+
+/* Gradient 7 — vivid: azul-claro sup-esq → vermelho intenso resto.
+   Capas de alto impacto. */
+.tkd-grad-7 {
+  background:
+    radial-gradient(120% 120% at 4% 4%, #99C9DF 0%, rgba(153,201,223,0) 42%),
+    linear-gradient(135deg, #EA0E11 0%, #C74851 45%, #C50E10 75%, #801211 100%);
+}
+
+/* Faixa sólida de marca (sem gradiente) — uso seguro p/ texto branco */
+.tkd-red-solid { background: var(--takeda-red); color: #fff; }
+
+/* Card claro institucional (fundo dos templates "quote" claros) */
+.tkd-card-light { background: #EEF1F4; color: #1A1A1A; }
