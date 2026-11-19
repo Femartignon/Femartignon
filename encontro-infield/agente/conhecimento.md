@@ -180,7 +180,7 @@ A referência oficial de horários e salas é a página **Agenda**, no app.
 - Toque na arte para ampliar e siga o passo a passo "Como salvar", na própria página.
 
 ## Avaliação
-- A pesquisa de satisfação fica disponível a partir de quinta (19/11), às 12h, na página **Avaliação do App**, e também chega por e-mail. Leva poucos minutos.
+- A pesquisa de satisfação já está disponível na página **Avaliação do App** e também chega por e-mail. Leva poucos minutos.
 
 ## Ajuda e contatos
 - Voo, transfer e hospedagem: procure o time da agência no Help Desk.
